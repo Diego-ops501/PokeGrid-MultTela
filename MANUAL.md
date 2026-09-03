@@ -8,13 +8,13 @@ Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual
 |---|---|
 | **▶ Logar equipe** | Loga as 4 contas de uma vez, com as senhas salvas |
 | **👤 Treinadores** | Cadastra e-mail e senha de cada conta. O 🗑 limpa o formulário; o 🧹 apaga os dados do jogo daquela conta (resolve conta bugada, a senha continua salva) |
-| **⟳ Atualizar tudo** | Recarrega os 4 painéis |
+| **⟳ Atualizar tudo** | Recarrega os painéis ligados, ignorando o cache (resolve tela de login velha presa) |
 | **📊 Painel** | A barra lateral com os números da conta em foco (detalhes abaixo) |
 | **🍃 Simples** | Esconde o jogo e mostra só os números das 4 contas. Gasta bem menos do PC |
 | **IV's** | Abre a calculadora de IV. Passe o mouse num pokémon dentro do jogo que ela preenche sozinha |
 | **☰ Opções** | Tudo o mais: Hunt, Tierlist, Scripts, Alertas, Venda protegida, Eco, FAQ... |
 
-Atalhos de teclado (só quando o foco está no app, não dentro do jogo): **H** Hunt, **C** Simples, **L** Limpar jogo, **R** Atualizar, **T** Treinadores, **G** Tierlist, **O** Opções, **M** menu do jogo.
+Atalhos de teclado (só quando o foco está no app, não dentro do jogo): **H** Hunt, **C** Simples, **L** Limpar jogo, **R** Atualizar, **T** Treinadores, **G** Tierlist, **O** Opções, **M** menu do jogo, **E** Eco, **A** Alertas.
 
 ## 📊 Painel: a barra lateral
 
@@ -47,7 +47,7 @@ Na linha: **FÍS/ESP** é a categoria do golpe, **folga ×N** é quanto dano sob
 ## Proteções
 
 - **🛡 Venda protegida**: pede confirmação antes de vender shiny, qualidade Lendária ou acima e itens raros. Na engrenagem do Painel dá pra travar seus próprios itens (**🔒 Cadeado de venda**)
-- **🔔 Alertas**: avisa quando uma conta cai, fica sem pokébola ou para de farmar. Com webhook do Discord configurado, o aviso chega no celular
+- **🔔 Alertas**: avisa quando aparece shiny, uma conta cai, para de farmar, fica sem suprimento ou tem pokémon derrubado. Na engrenagem do Simples você escolhe quais tipos avisam no Windows, um por um. Com webhook do Discord configurado, o aviso também chega no celular
 - **💾 Exportar/Importar config**: leva suas configurações pra outro PC. O app também salva um backup sozinho toda semana
 
 ## Coisas que confundem no começo
