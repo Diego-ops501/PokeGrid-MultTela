@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.0 — Interface 2.0
+
+- Nova navegação lateral permanente, com Dashboard, telas do jogo, resumo, Hunt Analyzer, Tierlist, Ditto, calculadora de IV e overlay.
+- Cabeçalho simplificado: mantém apenas login da equipe, treinadores, recarregamento e configurações.
+- Lista lateral das quatro contas com conexão e hunt atualizadas em tempo real.
+- Identidade visual renovada com superfícies, cartões, modais, grade e estados mais claros.
+- Dashboard e telas do jogo agora são visualizações explícitas, sem esconder recursos importantes no menu.
+- Sidebar responsiva: em janelas menores, recolhe para uma faixa compacta de ícones.
+- Motor, sessões, cofre, login, compra de bolas e retorno experimental à hunt permanecem compatíveis.
+
 ## 1.0.0 — PokeGrid MultTela
 
 - Produto Windows com identidade própria, instalador NSIS x64 e dados preservados durante upgrades.

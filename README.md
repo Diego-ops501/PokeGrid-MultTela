@@ -23,6 +23,7 @@
 - Painel, modo Simples, histórico, métricas de gold/XP/kills, overkill, ETA, melhor hunt, tierlist e Ditto.
 - Alertas de shiny por popup, som, Windows e Discord, com captura local opcional da tela do shiny.
 - Overlay flutuante somente-leitura, individual ou agregado.
+- Interface 2.0 com sidebar, Dashboard, lista de contas e navegação direta para as análises.
 - Compra de Pokébolas em ação única, com confirmação de conta, tipo, quantidade, custo e saldo.
 - Retorno experimental à mesma hunt após recarga, desligado por padrão, limitado a três tentativas espaçadas.
 - Atualizações consultadas no máximo uma vez por dia, com changelog antes do download e confirmação separada para baixar e instalar.

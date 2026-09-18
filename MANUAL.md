@@ -2,17 +2,17 @@
 
 Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual, veja o [FAQ](FAQ.md).
 
-## A barra do topo
+## Navegação lateral e barra do topo
+
+A barra lateral troca entre o **Dashboard**, as **Telas do jogo** e o **Resumo da conta**. Ela também abre diretamente Hunt Analyzer, Tierlist, Ditto, calculadora de IV e overlay. Na parte inferior aparecem as quatro contas, com conexão e hunt atualizadas; clicar em uma conta abre sua tela.
+
+A barra do topo ficou reservada às ações operacionais:
 
 | Botão | O que faz |
 |---|---|
 | **▶ Logar equipe** | Loga as 4 contas de uma vez, com as senhas salvas |
 | **👤 Treinadores** | Cadastra e-mail e senha de cada conta. O 🗑 limpa o formulário; o 🧹 apaga os dados do jogo daquela conta (resolve conta bugada, a senha continua salva) |
 | **⟳ Atualizar tudo** | Recarrega os painéis ligados, ignorando o cache (resolve tela de login velha presa) |
-| **📊 Painel** | A barra lateral com os números da conta em foco (detalhes abaixo) |
-| **🍃 Simples** | Esconde o jogo e mostra só os números das 4 contas. Gasta bem menos do PC |
-| **IV's** | Abre a calculadora de IV. Passe o mouse num pokémon dentro do jogo que ela preenche sozinha |
-| **▣ Overlay** | Abre um resumo flutuante e somente-leitura das contas |
 | **☰ Opções** | Tudo o mais: Hunt, Tierlist, Ditto, Alertas, Venda protegida, Eco, atualização e FAQ... |
 
 Atalhos de teclado (só quando o foco está no app, não dentro do jogo): **H** Hunt, **C** Simples, **L** Limpar jogo, **R** Atualizar, **T** Treinadores, **G** Tierlist, **D** Ditto, **O** Opções, **M** menu do jogo, **E** Eco, **A** Alertas.
