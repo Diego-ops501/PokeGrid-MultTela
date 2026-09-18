@@ -5,6 +5,7 @@ const path = require('path');
 const raiz = path.join(__dirname, '..');
 const s = fs.readFileSync(path.join(raiz, 'index.html'), 'utf8').replace(/\r\n/g, '\n');
 const mj = fs.readFileSync(path.join(raiz, 'main.js'), 'utf8').replace(/\r\n/g, '\n');
+const pl = fs.readFileSync(path.join(raiz, 'preload.js'), 'utf8').replace(/\r\n/g, '\n');
 let fail = 0;
 const ok = (c, l) => { console.log((c ? 'OK  ' : 'FAIL') + ' ' + l); if (!c) fail = 1; };
 const re = /<script>([\s\S]*?)<\/script>/g; let mm, b = '';
@@ -15,6 +16,12 @@ const LOGIN = 'https://poke.idleworld.online/login', PLAY = 'https://poke.idlewo
 const espera = () => new Promise((r) => setTimeout(r, 20));
 
 (async () => {
+  console.log('\n--- [alta] código arbitrário de terceiros desativado ---');
+  ok(!s.includes('id="scriptsBtn"') && !s.includes('id="scOverlay"'), 'interface não oferece gerenciador de userscripts');
+  ok(!mj.includes("ipcMain.handle('userscript:fetch'") && !mj.includes("ipcMain.handle('preset:read'"), 'processo principal não baixa nem lê scripts');
+  ok(!pl.includes('fetchUserScript') && !pl.includes('readPreset'), 'preload não expõe ponte para scripts');
+  ok(b.includes('if (false) {') && b.includes('const injectScripts = async () => {};'), 'código legado fica inalcançável e a injeção pública é no-op');
+  if (false) {
   console.log('\n--- [alta] userscript nunca entra na tela de login (ali o app digita a senha do cofre) ---');
   {
     const bloco = entre(b, '  const usNoLoginUrl = ', '  function renderScriptsList() {');
@@ -81,6 +88,8 @@ const espera = () => new Promise((r) => setTimeout(r, 20));
     ok(grande.out.userScripts[0].id === 'disco', 'e a memoria volta ao que esta no disco');
     const cota = roda(1000, false);
     ok(cota.out.r === false && cota.alertou === 1, 'cota estourada: avisa em vez de fingir que salvou');
+  }
+
   }
 
   console.log('\n--- [alta] sessao morta sem recarregar: o relogin agora dispara ---');
@@ -201,6 +210,8 @@ const espera = () => new Promise((r) => setTimeout(r, 20));
   }
 
   console.log('\n--- main.js: baixar userscript ---');
+  ok(!mj.includes('function baixaUserScript('), 'downloader de userscript removido do processo principal');
+  if (false) {
   {
     const src = entre(mj, 'function baixaUserScript(', '\nipcMain.handle(', false);
     const urlRaw = entre(mj, 'function urlRaw(', '\nfunction baixaUserScript(', false);
@@ -217,6 +228,7 @@ const espera = () => new Promise((r) => setTimeout(r, 20));
     ok(bom.ok === true && bom.code.indexOf('UserScript') > 0, 'script de verdade continua passando');
     const rel = await baixa('', 302, 'https://release-assets.githubusercontent.com/x/y.js')(U);
     ok(rel.ok === false && /redirecionou/.test(rel.error), 'link de release: a mensagem explica o redirecionamento em vez de repetir o que o usuario ja fez');
+  }
   }
 
   console.log('\n--- cacada 1521b: historico em CSV grava em sequencia, nada se perde nem duplica ---');

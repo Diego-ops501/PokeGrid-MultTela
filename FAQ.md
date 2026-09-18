@@ -2,14 +2,14 @@
 
 ## Instalação e atualização
 
-### Atualizar apaga minhas configurações e scripts?
-Não. Tudo fica em `%APPDATA%\pokegrid`, fora do programa. Atualizar, reinstalar ou trocar de versão não mexe nessa pasta.
+### Atualizar apaga minhas configurações?
+Não. Os dados ficam no perfil do Windows, fora da pasta do programa. Atualizar ou reinstalar não apaga essa pasta.
 
 ### Existe um config.ini?
-Não. Backup = copiar a pasta `%APPDATA%\pokegrid`. Só as senhas não migram pra outro PC (são criptografadas pelo Windows); o resto vai junto.
+Não. Use Exportar configuração ou copie a pasta de dados do PokeGrid MultTela. As senhas não migram para outro PC porque são criptografadas pelo Windows; o restante pode ser restaurado.
 
 ### O processo abre mas a janela não aparece
-Bug das versões 1.5.5 a 1.5.9, corrigido na **1.5.10**. Baixe a mais recente: https://github.com/soufoka/PokeGrid-source
+Use o botão de atualização do PokeGrid MultTela ou baixe a versão mais recente no repositório público de releases.
 
 ### Qual navegador o app usa?
 Electron (Chromium, o motor do Chrome). Cada conta roda numa sessão separada.
@@ -28,8 +28,8 @@ Bug corrigido na **1.5.11**: o painel segurava a atualização enquanto o foco f
 ### Não consigo mudar a pokébola!
 É o "sabonete": o botão **🧼 Limpar jogo** esconde o Auto-Helper do jogo, que é onde fica o seletor de pokébola. Desde a 1.5.13 basta **passar o mouse** no canto onde ele fica que ele aparece; em versões antigas, desligue o 🧼 na barra do topo, troque a bola e ligue de novo.
 
-### Como desabilito um script?
-**Opções → Scripts**, desmarque a caixinha. Desde a 1.5.11 isso recarrega as contas e o script para na hora. Antes: desmarque e clique em **⟳ Atualizar tudo**.
+### Posso instalar userscripts?
+Não. O PokeGrid MultTela não carrega código arbitrário dentro das contas conectadas. Essa decisão protege as credenciais e mantém o conjunto de automações limitado ao que o projeto declara.
 
 ### Como exporto os logs de hunt?
 **Simples → Hoje → "⬇ Hunts (N)"**. Baixa duas planilhas (hunts e drops) que abrem direto no Excel. O app guarda as últimas 150 hunts; as mais antigas ficam em `%APPDATA%\pokegrid\backups\hunts-historico.csv` (e `hunts-historico-drops.csv` pros drops por item).

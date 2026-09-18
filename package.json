@@ -1,12 +1,16 @@
 {
-  "name": "pokegrid",
-  "version": "1.5.22",
-  "description": "Rode 4 contas de Poke Idle World ao mesmo tempo, em uma janela so / Run 4 Poke Idle World accounts at once, in a single window",
+  "name": "pokegrid-multtela",
+  "version": "1.0.0",
+  "description": "PokeGrid MultTela: quatro contas de Poke Idle World, painel, alertas e ferramentas locais para Windows.",
   "main": "main.js",
   "author": "soufoka",
   "scripts": {
     "start": "electron .",
-    "test": "node test/iv-math.test.js && node test/boot.test.js && node test/atualizacao-jogo.test.js && node test/volta-hunt.test.js && node test/cacada-1521.test.js && node test/tierlist-ditto.test.js"
+    "test": "node test/iv-math.test.js && node test/boot.test.js && node test/atualizacao-jogo.test.js && node test/volta-hunt.test.js && node test/cacada-1521.test.js && node test/tierlist-ditto.test.js && node test/multtela-security.test.js",
+    "dist": "electron-builder --win nsis --x64 --publish never",
+    "dist:dir": "electron-builder --win dir --x64",
+    "release:win": "electron-builder --win nsis --x64 --publish never",
+    "release:publish": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish-release.ps1"
   },
   "keywords": [
     "electron",
@@ -15,7 +19,54 @@
     "idle-game"
   ],
   "license": "MIT",
+  "homepage": "https://github.com/Diego-ops501/PokeGrid-MultTela-Releases",
+  "dependencies": {
+    "electron-updater": "6.8.9"
+  },
   "devDependencies": {
-    "electron": "^43.1.1"
+    "electron": "43.1.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.multtela.pokegrid",
+    "productName": "PokeGrid MultTela",
+    "artifactName": "PokeGrid-MultTela-${version}-${arch}.${ext}",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "overlay.html",
+      "src/**/*",
+      "tray.png",
+      "build-icon.png",
+      "LICENSE",
+      "NOTICE.md",
+      "README.md",
+      "MANUAL.md",
+      "FAQ.md",
+      "CHANGELOG.md",
+      "update-config.json"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "build-icon.png",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "PokeGrid MultTela",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest/download"
+      }
+    ]
   }
 }

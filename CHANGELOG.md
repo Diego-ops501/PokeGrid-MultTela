@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0 — PokeGrid MultTela
+
+- Produto Windows com identidade própria, instalador NSIS x64 e dados preservados durante upgrades.
+- Limite rígido de quatro contas no renderer e no processo principal, com sessões persistentes isoladas.
+- Credenciais somente no cofre do sistema (`safeStorage`), sem fallback em texto puro e com escrita atômica.
+- Login automático mantido, preservando resolução manual de CAPTCHA e 2FA.
+- Compra de Pokébolas com confirmação detalhada, validação de saldo/quantidade e proteção contra resposta duplicada.
+- Retorno experimental apenas à mesma hunt, desligado por padrão, com intervalo de 12 segundos e até três tentativas.
+- Overlay flutuante somente-leitura e captura local opcional do painel ao detectar shiny.
+- Atualização pelo canal público com changelog, confirmação antes do download, SHA-512 e confirmação antes de reiniciar.
+- Carregamento de userscripts removido; não foram adicionadas rotinas de refill, venda ou rotação de hunts.
+- Mantidos painel, modo Simples, histórico, Discord, alertas, métricas, overkill, ETA, melhor hunt, tierlist e Ditto do projeto original.
+
 ## 1.5.22
 
 - **Tierlist e Ditto: nota que separa de verdade.** O modelo de dano passou a seguir as regras que o jogo documenta: efetividade amplificada na hunt (×2 vira ×2.5, ×4 vira ×5.5, resistências dividem por 1.5), STAB ×1.5 no golpe do próprio tipo, golpe físico contra a Defesa e especial contra a Defesa Especial do selvagem, e a vida dele dizendo quantos golpes o kill leva. E matar de um golpe no limite deixou de valer o mesmo que matar com folga: a nota usa a chance de matar de um golpe, então dezenas de espécies (e todos os tipos do Shiny Ditto) não empatam mais em 100. Vale pra tierlist, pra sugestão de hunt do Simples e pro painel do Ditto.

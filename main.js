@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, safeStorage, Tray, Menu, powerSaveBlocker, shell, session, Notification } = require('electron');
+const { app, BrowserWindow, ipcMain, safeStorage, Tray, Menu, powerSaveBlocker, shell, session, Notification, webContents } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
@@ -17,7 +17,7 @@ function logErro(origem, detalhe) {
     let txt = '';
     if (!errCabecalho) {
       errCabecalho = true;
-      txt += `\n=== sessao de ${new Date().toLocaleString('pt-BR')} · PokeGrid v${app.getVersion()} · Electron ${process.versions.electron} · ${process.platform} ${require('os').release()} ===\n`;
+      txt += `\n=== sessao de ${new Date().toLocaleString('pt-BR')} · PokeGrid MultTela v${app.getVersion()} · Electron ${process.versions.electron} · ${process.platform} ${require('os').release()} ===\n`;
     }
     txt += `[${new Date().toLocaleString('pt-BR')}] [${origem}] ${String(detalhe).slice(0, 4000)}\n`;
     fs.appendFileSync(f, txt);
@@ -78,55 +78,6 @@ ipcMain.handle('conta:limpar', async (_e, i) => {
   } catch (e) { try { logErro('conta', 'limpar conta' + i + ': ' + String(e && e.message).slice(0, 150)); } catch {} return false; }
 });
 
-// Baixa userscript do GitHub (base: PR #4 do JulianoCLI). Guardas: so https, so github.com e
-// raw.githubusercontent.com, redirect revalidado pela mesma funcao, no maximo 3 saltos, 2MB e
-// timeouts. Conserto proprio: link /blob/ (o que se copia do navegador) vira raw, senao o app
-// instalava a PAGINA HTML como se fosse o script.
-const US_HOSTS = new Set(['github.com', 'raw.githubusercontent.com']);
-function urlRaw(u) {
-  if (u.hostname === 'github.com') {
-    const p = u.pathname.split('/').filter(Boolean); // owner/repo/blob/branch/caminho...
-    const i = p.indexOf('blob');
-    if (i >= 2 && p.length > i + 2) return new URL('https://raw.githubusercontent.com/' + p[0] + '/' + p[1] + '/' + p.slice(i + 1).join('/'));
-  }
-  return u;
-}
-function baixaUserScript(url, saltos = 0) {
-  return new Promise((resolve) => {
-    let u;
-    try { u = urlRaw(new URL(String(url))); } catch { resolve({ ok: false, error: 'Link invalido.' }); return; }
-    if (u.protocol !== 'https:' || !US_HOSTS.has(u.hostname) || !/\.js$/i.test(u.pathname)) {
-      resolve({ ok: false, error: saltos ? 'O GitHub redirecionou para um endereco fora da lista (link de release?). Use o link do arquivo .js dentro do repositorio.' : 'Use um link https do GitHub para um arquivo .js' }); return;
-    }
-    const req = https.get(u, { headers: { 'User-Agent': 'PokeGrid/' + app.getVersion(), Accept: 'text/plain' } }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        res.resume();
-        if (saltos >= 3) { resolve({ ok: false, error: 'Redirecionamentos demais.' }); return; }
-        let prox; try { prox = new URL(res.headers.location, u).toString(); } catch { resolve({ ok: false, error: 'Redirecionamento invalido.' }); return; }
-        baixaUserScript(prox, saltos + 1).then(resolve); return;
-      }
-      if (res.statusCode !== 200) { res.resume(); resolve({ ok: false, error: 'GitHub respondeu HTTP ' + res.statusCode }); return; }
-      let tam = 0, corpo = '', parou = false;
-      res.setEncoding('utf8');
-      res.on('data', (c) => {
-        if (parou) return;
-        tam += Buffer.byteLength(c);
-        if (tam > 2 * 1024 * 1024) { parou = true; req.destroy(); resolve({ ok: false, error: 'O script passa de 2 MB.' }); }
-        else corpo += c;
-      });
-      res.on('end', () => {
-        if (parou) return;
-        const c0 = corpo.trim(); // pagina de erro/HTML do GitHub nao e script: nenhum .js valido comeca com '<'
-        if (!c0 || c0[0] === '<') { resolve({ ok: false, error: 'Esse link nao devolveu um arquivo .js. Abra o arquivo no GitHub e copie o link dele.' }); return; }
-        resolve({ ok: true, url: u.toString(), code: corpo });
-      });
-      res.on('error', () => { if (!parou) { parou = true; resolve({ ok: false, error: 'Falha ao ler o script.' }); } });
-    });
-    req.setTimeout(12000, () => req.destroy(new Error('timeout')));
-    req.on('error', () => resolve({ ok: false, error: 'Nao foi possivel acessar o GitHub.' }));
-  });
-}
-ipcMain.handle('userscript:fetch', (_e, url) => baixaUserScript(url));
 // Instancia unica: abrir o app de novo so foca a janela ja aberta.
 if (!app.requestSingleInstanceLock()) app.quit();
 
@@ -188,14 +139,26 @@ app.on('web-contents-created', (_e, contents) => {
 });
 
 const credFile = () => path.join(app.getPath('userData'), 'accounts.enc');
+const MAX_ACCOUNTS = 4;
+function sanitizeAccounts(value) {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, MAX_ACCOUNTS).map((entry) => {
+    const x = entry && typeof entry === 'object' ? entry : {};
+    return {
+      name: String(x.name || '').slice(0, 40),
+      email: String(x.email || '').slice(0, 160),
+      senha: String(x.senha || '').slice(0, 512)
+    };
+  });
+}
 
 // Contas salvas: criptografadas em disco via DPAPI/keychain do SO (safeStorage).
 ipcMain.handle('creds:load', () => {
   let buf;
   try { buf = fs.readFileSync(credFile()); } catch { return []; } // nunca salvo
   try {
-    if (safeStorage.isEncryptionAvailable()) return JSON.parse(safeStorage.decryptString(buf));
-    return JSON.parse(buf.toString('utf8')); // fallback se o SO nao oferecer cripto
+    if (!safeStorage.isEncryptionAvailable()) return [];
+    return sanitizeAccounts(JSON.parse(safeStorage.decryptString(buf)));
   } catch {
     // Ilegivel (ex.: chave de cripto mudou apos upgrade do Electron): preserva o
     // arquivo antes que um save por cima destrua a unica copia.
@@ -206,7 +169,7 @@ ipcMain.handle('creds:load', () => {
 
 ipcMain.handle('creds:save', (_e, accounts) => {
   try {
-    const json = JSON.stringify(accounts);
+    const json = JSON.stringify(sanitizeAccounts(accounts));
     // sem cripto do sistema, gravar em texto puro seria quebrar a promessa do app calado:
     // melhor recusar e dizer, que o renderer avisa e o relatorio de erros guarda o motivo
     if (!safeStorage.isEncryptionAvailable()) { logErro('creds', 'sistema sem cripto (safeStorage indisponivel): as senhas NAO foram salvas'); return false; }
@@ -240,12 +203,6 @@ ipcMain.handle('notify', (_e, title, body) => {
   try { if (Notification.isSupported()) new Notification({ title, body }).show(); } catch {}
 });
 
-// Le um preset de userscript da pasta presets/ (nome saneado, sem path traversal).
-ipcMain.handle('preset:read', (_e, name) => {
-  if (typeof name !== 'string' || !/^[\w.-]+\.js$/.test(name)) return '';
-  try { return fs.readFileSync(path.join(__dirname, 'presets', name), 'utf8'); } catch { return ''; }
-});
-
 // Anti-sono: impede o PC de dormir enquanto farma (a tela ainda pode desligar).
 let awakeId = null;
 ipcMain.handle('awake:set', (_e, on) => {
@@ -264,13 +221,13 @@ ipcMain.handle('mintray:set', (_e, on) => { minToTray = !!on; return minToTray; 
 // comportamentos que antivirus tratam como persistencia suspeita. O atalho fica num lugar que o
 // usuario ve e pode apagar sozinho (Win+R > shell:startup), e o app abre com a janela visivel.
 const startupDir = () => path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup');
-const startupLnk = () => path.join(startupDir(), 'PokeGrid.lnk');
+const startupLnk = () => path.join(startupDir(), 'PokeGrid MultTela.lnk');
 const autoStartOn = () => { try { return process.platform === 'win32' && fs.existsSync(startupLnk()); } catch { return false; } };
 function setAutoStart(on) {
   if (process.platform !== 'win32') return false;
   try {
     if (on) {
-      const opts = { target: process.execPath, description: 'PokeGrid', appUserModelId: 'online.idleworld.pokegrid' };
+      const opts = { target: process.execPath, description: 'PokeGrid MultTela', appUserModelId: 'com.multtela.pokegrid' };
       if (!app.isPackaged) opts.args = `"${app.getAppPath()}"`; // rodando pelo codigo: electron + a pasta do app
       shell.writeShortcutLink(startupLnk(), 'create', opts);
     } else {
@@ -303,24 +260,80 @@ ipcMain.handle('webhook:send', (_e, url, text) => {
 });
 
 let tray; // referencia viva para o icone nao sumir (GC)
+let mainWindow = null;
+let overlayWindow = null;
+
+function rendererConfiavel(event) {
+  try { return event.senderFrame && String(event.senderFrame.url).startsWith('file://'); } catch { return false; }
+}
+
+ipcMain.handle('overlay:toggle', (event) => {
+  if (!rendererConfiavel(event)) return false;
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
+    overlayWindow.close();
+    overlayWindow = null;
+    return false;
+  }
+  overlayWindow = new BrowserWindow({
+    width: 430, height: 310, minWidth: 340, minHeight: 190,
+    alwaysOnTop: true, frame: false, transparent: true, resizable: true,
+    backgroundColor: '#00000000', skipTaskbar: false,
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, nodeIntegration: false }
+  });
+  overlayWindow.setAlwaysOnTop(true, 'screen-saver');
+  overlayWindow.loadFile(path.join(__dirname, 'overlay.html'));
+  overlayWindow.on('closed', () => { overlayWindow = null; });
+  return true;
+});
+ipcMain.handle('overlay:state', (event, state) => {
+  if (!rendererConfiavel(event) || !overlayWindow || overlayWindow.isDestroyed()) return false;
+  overlayWindow.webContents.send('overlay:data', state);
+  return true;
+});
+ipcMain.handle('overlay:close', (event) => {
+  if (!rendererConfiavel(event)) return false;
+  if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.close();
+  return true;
+});
+
+ipcMain.handle('shiny:capture', async (event, contentsId, meta) => {
+  if (!rendererConfiavel(event)) return { ok: false };
+  const id = Math.trunc(Number(contentsId));
+  const target = webContents.fromId(id);
+  if (!target || target.isDestroyed() || target.getType() !== 'webview') return { ok: false };
+  try {
+    const origin = new URL(target.getURL()).origin;
+    if (origin !== GAME) return { ok: false };
+    const image = await target.capturePage();
+    const dir = path.join(app.getPath('userData'), 'shinies');
+    fs.mkdirSync(dir, { recursive: true });
+    const label = String(meta && meta.name || 'shiny').normalize('NFKD').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-|-$/g, '').slice(0, 40) || 'shiny';
+    const file = path.join(dir, `${new Date().toISOString().replace(/[:.]/g, '-')}-${label}.png`);
+    fs.writeFileSync(file, image.toPNG());
+    return { ok: true, file };
+  } catch (error) {
+    logErro('shiny-print', error && error.message ? error.message : error);
+    return { ok: false };
+  }
+});
 
 app.whenReady().then(() => {
   // Nada aqui pode derrubar a criacao da janela: se qualquer peca do sistema falhar (registro,
   // particao de sessao corrompida, bandeja), o app tem que abrir assim mesmo. Antes destas
   // guardas, uma excecao aqui deixava o processo vivo e SEM JANELA, que e o pior sintoma possivel.
-  try { app.setAppUserModelId('online.idleworld.pokegrid'); } catch (e) { logErro('boot', 'appUserModelId: ' + e.message); } // notificacoes do Windows com o nome certo
+  try { app.setAppUserModelId('com.multtela.pokegrid'); } catch (e) { logErro('boot', 'appUserModelId: ' + e.message); } // notificacoes do Windows com o nome certo
 
   // Nega pedidos de permissao dos jogos (mic, camera, localizacao, notificacao...).
   for (let i = 1; i <= 4; i++)
     try { session.fromPartition('persist:conta' + i).setPermissionRequestHandler((_wc, _p, cb) => cb(false)); } catch (e) { logErro('boot', 'sessao conta' + i + ': ' + e.message); }
 
-  const win = new BrowserWindow({
+  const win = mainWindow = new BrowserWindow({
     width: 1600,
     height: 900,
     show: false,
     autoHideMenuBar: true,
     backgroundColor: '#0d1117',
-    webPreferences: { webviewTag: true, preload: path.join(__dirname, 'preload.js'), backgroundThrottling: false }
+    webPreferences: { webviewTag: true, preload: path.join(__dirname, 'preload.js'), backgroundThrottling: false, contextIsolation: true, sandbox: true, nodeIntegration: false }
   });
   win.loadFile(path.join(__dirname, 'index.html')); // caminho absoluto: robusto no build empacotado (asar)
   // a janela principal so mostra index.html: bloqueia qualquer navegacao dela (canal de exfiltracao se houver XSS)
@@ -379,7 +392,7 @@ app.whenReady().then(() => {
   // segue funcionando sem bandeja em vez de morrer no boot.
   try {
     tray = new Tray(path.join(__dirname, 'tray.png'));
-    tray.setToolTip('PokeGrid');
+    tray.setToolTip('PokeGrid MultTela');
     tray.setContextMenu(Menu.buildFromTemplate([
       { label: 'Mostrar', click: mostrar },
       { label: 'Abrir com o Windows', type: 'checkbox',
@@ -401,7 +414,12 @@ app.whenReady().then(() => {
   win.on('minimize', () => { if (minToTray && tray) win.hide(); });
   app.on('second-instance', () => mostrar());
 
-  // checa atualizacao (nao incomoda quem abriu escondido na bandeja pra farmar)
+  // Atualização confirmada: consulta o canal público, mas nunca baixa ou instala em silêncio.
+  try {
+    const { createUpdateManager } = require('./src/main/update-manager');
+    const updates = createUpdateManager({ app, ipcMain, getWindow: () => mainWindow, log: logErro });
+    if (updates.supported && !process.argv.includes('--hidden')) setTimeout(() => updates.checkAutomatic(), 8000);
+  } catch (e) { logErro('update-init', e && e.message ? e.message : e); }
 });
 
 app.on('window-all-closed', () => app.quit());

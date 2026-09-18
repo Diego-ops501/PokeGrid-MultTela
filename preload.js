@@ -11,12 +11,19 @@ contextBridge.exposeInMainWorld('pokeAPI', {
   onAutoStart: (cb) => ipcRenderer.on('autostart', (_e, on) => cb(on)),
   onHotkey: (cb) => ipcRenderer.on('hotkey', (_e, k) => cb(k)),
   notify: (title, body) => ipcRenderer.invoke('notify', title, body),
-  readPreset: (name) => ipcRenderer.invoke('preset:read', name),
   logError: (origem, msg) => ipcRenderer.invoke('errlog:write', origem, msg),
   openErrorLog: () => ipcRenderer.invoke('errlog:open'),
   saveBackup: (nome, conteudo, cabecalho) => ipcRenderer.invoke('backup:save', nome, conteudo, cabecalho),
   clearAccount: (i) => ipcRenderer.invoke('conta:limpar', i),
-  fetchUserScript: (url) => ipcRenderer.invoke('userscript:fetch', url),
+  toggleOverlay: () => ipcRenderer.invoke('overlay:toggle'),
+  sendOverlayState: (state) => ipcRenderer.invoke('overlay:state', state),
+  closeOverlay: () => ipcRenderer.invoke('overlay:close'),
+  onOverlayData: (cb) => ipcRenderer.on('overlay:data', (_e, state) => cb(state)),
+  captureShiny: (contentsId, meta) => ipcRenderer.invoke('shiny:capture', contentsId, meta),
+  checkUpdate: () => ipcRenderer.invoke('update:check'),
+  downloadUpdate: () => ipcRenderer.invoke('update:download'),
+  installUpdate: () => ipcRenderer.invoke('update:install'),
+  onUpdateStatus: (cb) => ipcRenderer.on('update:status', (_e, state) => cb(state)),
   // versao do app: vem do processo principal (a UA nao carrega mais o token pokegrid/x, e o
   // preload roda em sandbox, entao require de arquivo local nao e confiavel)
   appVersion: (() => { try { return ipcRenderer.sendSync('app:version'); } catch { return ''; } })()

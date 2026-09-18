@@ -476,7 +476,7 @@
         <circle cx="16" cy="16" r="4.6" fill="#f6f8fa" stroke="#0b0f14" stroke-width="2"/>
         <circle cx="16" cy="16" r="2" fill="#cfe8ff"/>
       </svg>
-      POKEGRID
+      POKEGRID <small style="font-size:9px;color:#8b949e;letter-spacing:.08em">MULTTELA</small>
       <span class="ver" id="appVer"></span>
     </span>
     <button id="donTop">Ajude o projeto</button>
@@ -486,6 +486,7 @@
     <button id="dock" title="Mostra ou esconde o menu de ícones do jogo. F2 alterna no painel em foco.">🎛 Menu do jogo</button>
     <button id="statsBtn" title="Resumo da conta em foco (gold/h, XP/h, bag, drops)">📊 Painel</button>
     <button id="cardsBtn" title="Dashboard ultra leve: esconde o jogo e mostra só os números">🃏 Cartas</button>
+    <button id="overlayBtn" title="Abre um resumo flutuante somente-leitura">📌 Overlay</button>
     <button id="ivsBtn" title="Abre ou fecha a calculadora de IV (JustPokédex) em todos os painéis"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M2 12h20" stroke="#8f1408" stroke-width="3"/><circle cx="12" cy="12" r="3.4" fill="#fff" stroke="#8f1408" stroke-width="2.5"/></svg>IV's</button>
     <div id="menuWrap">
       <button id="menuBtn">☰ Opções</button>
@@ -493,7 +494,6 @@
         <button id="hunt" title="Abre o Hunt Analyzer em todos os painéis">🎯 Hunt</button>
         <button id="tierBtn">🏆 Tierlist</button>
         <button id="dittoBtn" title="Onde caçar com o Ditto (comum ou shiny) e em que pokémon virar, no seu nível">✨ Ditto</button>
-        <button id="scriptsBtn" title="Rode userscripts (IV calc e os seus) nos painéis">🧩 Scripts</button>
         <button id="count" title="Quantas contas rodar ao mesmo tempo (1 a 4)">🔢 Painéis: 4</button>
         <button id="alerts" title="Avisa quando uma conta cai ou fica sem pokébola">🔔 Alertas</button>
         <button id="sellguard" title="Pede confirmação antes de vender shiny, Lendária+ ou item raro">🛡 Venda protegida</button>
@@ -505,7 +505,9 @@
         <button id="minTray" title="O que o botão minimizar faz: esconder na bandeja ou minimizar normal na barra de tarefas">📥 Minimiza p/ bandeja</button>
         <button id="autoStart" style="display:none" title="Cria um atalho na pasta Inicializar do Windows pra abrir o PokeGrid junto com o sistema">🚀 Abrir com o Windows</button>
         <button id="sndShiny" title="Toca um som quando um shiny aparece (além da notificação)">✨🔊 Som do shiny</button>
+        <button id="shotShiny" title="Salva localmente um print quando aparece um shiny">📷 Print de shiny: off</button>
         <button id="voltaHunt">↩ Voltar pra hunt</button>
+        <button id="updateBtn" style="display:none">⬇ Atualização</button>
         <button id="manBtn" title="Manual: o que cada parte do app faz">📖 Manual</button> <button id="faqBtn" title="Perguntas frequentes: abre o FAQ no navegador">❓ FAQ</button> <button id="bkExp" title="Salva um arquivo com todas as configurações e o histórico (senhas ficam fora)">💾 Exportar config</button>
         <button id="bkImp" title="Restaura configurações e histórico de um arquivo exportado">📂 Importar config</button>
         <button id="layout">▦ Grade</button>
@@ -529,26 +531,6 @@
       <div class="modal-actions">
         <button id="accCancel">Cancelar</button>
         <button id="accSave" class="primary">Salvar</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="scOverlay">
-    <div id="scModal">
-      <h2>🧩 Scripts / Extras</h2>
-      <p class="hint">Rode userscripts (estilo Tampermonkey) dentro de cada painel do jogo. O IV calc já vem pronto. Você pode colar os seus. <b>Só adicione scripts em que você confia</b>, eles têm acesso total à página do jogo.</p>
-      <div id="scList"></div>
-      <div class="sc-add">
-        <div class="sc-drop">Solte o arquivo .user.js aqui</div>
-        <input id="scUrl" type="url" placeholder="Link do script no GitHub (.user.js)">
-        <button id="scAddUrl" class="primary">+ Adicionar pelo GitHub</button>
-        <div class="sc-tag" style="text-align:center">ou cole o código</div>
-        <input id="scName" placeholder="Nome do script">
-        <textarea id="scCode" placeholder="Cole aqui o código do userscript (@grant none)"></textarea>
-        <button id="scAdd" class="primary">+ Adicionar script</button>
-      </div>
-      <div class="modal-actions">
-        <button id="scClose">Fechar</button>
       </div>
     </div>
   </div>
@@ -639,6 +621,9 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
   let accounts = [];
   const webviews = [];
   const off = [false, false, false, false];
+  // PokeGrid MultTela não carrega código arbitrário nas sessões autenticadas.
+  const injectScripts = async () => {};
+  const usNoLoginUrl = () => true;
   const lastLogin = [0, 0, 0, 0]; // cooldown do auto-login por painel (evita ressubmeter em loop)
   const deadT = [0, 0, 0, 0]; // ticks seguidos sem sessao viva: o jogo nao navega sozinho pro login
   const alertedBalls = [false, false, false, false]; // ja avisou "sem pokebola" nesta falta?
@@ -832,7 +817,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
         const m = e && e.message;
         if (typeof m !== 'string') return;
         if (m.lastIndexOf('__PGST__', 0) === 0 && m.length < 300000) {
-          try { const d = stSane(JSON.parse(m.slice(8))); if (d) { stCache[i] = { t: Date.now(), d }; dtPush(); } } catch {}
+          try { const d = stSane(JSON.parse(m.slice(8))); if (d) { stCache[i] = { t: Date.now(), d }; dtPush(); pushOverlay(); } } catch {}
           return;
         }
         if (m.lastIndexOf('__PGIV__', 0) !== 0) return;
@@ -1085,6 +1070,17 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   // funcao, nao constante: o READ_STATE so e declarado mais abaixo; no dom-ready ja existe
   const PUSH_STATE = () => '(()=>{if(window.__pgPush)return;window.__pgPush=1;setInterval(()=>{try{const d=' + READ_STATE + ';if(d&&d.ok)console.log("__PGST__"+JSON.stringify(d))}catch(x){}},10000)})()';
   const stCache = {};
+  function overlayState() {
+    const rows = [];
+    let gph = 0, xph = 0, shiny = 0;
+    for (let i = 0; i < Math.min(4, count); i++) {
+      const d = stCache[i] && stCache[i].d, a = d && d.a || {};
+      const row = { name: (d && d.name) || (accounts[i] && accounts[i].name) || ('Conta ' + (i + 1)), online: !off[i] && !!d, hunt: d && d.hunt || '', gph: +a.gph || 0, xph: +a.xph || 0, shiny: +a.shinyFound || 0 };
+      rows.push(row); gph += row.gph; xph += row.xph; shiny += row.shiny;
+    }
+    return { total: { gph, xph, shiny }, accounts: rows };
+  }
+  function pushOverlay() { try { window.pokeAPI.sendOverlayState(overlayState()); } catch {} }
   // Depot por conta (pedido do Semai: "aparece o depot da familia?"). Busca preguicosa: so com o
   // Simples aberto e a secao de inventario visivel, no maximo a cada 2 min por conta. A resposta
   // vem de codigo injetado, entao e saneada: so chaves simples, quantidade > 0, teto de 500 itens.
@@ -1518,7 +1514,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   function alerta(i, chave) {
     if (!alertsOn) return;
     const nome = (accounts[i] && accounts[i].name) || defName(i);
-    if (alLocal[alCat(chave)] !== false) { try { window.pokeAPI.notify('PokeGrid', nome + ' ' + t(chave)); } catch {} } // notify local so se o tipo estiver ligado
+    if (alLocal[alCat(chave)] !== false) { try { window.pokeAPI.notify('PokeGrid MultTela', nome + ' ' + t(chave)); } catch {} } // notify local so se o tipo estiver ligado
     // pedido do Arthur: o mesmo aviso vai pro Discord, pra chegar no celular quando uma conta
     // cai ou para de farmar e voce nao esta no PC (shiny e resumo tem as chaves proprias deles)
     // shiny tem preferencia propria (whCfg.shiny) e caminho proprio; aqui so avisos de PROBLEMA
@@ -1546,6 +1542,14 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   const sndBtn = document.getElementById('sndShiny');
   function applySndShiny() { sndBtn.textContent = t(sndShinyOn ? 'sndOn' : 'sndOff'); sndBtn.title = t('sndTitle'); sndBtn.classList.toggle('on', sndShinyOn); lsSet('sndShiny', sndShinyOn ? '1' : '0'); }
   sndBtn.onclick = () => { sndShinyOn = !sndShinyOn; applySndShiny(); if (sndShinyOn) beepShiny(); };
+  let shotShinyOn = lsGet('shotShiny') === '1';
+  const shotBtn = document.getElementById('shotShiny');
+  function applyShotShiny() { shotBtn.textContent = shotShinyOn ? '📷 Print de shiny: on' : '📷 Print de shiny: off'; shotBtn.classList.toggle('on', shotShinyOn); lsSet('shotShiny', shotShinyOn ? '1' : '0'); }
+  shotBtn.onclick = () => { shotShinyOn = !shotShinyOn; applyShotShiny(); };
+  function captureShiny(i, shiny) {
+    if (!shotShinyOn || !webviews[i]) return;
+    try { window.pokeAPI.captureShiny(webviews[i].getWebContentsId(), { name: String(shiny && shiny.n || 'shiny').slice(0, 40) }); } catch {}
+  }
   // ----- Voltar pra hunt depois de recarregar (EXPERIMENTAL, desligado por padrao) -----
   // Quem tira a conta da hunt num reload e a SPA do jogo, nao o servidor: ela nasce com o mapa em
   // Cerulean e manda {type:'set-city'} ao montar. A hunt e so uma mensagem de WS ({type:'enter-hunt',
@@ -1789,6 +1793,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       if (seenLog[key]) return; seenLog[key] = 1; dirty = true;
       lifeShiny.push({ n: String(x.n || '').slice(0, 40), sid: +x.sid || 0, t: +x.t || 0, cap: x.cap ? 1 : 0, def: x.def ? 1 : 0, p: i, acc, dot });
       if (avisa && whCfg.shiny) webhookSend((whCfg.mention ? '<@' + whCfg.mention + '> ' : '') + '✨ ' + acc + ': shiny ' + (x.n || ('#' + (+x.sid || '?'))) + ' ' + (x.cap ? t('whCaught') : t('whLost')));
+      if (avisa) captureShiny(i, x);
       if (avisa && x.cap) { // CAPTUROU: aviso grande na tela, som de festa e notificacao propria
         const c = (r.catchLog || []).filter(y => y.sh).sort((p, q2) => Math.abs((+p.t || 0) - (+x.t || 0)) - Math.abs((+q2.t || 0) - (+x.t || 0)))[0]; // pega IV/qualidade da captura correspondente
         festaShiny({ n: x.n || (c && c.n), sid: x.sid, acc, dot, iv: c && c.iv, q: c && c.q, t: x.t });
@@ -1901,7 +1906,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       p.querySelector('.expand').title = t('tExpand');
       p.querySelector('.zpct').title = t('tZoomPct');
     });
-    applyMute(); applyEco(); applyChat(); applyDock(); applyAwake(); applyMinTray(); applyPropNat(); applySndShiny(); applyVoltaHunt(); applyAlerts(); applySellGuard(); applyClean(); aplicaCountLayout();
+    applyMute(); applyEco(); applyChat(); applyDock(); applyAwake(); applyMinTray(); applyPropNat(); applySndShiny(); applyShotShiny(); applyVoltaHunt(); applyAlerts(); applySellGuard(); applyClean(); aplicaCountLayout();
     lsSet('lang', lang);
   }
   function applyGameLang() {
@@ -1941,38 +1946,35 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     setTimeout(() => { refBtn.textContent = '🔗'; }, 1500);
   };
   document.getElementById('reloadAll').onclick = () => webviews.forEach((w, i) => { if (!off[i]) { try { w.reloadIgnoringCache(); } catch { w.reload(); } } }); // ignora cache: resolve pagina de login velha em cache (sem captcha)
-  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/soufoka/PokeGrid-source/blob/main/FAQ.md');
-  document.getElementById('manBtn').onclick = () => window.open('https://github.com/soufoka/PokeGrid-source/blob/main/MANUAL.md');
+  const overlayBtn = document.getElementById('overlayBtn');
+  overlayBtn.onclick = async () => { try { const on = await window.pokeAPI.toggleOverlay(); overlayBtn.classList.toggle('on', !!on); if (on) pushOverlay(); } catch {} };
+  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest');
+  document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest');
   const donTop = document.getElementById('donTop');
   donTop.onclick = () => window.open('https://link.mercadopago.com.br/pokegrid');
-  // versao pequena ao lado do logo, vinda do processo principal (a UA nao carrega mais o token do app)
+  // Versão e atualização confirmada. O processo principal valida o feed e o SHA-512 do latest.yml.
   try {
     const vAtual = window.pokeAPI && window.pokeAPI.appVersion;
     const elVer = document.getElementById('appVer');
     if (vAtual) elVer.textContent = 'v' + vAtual;
-    // Aviso de versao nova, 1x/dia. Nasceu do incidente 1.5.5: quem usa a versao sem executavel
-    // (sem o avisador do instalador) ficou preso numa versao quebrada sem saber.
-    const vMaior = (a, b) => { const A = String(a).split('.'), B = String(b).split('.'); for (let k = 0; k < 3; k++) { if ((+A[k] || 0) > (+B[k] || 0)) return true; if ((+A[k] || 0) < (+B[k] || 0)) return false; } return false; };
-    const vMostra = (tag) => {
-      if (!vAtual || !/^v?[\d.]{1,12}$/.test(String(tag))) return; // tag vem da rede: so digitos e pontos
-      const limpa = String(tag).replace(/^v/, '');
-      if (!vMaior(limpa, vAtual) || document.getElementById('appVerNew')) return;
-      const a2 = document.createElement('span');
-      a2.id = 'appVerNew'; a2.textContent = ' \u2192 v' + limpa;
-      a2.style.cssText = 'color:#f2c665;cursor:pointer';
-      a2.title = t('verNova');
-      a2.onclick = () => window.open('https://github.com/soufoka/PokeGrid-source');
-      elVer.appendChild(a2);
+    const ub = document.getElementById('updateBtn');
+    let updateState = null;
+    window.pokeAPI.onUpdateStatus((s) => {
+      updateState = s || {};
+      if (s.status === 'available') { ub.style.display = ''; ub.textContent = '⬇ v' + s.version; ub.title = (s.releaseName || 'Nova versão') + (s.size ? ' · ' + Math.round(s.size / 1048576) + ' MB' : ''); }
+      else if (s.status === 'downloading') { ub.style.display = ''; ub.textContent = '⬇ ' + Math.round(s.percent || 0) + '%'; ub.disabled = true; }
+      else if (s.status === 'downloaded') { ub.style.display = ''; ub.disabled = false; ub.textContent = '↻ Reiniciar e instalar'; }
+      else if (s.status === 'error') { ub.style.display = ''; ub.disabled = false; ub.textContent = '⚠ Atualização'; ub.title = s.message || ''; }
+    });
+    ub.onclick = async () => {
+      if (!updateState) return;
+      if (updateState.status === 'available') {
+        const notes = String(updateState.releaseNotes || '').replace(/<[^>]+>/g, '').slice(0, 1200);
+        if (!window.confirm('Baixar PokeGrid MultTela v' + updateState.version + '?\n\n' + notes)) return;
+        ub.disabled = true; await window.pokeAPI.downloadUpdate();
+      } else if (updateState.status === 'downloaded' && window.confirm('Reiniciar agora e instalar a atualização?')) await window.pokeAPI.installUpdate();
+      else if (updateState.status === 'error') await window.pokeAPI.checkUpdate();
     };
-    const cacheV = lsObj('verNova');
-    if (cacheV.tag) vMostra(cacheV.tag);
-    if (vAtual && Date.now() - (+cacheV.t || 0) > 22 * 3600e3) setTimeout(() => {
-      fetch('https://api.github.com/repos/soufoka/PokeGrid/releases/latest').then(r => r.json()).then(j => {
-        const tag = j && typeof j.tag_name === 'string' ? j.tag_name : '';
-        lsSet('verNova', JSON.stringify({ t: Date.now(), tag: /^v?[\d.]{1,12}$/.test(tag) ? tag : '' }));
-        vMostra(tag);
-      }).catch(() => {});
-    }, 8000); // depois do boot, sem atrasar nada
   } catch {}
   // Layout dos paineis: grade (2x2) -> coluna (vertical) -> linha (horizontal)
   let layoutMode = lsGet('layout') || 'grid';
@@ -2577,16 +2579,22 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       if (!bolas.length) { sel.outerHTML = '<div class="cfg-noc">' + t('cfgNoCat') + '</div>'; return; }
       sel.innerHTML = bolas.map(b2 => '<option value="' + (+b2.id || 0) + '" data-p="' + (+b2.p || 0) + '">' + esc(b2.name) + ' \u00b7 ' + nf(b2.p) + 'g</option>').join('');
       const msg = stCfg.querySelector('#cfgBallMsg');
+      let compraEmAndamento = false;
       const compra = (qtd) => async () => {
+        if (compraEmAndamento || !Number.isSafeInteger(qtd) || qtd < 1 || qtd > 10000) return;
         const opt = sel.options[sel.selectedIndex]; if (!opt) return;
         const ballId = +opt.value, preco = +opt.dataset.p || 0, custo = preco * qtd;
+        if (!Number.isSafeInteger(ballId) || ballId <= 0 || !Number.isFinite(preco) || preco <= 0 || !Number.isSafeInteger(custo) || custo <= 0) { msg.textContent = '\u274c ' + t('cfgBallsErr'); return; }
         let j = statsIdx >= 0 && !off[statsIdx] && webviews[statsIdx] ? statsIdx : -1;
         if (j < 0) { for (let k = 0; k < count; k++) if (!off[k] && webviews[k]) { j = k; break; } }
         if (j < 0) { msg.textContent = t('cfgBallsOff'); return; }
         const goldTem = (stCache[j] && stCache[j].d && +stCache[j].d.gold) || (j === statsIdx && lastData && +lastData.gold) || 0;
+        if (!Number.isFinite(goldTem) || goldTem < custo) { msg.textContent = '\u274c Saldo insuficiente (' + nf(goldTem) + ' / ' + nf(custo) + ')'; return; }
         const txt = t('cfgBallsConfirm').replace('{q}', nf(qtd)).replace('{b}', opt.textContent.split(' \u00b7 ')[0])
           .replace('{c}', nf(custo)).replace('{g}', nf(goldTem)).replace('{a}', () => tabNames[j] || stName(j));
         if (!window.confirm(txt)) return;
+        compraEmAndamento = true;
+        const botoes = [stCfg.querySelector('#cfgBallB1'), stCfg.querySelector('#cfgBallB2')].filter(Boolean); botoes.forEach(b => b.disabled = true);
         msg.textContent = '\u23f3';
         try {
           const r = await webviews[j].executeJavaScript(
@@ -2594,6 +2602,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
           if (r && r.st === 200) { msg.textContent = '\u2705 ' + t('cfgBallsOk').replace('{q}', nf(qtd)); refreshStats(); }
           else msg.textContent = '\u274c ' + t('cfgBallsErr') + (r && r.st ? ' (' + r.st + ')' : '');
         } catch { msg.textContent = '\u274c ' + t('cfgBallsErr'); }
+        finally { compraEmAndamento = false; botoes.forEach(b => b.disabled = false); }
       };
       const b1 = stCfg.querySelector('#cfgBallB1'), b2b = stCfg.querySelector('#cfgBallB2');
       if (b1) b1.onclick = compra(1000);
@@ -3657,6 +3666,9 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   statsEl.querySelector('.st-reset').onclick = resetSessao;
 
   // ===== Gerenciador de scripts / extras (userscripts injetados nos painéis) =====
+  // Mantido abaixo apenas como referência histórica do upstream. O bloco é inalcançável nesta
+  // variante: não há UI, preload ou IPC capaz de carregar código de terceiros nas contas.
+  if (false) {
   const PRESETS = [{ id: 'justpokedex', name: 'JustPokédex: Calculadora de IV', file: 'justpokedex.js', author: 'guilherme-se' }];
   let scriptsOn = {}; try { scriptsOn = lsObj('scriptsOn'); } catch {}
   let userScripts = []; try { userScripts = lsArr('userScripts'); } catch {}
@@ -3785,6 +3797,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     document.getElementById('scName').value = ''; document.getElementById('scCode').value = '';
     renderScriptsList(); applyScriptToAll(id);
   };
+  }
 
   // ===== Calculadora de IV única, na janela do app =====
   // Uma só, no centro da tela e do tamanho que precisa: qualquer painel alimenta ela ao passar o

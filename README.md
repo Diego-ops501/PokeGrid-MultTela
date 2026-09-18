@@ -1,91 +1,71 @@
 <div align="center">
 
-<img src="tray.png" width="72" alt="PokeGrid">
+<img src="tray.png" width="72" alt="PokeGrid MultTela">
 
-# PokeGrid
+# PokeGrid MultTela
 
-**Quatro contas de Poke Idle World em uma janela só.**
+**Até quatro contas de Poke Idle World em uma janela, com sessões isoladas e ferramentas locais.**
 
-![Plataforma](https://img.shields.io/badge/Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-0078D6)
+![Plataforma](https://img.shields.io/badge/Windows%2010%20%7C%2011-0078D6)
 ![Electron](https://img.shields.io/badge/Electron-43-47848F)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)](LICENSE)
 
-[English](README.en.md)
-
-<img src="docs/modo-simples.png" width="880" alt="Modo Simples: painel com os números das quatro contas">
-
-<sub>Modo Simples: esconde o jogo e mostra só os números. Cada seção pode ser movida e redimensionada.</sub>
+<img src="docs/modo-simples.png" width="880" alt="Modo Simples do PokeGrid MultTela">
 
 </div>
 
-> Esta é a versão que roda a partir do código. Não tem executável pronto pra baixar: você pega o código, olha o que ele faz e roda você mesmo. Assim a confiança fica com você, não comigo.
+> Projeto independente, sem vínculo com o Poke Idle World. O uso deve respeitar as regras atuais do jogo. CAPTCHA e 2FA continuam sempre manuais.
 
-> 🔰 **Nunca mexeu com isso?** Tem um passo a passo pra leigo aqui: **[TUTORIAL.md](TUTORIAL.md)** (ou o arquivo `COMO USAR.txt` dentro da pasta).
+## Principais recursos
 
-> ### 🔒 Seus dados de login ficam só no seu computador
-> Login e senha são criptografados no seu próprio PC e nunca saem dele. Nada de servidor, nada de repositório. O código está todo aqui pra você conferir.
+- De uma a quatro contas, com partições persistentes e isoladas.
+- Login automático usando credenciais protegidas pelo `safeStorage` do Electron; não há fallback em texto puro.
+- Painel, modo Simples, histórico, métricas de gold/XP/kills, overkill, ETA, melhor hunt, tierlist e Ditto.
+- Alertas de shiny por popup, som, Windows e Discord, com captura local opcional da tela do shiny.
+- Overlay flutuante somente-leitura, individual ou agregado.
+- Compra de Pokébolas em ação única, com confirmação de conta, tipo, quantidade, custo e saldo.
+- Retorno experimental à mesma hunt após recarga, desligado por padrão, limitado a três tentativas espaçadas.
+- Atualizações consultadas no máximo uma vez por dia, com changelog antes do download e confirmação separada para baixar e instalar.
 
-## O que é
+O PokeGrid MultTela não carrega userscripts arbitrários e não inclui refill, venda, rotação de hunts ou ações repetitivas. As únicas ações de jogo mantidas são o login preenchido localmente, a compra confirmada de Pokébolas e o retorno experimental à mesma hunt.
 
-Quatro contas rodando ao mesmo tempo, cada uma no seu quadrante e com sessão separada. Você salva o login uma vez e o app entra sozinho nas próximas. Se a sessão cair no meio do farm, ele loga de novo sem você precisar estar por perto. Ele não automatiza o jogo nem toca no captcha, só organiza as contas que você já tem.
+## Instalação no Windows
 
-## Como rodar
+Baixe o instalador x64 na [página pública de releases](https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases). A primeira versão não possui assinatura de código, então o Windows SmartScreen pode pedir confirmação. O instalador já inclui o runtime necessário: o usuário não precisa instalar Node.js.
 
-Você precisa do Node.js instalado uma vez. Depois é rápido.
+As configurações e o histórico ficam no perfil do Windows e são preservados em atualizações e reinstalações. Senhas protegidas pelo Windows não devem ser copiadas para outro computador.
 
-**1. Instale o Node.js**
-Baixe a versão LTS em [nodejs.org](https://nodejs.org) e instale (é next, next, finish).
+## Rodar a partir do código
 
-**2. Baixe este código**
-Clique no botão verde **Code** aqui em cima e depois em **Download ZIP**. Extraia a pasta onde quiser. Quem usa Git pode clonar:
+Para desenvolvimento, instale Node.js LTS e execute:
 
-```bash
-git clone https://github.com/soufoka/PokeGrid-source.git
+```powershell
+npm ci
+npm test
+npm start
 ```
 
-**3. Abra o app**
-No Windows, dê dois cliques no arquivo **Abrir PokeGrid** (`.vbs`) dentro da pasta. Na primeira vez ele instala o necessário e abre sozinho; nas próximas abre na hora, sem janela preta. Quer um atalho? Botão direito nele, **Enviar para: Área de trabalho (criar atalho)**.
+Para gerar o instalador NSIS x64:
 
-Também dá pra usar o **iniciar.bat**, mas ele mantém uma janela preta aberta e, se ela for fechada, o app fecha junto.
-
-No macOS ou Linux, abra o terminal na pasta e rode:
-
-```bash
-bash iniciar.sh
+```powershell
+npm run dist
 ```
-
-Pronto. Entre ou crie uma conta em cada painel e, em "Treinadores", salve o login. Da próxima vez ele entra sozinho.
-
-## Documentação
-
-| | |
-|---|---|
-| **[Manual](MANUAL.md)** | O que cada botão e cada seção faz, em linguagem simples |
-| **[FAQ](FAQ.md)** | Dúvidas frequentes: atualizar sem perder nada, pokébola sumida, scripts, planilhas |
-| **[Tutorial](TUTORIAL.md)** | Passo a passo pra rodar a versão sem instalador |
-| **[Mudanças](CHANGELOG.md)** | O que entrou em cada versão |
-
-## O que ele faz
-
-- Rode de 1 a 4 contas, você escolhe quantos painéis abrir.
-- Login automático, mesmo quando a sessão expira no meio do farm.
-- Modo Eco que segura o uso de CPU sem atrapalhar o progresso.
-- Esconde o chat e o menu de ícones do jogo pra sobrar tela.
-- Avisa quando aparece shiny, uma conta cai, para de farmar ou fica sem suprimento, no Windows e no Discord.
-- Liga e desliga cada painel, zoom, tela cheia e atalhos de teclado.
-- Bandeja, iniciar junto com o Windows e idioma português, inglês ou espanhol.
 
 ## Segurança
 
-- As senhas são criptografadas pelo `safeStorage` do Electron, que usa a API do sistema (DPAPI no Windows). Nunca saem do PC.
-- Os painéis ficam presos ao domínio do jogo. Link externo abre no seu navegador, e a senha só é digitada na tela de login oficial.
-- Câmera, microfone, localização e notificações do jogo ficam bloqueados.
-- O captcha é sempre você que resolve. O app preenche e aperta Entrar quando você marca a caixinha, mas nunca toca no "Confirme que é humano". Burlar detecção de bot não é a proposta.
+- O limite de quatro contas é validado no renderer e no processo principal.
+- Cada conta usa uma partição persistente própria; as janelas locais usam `contextIsolation`, sandbox e Node desativado.
+- Navegação dos painéis fica restrita ao domínio oficial do jogo; links externos abrem no navegador padrão.
+- Credenciais são criptografadas via DPAPI no Windows e gravadas atomicamente, sem aparecer em logs ou exportações.
+- O download de atualização só aceita o canal público configurado e a integridade é validada pelo SHA-512 do manifesto.
 
-## Por dentro
+## Documentação
 
-Cada painel é um `<webview>` do Electron com partição própria (`persist:conta1` até `conta4`), e é isso que mantém as contas isoladas e logadas entre aberturas. O que o jogo não oferece, o app injeta em cada painel: o Eco troca o `requestAnimationFrame` por uma versão mais lenta, o login preenche pelo setter nativo do input, e o menu e o chat somem via CSS com um `MutationObserver`. Está tudo em `main.js`, `preload.js` e `index.html`, sem nada escondido.
+- [Manual](MANUAL.md)
+- [FAQ](FAQ.md)
+- [Histórico de mudanças](CHANGELOG.md)
+- [Avisos e créditos](NOTICE.md)
 
-## Licença
+## Créditos e licença
 
-MIT. Projeto independente, sem ligação com o Poke Idle World.
+Este projeto deriva de [`soufoka/PokeGrid-source`](https://github.com/soufoka/PokeGrid-source), preservando seu histórico, licença MIT e créditos. Alterações do PokeGrid MultTela também são distribuídas sob a [licença MIT](LICENSE).

@@ -1,4 +1,4 @@
-# Manual do PokeGrid
+# Manual do PokeGrid MultTela
 
 Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual, veja o [FAQ](FAQ.md).
 
@@ -12,7 +12,8 @@ Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual
 | **📊 Painel** | A barra lateral com os números da conta em foco (detalhes abaixo) |
 | **🍃 Simples** | Esconde o jogo e mostra só os números das 4 contas. Gasta bem menos do PC |
 | **IV's** | Abre a calculadora de IV. Passe o mouse num pokémon dentro do jogo que ela preenche sozinha |
-| **☰ Opções** | Tudo o mais: Hunt, Tierlist, Ditto, Scripts, Alertas, Venda protegida, Eco, FAQ... |
+| **▣ Overlay** | Abre um resumo flutuante e somente-leitura das contas |
+| **☰ Opções** | Tudo o mais: Hunt, Tierlist, Ditto, Alertas, Venda protegida, Eco, atualização e FAQ... |
 
 Atalhos de teclado (só quando o foco está no app, não dentro do jogo): **H** Hunt, **C** Simples, **L** Limpar jogo, **R** Atualizar, **T** Treinadores, **G** Tierlist, **D** Ditto, **O** Opções, **M** menu do jogo, **E** Eco, **A** Alertas.
 
@@ -56,7 +57,9 @@ Onde caçar com um Ditto e em que pokémon virar. Escolha **Shiny** ou **Comum**
 
 - **🛡 Venda protegida**: pede confirmação antes de vender shiny, qualidade Lendária ou acima e itens raros. Na engrenagem do Painel dá pra travar seus próprios itens (**🔒 Cadeado de venda**)
 - **🔔 Alertas**: avisa quando aparece shiny, uma conta cai, para de farmar, fica sem suprimento ou tem pokémon derrubado. Na engrenagem do Simples você escolhe quais tipos avisam no Windows, um por um. Com webhook do Discord configurado, o aviso também chega no celular
-- **💾 Exportar/Importar config**: leva suas configurações e seu histórico pra outro PC. Scripts e webhook ficam de fora, de propósito. Importar troca o histórico pelo do arquivo e guarda uma cópia do seu antes. O app também salva um backup sozinho toda semana em `%APPDATA%\pokegrid\backups`, a mesma pasta do `hunts-historico.csv` (as hunts que passam das 150 guardadas) e do `hunts-historico-drops.csv`
+- **📷 Print de shiny**: quando ligado, salva localmente uma imagem do painel em que o shiny apareceu
+- **💾 Exportar/Importar config**: leva suas configurações e seu histórico pra outro PC. Credenciais e webhook ficam de fora, de propósito. Importar troca o histórico pelo do arquivo e guarda uma cópia do seu antes. O app também salva um backup semanal na pasta de dados do PokeGrid MultTela
+- **⬆ Atualização**: consulta o canal oficial uma vez por dia. Exibe versão, changelog e tamanho antes de perguntar se pode baixar; a instalação também exige confirmação
 
 ## Coisas que confundem no começo
 

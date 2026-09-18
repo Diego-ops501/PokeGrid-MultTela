@@ -90,7 +90,7 @@ ok(b.includes('recarregou farmando, volta pra hunt'), 'fica registrado no relato
 
 console.log('\n--- interface ---');
 ok(s.includes('<button id="voltaHunt">'), 'botao no menu');
-ok(b.includes('applySndShiny(); applyVoltaHunt(); applyAlerts();'), 'entra na cadeia de apply (texto e estado certos ao abrir e ao trocar idioma)');
+ok(b.includes('applyVoltaHunt();') && b.includes('applyShotShiny();'), 'entra na cadeia de apply (texto e estado certos ao abrir e ao trocar idioma)');
 ['voltaOn', 'voltaOff', 'voltaTitle'].forEach((k) => ok(s.split(k + ":'").length - 1 === 3, k + ' nos 3 idiomas'));
 ok(!/volta(On|Off|Title):'[^']*—/.test(s), 'sem travessao nos textos');
 
