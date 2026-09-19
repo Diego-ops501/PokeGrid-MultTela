@@ -21,7 +21,7 @@
 - De uma a quatro contas, com partições persistentes e isoladas.
 - Login automático usando credenciais protegidas pelo `safeStorage` do Electron; não há fallback em texto puro.
 - Painel, modo Simples, histórico, métricas de gold/XP/kills, overkill, ETA, melhor hunt, tierlist e Ditto.
-- Alertas de shiny por popup, som, Windows e Discord, com captura local opcional da tela do shiny.
+- Alertas de shiny por popup, voz local, Windows e Discord, além de voz para Lendária e suprimentos baixos, com captura local opcional da tela do shiny.
 - Overlay flutuante somente-leitura, individual ou agregado.
 - Interface 2.0 com sidebar, Dashboard, lista de contas e navegação direta para as análises.
 - Compra de Pokébolas em ação única, com confirmação de conta, tipo, quantidade, custo e saldo.

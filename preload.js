@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('pokeAPI', {
   onAutoStart: (cb) => ipcRenderer.on('autostart', (_e, on) => cb(on)),
   onHotkey: (cb) => ipcRenderer.on('hotkey', (_e, k) => cb(k)),
   notify: (title, body) => ipcRenderer.invoke('notify', title, body),
+  readIvHelper: () => ipcRenderer.invoke('iv-helper:read'),
   logError: (origem, msg) => ipcRenderer.invoke('errlog:write', origem, msg),
   openErrorLog: () => ipcRenderer.invoke('errlog:open'),
   saveBackup: (nome, conteudo, cabecalho) => ipcRenderer.invoke('backup:save', nome, conteudo, cabecalho),

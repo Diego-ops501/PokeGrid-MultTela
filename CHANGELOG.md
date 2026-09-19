@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 — Voz dos alertas e correção do IV
+
+- Voz local e configurável para shiny aparecendo, captura de shiny bem-sucedida ou perdida, Pokébolas/curas acabando e captura de Pokémon na faixa Lendária. A fala inclui o nome da conta e usa uma voz instalada no Windows, sem serviço externo.
+- Shiny passa a ser detectado no estado vivo do campo, com o resultado confirmado separadamente pelos eventos de captura ou derrota.
+- Calculadora de IV volta a funcionar: o helper confiável agora é empacotado e injetado depois do login, sem reativar userscripts externos.
+
 ## 1.1.0 — Interface 2.0
 
 - Nova navegação lateral permanente, com Dashboard, telas do jogo, resumo, Hunt Analyzer, Tierlist, Ditto, calculadora de IV e overlay.

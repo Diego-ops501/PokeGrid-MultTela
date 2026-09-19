@@ -203,6 +203,21 @@ ipcMain.handle('notify', (_e, title, body) => {
   try { if (Notification.isSupported()) new Notification({ title, body }).show(); } catch {}
 });
 
+// Calculadora de IV embutida: somente este arquivo auditado pode atravessar o IPC.
+// O gerenciador de userscripts externos continua desativado; não aceitamos caminho nem URL
+// vindos do renderer.
+ipcMain.handle('iv-helper:read', (event) => {
+  if (!rendererConfiavel(event)) return '';
+  try {
+    const file = path.join(__dirname, 'presets', 'justpokedex.js');
+    const code = fs.readFileSync(file, 'utf8');
+    return code.length <= 2 * 1024 * 1024 ? code : '';
+  } catch (error) {
+    logErro('iv-helper', error && error.message ? error.message : error);
+    return '';
+  }
+});
+
 // Anti-sono: impede o PC de dormir enquanto farma (a tela ainda pode desligar).
 let awakeId = null;
 ipcMain.handle('awake:set', (_e, on) => {

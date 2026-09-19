@@ -57,12 +57,14 @@ Onde caçar com um Ditto e em que pokémon virar. Escolha **Shiny** ou **Comum**
 
 - **🛡 Venda protegida**: pede confirmação antes de vender shiny, qualidade Lendária ou acima e itens raros. Na engrenagem do Painel dá pra travar seus próprios itens (**🔒 Cadeado de venda**)
 - **🔔 Alertas**: avisa quando aparece shiny, uma conta cai, para de farmar, fica sem suprimento ou tem pokémon derrubado. Na engrenagem do Simples você escolhe quais tipos avisam no Windows, um por um. Com webhook do Discord configurado, o aviso também chega no celular
+- **🗣️ Voz dos alertas**: usa uma voz instalada no Windows e fala a conta envolvida. Anuncia shiny aparecendo, sucesso ou falha final da captura, Pokébolas/curas acabando e capturas exatamente da faixa Lendária. Mítica, Anciã e Divina não são chamadas de Lendária
 - **📷 Print de shiny**: quando ligado, salva localmente uma imagem do painel em que o shiny apareceu
 - **💾 Exportar/Importar config**: leva suas configurações e seu histórico pra outro PC. Credenciais e webhook ficam de fora, de propósito. Importar troca o histórico pelo do arquivo e guarda uma cópia do seu antes. O app também salva um backup semanal na pasta de dados do PokeGrid MultTela
 - **⬆ Atualização**: consulta o canal oficial uma vez por dia. Exibe versão, changelog e tamanho antes de perguntar se pode baixar; a instalação também exige confirmação
 
 ## Coisas que confundem no começo
 
+- **Calculadora de IV vazia**: passe o mouse sobre um Pokémon no jogo para alimentar o card. O helper embutido só entra depois do login e nunca roda na tela que contém senha, CAPTCHA ou 2FA
 - **A opção marcada não mudou nada?** Provavelmente é uma seção que precisa de configuração (Fixados e Alvo shiny). Elas agora dizem isso na tela
 - **Não consigo trocar a pokébola**: é o **🧼 Limpar jogo** escondendo o Auto-Helper. Passe o mouse no canto que ele aparece
 - **O ouro da sessão**: desde a 1.5.16 vem do próprio servidor do jogo, então é o mesmo número do Hunt Analyzer

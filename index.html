@@ -611,6 +611,7 @@
         <button id="minTray" title="O que o botão minimizar faz: esconder na bandeja ou minimizar normal na barra de tarefas">📥 Minimiza p/ bandeja</button>
         <button id="autoStart" style="display:none" title="Cria um atalho na pasta Inicializar do Windows pra abrir o PokeGrid junto com o sistema">🚀 Abrir com o Windows</button>
         <button id="sndShiny" title="Toca um som quando um shiny aparece (além da notificação)">✨🔊 Som do shiny</button>
+        <button id="voiceAlerts" title="Fala alertas importantes usando uma voz instalada no Windows">🗣️ Voz dos alertas</button>
         <button id="shotShiny" title="Salva localmente um print quando aparece um shiny">📷 Print de shiny: off</button>
         <button id="voltaHunt">↩ Voltar pra hunt</button>
         <button id="updateBtn" style="display:none">⬇ Atualização</button>
@@ -774,7 +775,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       cdTime:'Tempo', cdPoke:'Pokémon', cdTeams:'Times & IV', cdSortSug:'Sugerido ↓', cdWith:'caçar com', cdLvNeed:'precisa Lv', cdEstTip:'estimado a partir das suas hunts medidas', cdRunTip:'no ritmo desta sess\u00e3o, quanto o estoque ainda dura', cdBetterTip:'na sua m\u00e9dia (rende mais que a hunt atual)', cdDittoH:'Ditto: melhor transforma\u00e7\u00e3o e onde ca\u00e7ar, por tipo', cdDitAll:'quadro por tipo (todas as hunts)', cdInv:'Inventário global', cdProjLv:'projetar no nível', cdFAll:'todas', ivcMoveLv:'Nv', ivcMoveLocked:'Só aprende no nível',
       cdMove:'Arraste para mover a seção', cdResize:'Arraste para ajustar a largura', cdResizeV:'Arraste para ajustar a altura (clique duplo: automática)',
       minTrayOn:'📥 Minimiza p/ bandeja', minTrayOff:'📥 Minimiza normal', minTrayTitle:'O que o botão minimizar faz: esconder na bandeja (ícone perto do relógio) ou minimizar normal na barra de tarefas',
-      voltaOn:'↩ Voltar pra hunt: ligado', voltaOff:'↩ Voltar pra hunt: desligado', voltaTitle:'Experimental. Quando o app recarrega um painel que estava farmando, o jogo larga a conta na cidade. Ligado, o app manda a conta de volta pra mesma hunt (repete a cada 12 s, até 3 vezes, até o primeiro kill). Só age se houve kill nos últimos 10 minutos. A tela do jogo pode seguir mostrando a cidade enquanto a conta farma.', sndOn:'✨🔊 Som do shiny', sndOff:'✨🔇 Som do shiny', sndTitle:'Toca um som quando um shiny aparece (além da notificação)',
+      voltaOn:'↩ Voltar pra hunt: ligado', voltaOff:'↩ Voltar pra hunt: desligado', voltaTitle:'Experimental. Quando o app recarrega um painel que estava farmando, o jogo larga a conta na cidade. Ligado, o app manda a conta de volta pra mesma hunt (repete a cada 12 s, até 3 vezes, até o primeiro kill). Só age se houve kill nos últimos 10 minutos. A tela do jogo pode seguir mostrando a cidade enquanto a conta farma.', sndOn:'✨🔊 Som do shiny', sndOff:'✨🔇 Som do shiny', sndTitle:'Toca um som quando um shiny aparece (além da notificação)', voiceOn:'🗣️ Voz dos alertas: ligada', voiceOff:'🔇 Voz dos alertas: desligada', voiceTitle:'Usa uma voz local do Windows para shiny, captura lendária e suprimentos baixos',
       msgStalled:'parece ter parado de farmar (10 min sem kills)',
       cdToday:'Hoje', cdWeek:'7 dias', cdAllTime:'Total', goalG:'Meta gold/dia', goalC:'Meta capturas/dia', csvTitle:'Baixa o resumo por dia em CSV (planilha)', csvDia:'Dia', csvHunts:'Hunts', csvHuntsTitle:'Baixa duas planilhas: uma linha por hunt (tempo, kills/h, XP/h, capturas, gold) e uma linha por item dropado, com drop por kill pra calcular a porcentagem. O registro é automático: cada vez que você troca de hunt, a anterior entra no log.', cdLifeHint:'contadores: sessão · lista: histórico',
       cdTargets:'Alvos', cdCritIvQ:'IV × qual.', cdCritIv:'IV', cdCritQ:'Qualidade', cdBestCritTitle:'Critério do melhor catch. A qualidade multiplica os stats e o poder, então IV × qualidade reflete melhor a força real.', cdTargetsHint:'Sem alvos ainda: no modo Total, passe o mouse num card e clique na ★ para marcar', cdTargetsMark:'Marcar/desmarcar como alvo',
@@ -818,7 +819,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       cdTime:'Time', cdPoke:'Pokémon', cdTeams:'Teams & IV', cdSortSug:'Suggested ↓', cdWith:'hunt with', cdLvNeed:'needs Lv', cdEstTip:'estimated from your measured hunts', cdRunTip:'at this session pace, how long stock lasts', cdBetterTip:'on your average (beats the current hunt)', cdDittoH:'Ditto: best transformation and where to hunt, per type', cdDitAll:'board by type (all hunts)', cdInv:'Global inventory', cdProjLv:'project at level', cdFAll:'all', ivcMoveLv:'Lv', ivcMoveLocked:'Only learned at level',
       cdMove:'Drag to move the section', cdResize:'Drag to adjust the width', cdResizeV:'Drag to adjust the height (double-click: automatic)',
       minTrayOn:'📥 Minimize to tray', minTrayOff:'📥 Minimize normally', minTrayTitle:'What the minimize button does: hide to the tray (icon near the clock) or minimize normally to the taskbar',
-      voltaOn:'↩ Back to hunt: on', voltaOff:'↩ Back to hunt: off', voltaTitle:'Experimental. When the app reloads a panel that was farming, the game drops the account in the city. When on, the app sends it back to the same hunt (retrying every 12 s, up to 3 times, until the first kill). Only acts if there was a kill in the last 10 minutes. The game screen may keep showing the city while the account farms.', sndOn:'✨🔊 Shiny sound', sndOff:'✨🔇 Shiny sound', sndTitle:'Plays a sound when a shiny appears (besides the notification)',
+      voltaOn:'↩ Back to hunt: on', voltaOff:'↩ Back to hunt: off', voltaTitle:'Experimental. When the app reloads a panel that was farming, the game drops the account in the city. When on, the app sends it back to the same hunt (retrying every 12 s, up to 3 times, until the first kill). Only acts if there was a kill in the last 10 minutes. The game screen may keep showing the city while the account farms.', sndOn:'✨🔊 Shiny sound', sndOff:'✨🔇 Shiny sound', sndTitle:'Plays a sound when a shiny appears (besides the notification)', voiceOn:'🗣️ Alert voice: on', voiceOff:'🔇 Alert voice: off', voiceTitle:'Uses a local Windows voice for shiny, legendary catches and low supplies',
       msgStalled:'seems to have stopped farming (10 min without kills)',
       cdToday:'Today', cdWeek:'7 days', cdAllTime:'All time', goalG:'Gold goal/day', goalC:'Catch goal/day', csvTitle:'Downloads the daily summary as a CSV (spreadsheet)', csvDia:'Day', csvHunts:'Hunts', csvHuntsTitle:'Downloads two spreadsheets: one row per hunt (time, kills/h, XP/h, captures, gold) and one row per dropped item, with drop per kill so you can work out the percentage. Logging is automatic: every time you switch hunts, the previous one is recorded.', cdLifeHint:'counters: session · list: all-time',
       cdTargets:'Targets', cdCritIvQ:'IV × qual.', cdCritIv:'IV', cdCritQ:'Quality', cdBestCritTitle:'Best-catch criterion. Quality multiplies stats and power, so IV × quality reflects real strength better.', cdTargetsHint:'No targets yet: in Total mode, hover a card and click the ★ to mark it', cdTargetsMark:'Mark/unmark as target',
@@ -861,7 +862,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       cdTime:'Tiempo', cdPoke:'Pokémon', cdTeams:'Equipos & IV', cdSortSug:'Sugerido ↓', cdWith:'cazar con', cdLvNeed:'necesita Lv', cdEstTip:'estimado a partir de tus hunts medidas', cdRunTip:'al ritmo de esta sesi\u00f3n, cu\u00e1nto dura el stock', cdBetterTip:'en tu promedio (rinde m\u00e1s que la hunt actual)', cdDittoH:'Ditto: mejor transformaci\u00f3n y d\u00f3nde cazar, por tipo', cdDitAll:'cuadro por tipo (todas las hunts)', cdInv:'Inventario global', cdProjLv:'proyectar al nivel', cdFAll:'todas', ivcMoveLv:'Nv', ivcMoveLocked:'Solo se aprende en el nivel',
       cdMove:'Arrastra para mover la sección', cdResize:'Arrastra para ajustar el ancho', cdResizeV:'Arrastra para ajustar la altura (doble clic: automática)',
       minTrayOn:'📥 Minimizar a la bandeja', minTrayOff:'📥 Minimizar normal', minTrayTitle:'Qué hace el botón minimizar: esconder en la bandeja (icono junto al reloj) o minimizar normal a la barra de tareas',
-      voltaOn:'↩ Volver a la hunt: activado', voltaOff:'↩ Volver a la hunt: desactivado', voltaTitle:'Experimental. Cuando la app recarga un panel que estaba farmeando, el juego deja la cuenta en la ciudad. Activado, la app la manda de vuelta a la misma hunt (repite cada 12 s, hasta 3 veces, hasta el primer kill). Solo actúa si hubo kill en los últimos 10 minutos. La pantalla del juego puede seguir mostrando la ciudad mientras la cuenta farmea.', sndOn:'✨🔊 Sonido de shiny', sndOff:'✨🔇 Sonido de shiny', sndTitle:'Reproduce un sonido cuando aparece un shiny (además de la notificación)',
+      voltaOn:'↩ Volver a la hunt: activado', voltaOff:'↩ Volver a la hunt: desactivado', voltaTitle:'Experimental. Cuando la app recarga un panel que estaba farmeando, el juego deja la cuenta en la ciudad. Activado, la app la manda de vuelta a la misma hunt (repite cada 12 s, hasta 3 veces, hasta el primer kill). Solo actúa si hubo kill en los últimos 10 minutos. La pantalla del juego puede seguir mostrando la ciudad mientras la cuenta farmea.', sndOn:'✨🔊 Sonido de shiny', sndOff:'✨🔇 Sonido de shiny', sndTitle:'Reproduce un sonido cuando aparece un shiny (además de la notificación)', voiceOn:'🗣️ Voz de alertas: activada', voiceOff:'🔇 Voz de alertas: desactivada', voiceTitle:'Usa una voz local de Windows para shiny, capturas legendarias y pocos suministros',
       msgStalled:'parece haber dejado de farmear (10 min sin kills)',
       cdToday:'Hoy', cdWeek:'7 días', cdAllTime:'Total', goalG:'Meta oro/día', goalC:'Meta capturas/día', csvTitle:'Descarga el resumen por día en CSV (planilla)', csvDia:'Día', csvHunts:'Hunts', csvHuntsTitle:'Descarga dos planillas: una fila por hunt (tiempo, kills/h, XP/h, capturas, oro) y una fila por ítem dropeado, con drop por kill para calcular el porcentaje. El registro es automático: cada vez que cambias de hunt, la anterior queda guardada.', cdLifeHint:'contadores: sesión · lista: histórico',
       cdTargets:'Objetivos', cdCritIvQ:'IV × cal.', cdCritIv:'IV', cdCritQ:'Calidad', cdBestCritTitle:'Criterio del mejor catch. La calidad multiplica los stats y el poder, así que IV × calidad refleja mejor la fuerza real.', cdTargetsHint:'Sin objetivos aún: en modo Total, pasa el mouse por un card y haz clic en la ★ para marcarlo', cdTargetsMark:'Marcar/desmarcar como objetivo',
@@ -878,6 +879,31 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
     const out = [];
     for (let i = 0; i < 4; i++) out.push(Object.assign(blank(), arr && arr[i]));
     return out;
+  }
+
+  // A calculadora de IV é um helper fixo, empacotado e lido por um IPC sem parâmetros.
+  // Assim ela funciona sem reabrir a porta para userscripts arbitrários nas contas logadas.
+  let ivHelperCodePromise = null;
+  const ivHelperBloqueado = (u) => {
+    u = String(u || '');
+    if (!u.startsWith('https://poke.idleworld.online/')) return true;
+    const p = u.slice('https://poke.idleworld.online'.length);
+    return ['/login', '/register', '/forgot-password', '/verify-email'].some(x => p === x || p.startsWith(x + '?') || p.startsWith(x + '/') || p.startsWith(x + '#'));
+  };
+  async function injectIvHelper(wv) {
+    let url = ''; try { url = wv.getURL(); } catch {}
+    if (ivHelperBloqueado(url)) { wv.__pgSemIv = true; return false; }
+    wv.__pgSemIv = false;
+    if (!ivHelperCodePromise) ivHelperCodePromise = Promise.resolve(window.pokeAPI.readIvHelper()).catch(() => '');
+    const code = await ivHelperCodePromise;
+    if (!code) return false;
+    try {
+      await wv.executeJavaScript("(async()=>{if(window.__pgIvBundled)return true;window.__pgIvBundled=1;try{" + code + "\nreturn true;}catch(e){delete window.__pgIvBundled;throw e;}})()");
+      return true;
+    } catch (error) {
+      try { window.pokeAPI.logError('iv-helper', String((error && error.message) || error).slice(0, 200)); } catch {}
+      return false;
+    }
   }
 
   function criarPainel(i) {
@@ -984,7 +1010,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
           // so na tela de login, pra nao rodar a toa dentro do jogo
           if ((wv.getURL() || '').startsWith(LOGIN_URL)) wv.executeJavaScript(scrollLoginScript).catch(() => {});
           wv.executeJavaScript(`localStorage.setItem('poke_lang', ${JSON.stringify(lang === 'pt' ? 'pt' : 'en')})`).catch(() => {}); // mantem o jogo no idioma escolhido (es usa en, o jogo so tem pt/en)
-          injectScripts(wv); // userscripts habilitados (IV calc e os do usuário)
+          injectIvHelper(wv); // somente o helper de IV auditado e empacotado
         } catch {}
       });
       wv.addEventListener('did-fail-load', (e) => {
@@ -1006,7 +1032,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
       wv.addEventListener('did-navigate', autoLogin);
       wv.addEventListener('did-navigate-in-page', (e) => { if (e.isMainFrame !== false) autoLogin(e); }); // Sair pelo dock: rota interna pra /login, sem did-navigate
       // saiu do /login por rota interna da SPA (sem novo dom-ready): agora sim os userscripts entram
-      wv.addEventListener('did-navigate-in-page', (e) => { try { if (e.isMainFrame && wv.__pgSemScripts && !usNoLoginUrl(e.url)) injectScripts(wv); } catch {} });
+      wv.addEventListener('did-navigate-in-page', (e) => { try { if (e.isMainFrame && wv.__pgSemIv && !ivHelperBloqueado(e.url)) injectIvHelper(wv); } catch {} });
 
       panel.querySelector('.reload').onclick = () => { if (!off[i]) { try { wv.reloadIgnoringCache(); } catch { wv.reload(); } } };
       panel.querySelector('.expand').onclick = () => toggleExpand(i);
@@ -1642,10 +1668,12 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
     webviews.forEach((w, i) => { if (off[i] || !w) return; try { w.executeJavaScript('window.__pgSellGuardOn=' + (sellGuardOn ? 'true' : 'false') + ';window.__pgSellLock=' + JSON.stringify(sellLock) + ';window.__pgSellTxt=' + JSON.stringify([t('sgAviso'), t('sgConfirma')])).catch(() => {}); } catch {} });
   }
   sgBtn.onclick = () => { sellGuardOn = !sellGuardOn; applySellGuard(); };
-  function alerta(i, chave) {
+  function alerta(i, chave, meta) {
     if (!alertsOn) return;
     const nome = (accounts[i] && accounts[i].name) || defName(i);
     if (alLocal[alCat(chave)] !== false) { try { window.pokeAPI.notify('PokeGrid MultTela', nome + ' ' + t(chave)); } catch {} } // notify local so se o tipo estiver ligado
+    const vozTipo = { msgShiny: 'shinyAppear', msgShinyCap: 'shinySuccess', msgBallsLow: 'ballsLow', msgPotionsLow: 'healsLow', msgRevivesLow: 'revivesLow' }[chave];
+    if (vozTipo && alLocal[alCat(chave)] !== false) falaAlerta(vozTipo, i, meta || {});
     // pedido do Arthur: o mesmo aviso vai pro Discord, pra chegar no celular quando uma conta
     // cai ou para de farmar e voce nao esta no PC (shiny e resumo tem as chaves proprias deles)
     // shiny tem preferencia propria (whCfg.shiny) e caminho proprio; aqui so avisos de PROBLEMA
@@ -1660,13 +1688,73 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
 /* resumo de uma hunt encerrada: o app grava isso no log e usa pra exportar (drop por kill etc) */
 const resumo=(X)=>{if(!X||!X.start||!X.kills)return null;let lg=0;const dr=[];for(const id in (X.drops||{})){const dd=X.drops[id];const g=(dd.qty||0)*((cat[id]||{}).npcPrice||0);lg+=g;dr.push({id:+id||0,n:dd.name||'',q:dd.qty||0,g});}
 return {start:X.start,end:X.end||Date.now(),slug:X.slug||'',kills:X.kills||0,xp:X.xp||0,caps:X.captures||0,sf:X.shinyN||0,sc:X.shinyCapN||0,balls:X.balls||0,pots:X.supN||0,loot:lg,sell:X.sellG||0,sup:(X.supGold||0),drops:dr};};
-return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shinyN:S.shinyN||0,faintN:S.faintN||0,cid:ch.id||'',kills:S.kills||0,xp:S.xp||0,caps:S.captures||0,shinyCapN:S.shinyCapN||0,saldo:(()=>{const A=ws.analyzer;if(A&&typeof A==='object'&&+A.seconds>0&&Number.isFinite(+A.balance)){const B=P.anBase;return (+A.balance||0)-((B&&+B.balance)||0);}return lootGold+(S.sellG||0)-(S.supGold||0);})(),shinyLog:P.shinyLog||[],catchLog:P.catchLog||[],sess:S,slug:P.lastSlug||'',anBase:(P.anBase&&typeof P.anBase==='object')?P.anBase:null};})()`;
+const fm=(ws.field&&Array.isArray(ws.field.mobs))?ws.field.mobs:[];const fs=fm.find(x=>x&&x.shiny&&!x.dead);const fieldShiny=fs?{n:fs.speciesName||fs.name||'',sid:fs.speciesId||fs.pokeId||0}:null;
+return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shinyN:S.shinyN||0,fieldShiny,faintN:S.faintN||0,cid:ch.id||'',kills:S.kills||0,xp:S.xp||0,caps:S.captures||0,shinyCapN:S.shinyCapN||0,saldo:(()=>{const A=ws.analyzer;if(A&&typeof A==='object'&&+A.seconds>0&&Number.isFinite(+A.balance)){const B=P.anBase;return (+A.balance||0)-((B&&+B.balance)||0);}return lootGold+(S.sellG||0)-(S.supGold||0);})(),shinyLog:P.shinyLog||[],catchLog:P.catchLog||[],sess:S,slug:P.lastSlug||'',anBase:(P.anBase&&typeof P.anBase==='object')?P.anBase:null};})()`;
   const BALL_MIN = 100, POTION_MIN = 15, REVIVE_MIN = 5; // limites do "está com poucos ..."
-  const lastShiny = [], lastFaint = [], lowOn = [{}, {}, {}, {}];
+  const lastShiny = [], shinyFieldOn = [], shinyFalouEm = [], lastFaint = [], lowOn = [{}, {}, {}, {}];
   function checkLow(i, key, val, min, msgKey) {
-    if (val < min) { if (!lowOn[i][key]) { lowOn[i][key] = true; alerta(i, msgKey); } }
+    if (val < min) { if (!lowOn[i][key]) { lowOn[i][key] = true; alerta(i, msgKey, { count: val }); } }
     else lowOn[i][key] = false; // reabasteceu: pode avisar de novo depois
   }
+
+  // Voz local do sistema: não baixa áudio, não usa nuvem e consegue falar o nome da conta.
+  // Uma fila curta evita que quatro contas falando juntas virem uma avalanche de mensagens velhas.
+  let voiceOn = lsGet('voiceAlerts') !== '0';
+  const voiceBtn = document.getElementById('voiceAlerts');
+  const voiceQueue = [];
+  let voiceBusy = false, voiceLast = { key: '', t: 0 };
+  const vozLimpa = (v, n) => String(v == null ? '' : v).replace(/[<>\[\]{}]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n || 50);
+  function fraseVoz(tipo, i, meta) {
+    const conta = vozLimpa((accounts[i] && accounts[i].name) || defName(i), 35);
+    const poke = vozLimpa(meta && meta.name, 40) || 'Pokémon';
+    const qtd = Math.max(0, Math.floor(+(meta && meta.count) || 0));
+    if (lang === 'en') return ({
+      shinyAppear: `A shiny ${poke} appeared on account ${conta}.`, shinySuccess: `Shiny ${poke} caught successfully on account ${conta}.`,
+      shinyFail: `The shiny ${poke} was not caught on account ${conta}.`, legendary: `Account ${conta} caught the legendary rarity Pokémon ${poke}.`,
+      ballsLow: `Poké Balls are running low on account ${conta}. ${qtd} remaining.`, healsLow: `Healing items are running low on account ${conta}. ${qtd} potions remaining.`,
+      revivesLow: `Revives are running low on account ${conta}. ${qtd} remaining.`
+    })[tipo] || '';
+    if (lang === 'es') return ({
+      shinyAppear: `Apareció un ${poke} shiny en la cuenta ${conta}.`, shinySuccess: `El shiny ${poke} fue capturado con éxito en la cuenta ${conta}.`,
+      shinyFail: `El shiny ${poke} no fue capturado en la cuenta ${conta}.`, legendary: `La cuenta ${conta} capturó el Pokémon ${poke} de rareza legendaria.`,
+      ballsLow: `Las Poké Balls se están acabando en la cuenta ${conta}. Quedan ${qtd}.`, healsLow: `Las curas se están acabando en la cuenta ${conta}. Quedan ${qtd} pociones.`,
+      revivesLow: `Los revivir se están acabando en la cuenta ${conta}. Quedan ${qtd}.`
+    })[tipo] || '';
+    return ({
+      shinyAppear: `Apareceu um ${poke} shiny na conta ${conta}.`, shinySuccess: `O shiny ${poke} foi capturado com sucesso na conta ${conta}.`,
+      shinyFail: `A captura do shiny ${poke} falhou na conta ${conta}.`, legendary: `A conta ${conta} capturou o Pokémon ${poke}, de raridade lendária.`,
+      ballsLow: `As Pokébolas estão acabando na conta ${conta}. Restam ${qtd}.`, healsLow: `As curas estão acabando na conta ${conta}. Restam ${qtd} poções.`,
+      revivesLow: `Os revives estão acabando na conta ${conta}. Restam ${qtd}.`
+    })[tipo] || '';
+  }
+  function proximaFala() {
+    if (!voiceOn || voiceBusy || !voiceQueue.length || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    const item = voiceQueue.shift(); voiceBusy = true;
+    try {
+      const u = new SpeechSynthesisUtterance(item.text);
+      u.lang = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
+      const vs = speechSynthesis.getVoices();
+      u.voice = vs.find(v => String(v.lang).toLowerCase() === u.lang.toLowerCase()) || vs.find(v => String(v.lang).toLowerCase().startsWith(u.lang.slice(0, 2).toLowerCase())) || null;
+      u.rate = .96; u.pitch = 1; u.volume = 1;
+      const fim = () => { voiceBusy = false; setTimeout(proximaFala, 120); };
+      u.onend = fim; u.onerror = fim; speechSynthesis.speak(u);
+    } catch { voiceBusy = false; }
+  }
+  function falaAlerta(tipo, i, meta) {
+    if (!voiceOn || !alertsOn) return;
+    const text = fraseVoz(tipo, i, meta || {}); if (!text) return;
+    const key = tipo + '|' + i + '|' + vozLimpa(meta && meta.name, 40);
+    const now = Date.now(); if (voiceLast.key === key && now - voiceLast.t < 5000) return;
+    voiceLast = { key, t: now };
+    if (voiceQueue.length >= 8) voiceQueue.shift();
+    voiceQueue.push({ text }); proximaFala();
+  }
+  function applyVoice() {
+    voiceBtn.textContent = t(voiceOn ? 'voiceOn' : 'voiceOff'); voiceBtn.title = t('voiceTitle');
+    voiceBtn.classList.toggle('on', voiceOn); lsSet('voiceAlerts', voiceOn ? '1' : '0');
+    if (!voiceOn) { voiceQueue.length = 0; voiceBusy = false; try { speechSynthesis.cancel(); } catch {} }
+  }
+  voiceBtn.onclick = () => { voiceOn = !voiceOn; applyVoice(); if (voiceOn) { voiceQueue.push({ text: lang === 'en' ? 'Alert voice enabled.' : lang === 'es' ? 'Voz de alertas activada.' : 'Voz dos alertas ativada.' }); proximaFala(); } };
 
   // ----- Som do shiny: acorde curto via WebAudio (sem arquivo de audio) -----
   let sndShinyOn = lsGet('sndShiny') !== '0'; // ligado por padrao
@@ -1726,7 +1814,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     el.querySelector('.sp-x').onclick = () => el.remove();
     wrap.appendChild(el);
     while (wrap.children.length > 3) wrap.firstChild.remove(); // varias capturas: mantem as 3 mais recentes
-    if (sndShinyOn) beepShiny(true);
+    if (sndShinyOn && !voiceOn) beepShiny(true);
   }
 
   // ----- Webhook do Discord (opcional): a URL e do proprio usuario, envio via main (CSP nao deixa daqui) -----
@@ -1928,10 +2016,18 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       if (avisa && x.cap) { // CAPTUROU: aviso grande na tela, som de festa e notificacao propria
         const c = (r.catchLog || []).filter(y => y.sh).sort((p, q2) => Math.abs((+p.t || 0) - (+x.t || 0)) - Math.abs((+q2.t || 0) - (+x.t || 0)))[0]; // pega IV/qualidade da captura correspondente
         festaShiny({ n: x.n || (c && c.n), sid: x.sid, acc, dot, iv: c && c.iv, q: c && c.q, t: x.t });
-        if (alertsOn) alerta(i, 'msgShinyCap');
+        if (alertsOn) alerta(i, 'msgShinyCap', { name: x.n || (c && c.n) });
+      } else if (avisa && x.def) {
+        falaAlerta('shinyFail', i, { name: x.n });
       }
     });
-    (r.catchLog || []).forEach(x => { const key = kCa(i, x); if (seenLog[key]) return; seenLog[key] = 1; dirty = true; lifeCatch.push({ n: String(x.n || '').slice(0, 40), iv: +x.iv || 0, q: +x.q || 0, sh: !!x.sh, fx: !!x.fx, t: +x.t || 0, p: i, acc, dot }); });
+    (r.catchLog || []).forEach(x => {
+      const key = kCa(i, x); if (seenLog[key]) return; seenLog[key] = 1; dirty = true;
+      lifeCatch.push({ n: String(x.n || '').slice(0, 40), iv: +x.iv || 0, q: +x.q || 0, sh: !!x.sh, fx: !!x.fx, t: +x.t || 0, p: i, acc, dot });
+      // Entre as capturas comuns, só a faixa oficialmente Lendária recebe voz. Shiny tem
+      // avisos próprios e não é anunciado duas vezes.
+      if (avisa && !x.sh && +x.q >= 1.7 && +x.q < 2) falaAlerta('legendary', i, { name: x.n, iv: +x.iv || 0, quality: +x.q || 0 });
+    });
     if (dirty) {
       if (lifeShiny.length > 500) lifeShiny = lifeShiny.slice(-500);
       if (lifeCatch.length > 300) lifeCatch = lifeCatch.slice(-300);
@@ -1966,9 +2062,25 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
           if (r.cid && o && o.cid && o.cid !== r.cid) { delete sessSnap[i]; w.executeJavaScript(RESET_SESS).catch(() => {}); return; } // trocou de conta no painel: nao herda sessao nem hunt da anterior
           sessSnap[i] = { s: r.sess, slug: r.slug || '', cl: r.catchLog || [], sl: r.shinyLog || [], ab: r.anBase || null, cid: r.cid || (o && o.cid) || '', t: Date.now() };
         }
-        // shiny encontrado: acumula na vida da conta (sempre), toca o som e avisa (se ligados)
+        // O frame `field` mostra o shiny enquanto ele ainda está vivo: esse é o aviso precoce.
+        // O contador abaixo fica como fallback para encontros tão rápidos que passam entre polls.
+        if (r.fieldShiny) {
+          if (!shinyFieldOn[i] && Date.now() - (shinyFalouEm[i] || 0) > 30000) {
+            shinyFalouEm[i] = Date.now();
+            if (sndShinyOn && !voiceOn) beepShiny();
+            if (alertsOn) alerta(i, 'msgShiny', { name: r.fieldShiny.n });
+          }
+          shinyFieldOn[i] = true;
+        } else shinyFieldOn[i] = false;
+        // encontro encerrado: acumula na vida da conta e avisa só se o frame precoce foi perdido
         if (lastShiny[i] === undefined || r.shinyN < lastShiny[i]) lastShiny[i] = r.shinyN;
-        else if (r.shinyN > lastShiny[i]) { const delta = r.shinyN - lastShiny[i]; lastShiny[i] = r.shinyN; addShinyLife(r.cid, delta); if (sndShinyOn) beepShiny(); if (alertsOn) alerta(i, 'msgShiny'); }
+        else if (r.shinyN > lastShiny[i]) {
+          const delta = r.shinyN - lastShiny[i]; lastShiny[i] = r.shinyN; addShinyLife(r.cid, delta);
+          if (Date.now() - (shinyFalouEm[i] || 0) > 120000) {
+            const ult = (r.shinyLog || []).slice().sort((a, b) => (+b.t || 0) - (+a.t || 0))[0] || {};
+            shinyFalouEm[i] = Date.now(); if (sndShinyOn && !voiceOn) beepShiny(); if (alertsOn) alerta(i, 'msgShiny', { name: ult.n });
+          }
+        }
         registraHunt(i, r.prevHunt); // hunt encerrada entra no log sozinha
         mergeLogs(i, r);  // logs vitalicios + webhook de shiny
         accumHist(i, r);  // historico diario
@@ -2037,7 +2149,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       p.querySelector('.expand').title = t('tExpand');
       p.querySelector('.zpct').title = t('tZoomPct');
     });
-    applyMute(); applyEco(); applyChat(); applyDock(); applyAwake(); applyMinTray(); applyPropNat(); applySndShiny(); applyShotShiny(); applyVoltaHunt(); applyAlerts(); applySellGuard(); applyClean(); aplicaCountLayout();
+    applyMute(); applyEco(); applyChat(); applyDock(); applyAwake(); applyMinTray(); applyPropNat(); applySndShiny(); applyVoice(); applyShotShiny(); applyVoltaHunt(); applyAlerts(); applySellGuard(); applyClean(); aplicaCountLayout();
     lsSet('lang', lang);
   }
   function applyGameLang() {
