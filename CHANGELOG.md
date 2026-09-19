@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4 — Lista de capturas compacta
+
+- A seção **Últimas capturas · todas as contas** no modo Simples deixa de crescer com até 40 linhas e ocupar a página inteira.
+- Cabeçalho e filtros permanecem visíveis; as capturas excedentes passam a usar uma barra de rolagem interna com altura responsiva.
+- Adicionado filtro por faixa exata de raridade, de Fraca a Divina, combinado com conta, período, nome, IV, qualidade mínima e shiny.
+
 ## 1.1.3 — Retorno ao layout original
 
 - Removida a navegação lateral fixa da Interface 2.0, recuperando toda a largura horizontal para as telas do jogo.
