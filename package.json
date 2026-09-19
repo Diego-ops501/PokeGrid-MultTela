@@ -1,6 +1,6 @@
 {
   "name": "pokegrid-multtela",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "PokeGrid MultTela: quatro contas de Poke Idle World, painel, alertas e ferramentas locais para Windows.",
   "main": "main.js",
   "author": "soufoka",
@@ -19,7 +19,7 @@
     "idle-game"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Diego-ops501/PokeGrid-MultTela-Releases",
+  "homepage": "https://github.com/Diego-ops501/PokeGrid-MultTela",
   "dependencies": {
     "electron-updater": "6.8.9"
   },
@@ -66,7 +66,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest/download"
+        "url": "https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest/download"
       }
     ]
   }

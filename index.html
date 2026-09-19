@@ -2191,8 +2191,8 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   document.getElementById('reloadAll').onclick = () => webviews.forEach((w, i) => { if (!off[i]) { try { w.reloadIgnoringCache(); } catch { w.reload(); } } }); // ignora cache: resolve pagina de login velha em cache (sem captcha)
   const overlayBtn = document.getElementById('overlayBtn');
   overlayBtn.onclick = async () => { try { const on = await window.pokeAPI.toggleOverlay(); overlayBtn.classList.toggle('on', !!on); if (on) pushOverlay(); } catch {} };
-  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest');
-  document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases/latest');
+  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela/blob/main/FAQ.md');
+  document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela/blob/main/MANUAL.md');
   const donTop = document.getElementById('donTop');
   donTop.onclick = () => window.open('https://link.mercadopago.com.br/pokegrid');
   // Versão e atualização confirmada. O processo principal valida o feed e o SHA-512 do latest.yml.

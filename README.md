@@ -4,69 +4,146 @@
 
 # PokeGrid MultTela
 
-**Até quatro contas de Poke Idle World em uma janela, com sessões isoladas e ferramentas locais.**
+**Até quatro contas de Poke Idle World em uma janela, com sessões isoladas, painel completo e ferramentas locais.**
 
-![Plataforma](https://img.shields.io/badge/Windows%2010%20%7C%2011-0078D6)
-![Electron](https://img.shields.io/badge/Electron-43-47848F)
-[![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)](LICENSE)
+[![Windows](https://img.shields.io/badge/Windows%2010%20%7C%2011-0078D6)](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest)
+[![Electron](https://img.shields.io/badge/Electron-43-47848F)](package.json)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)](LICENSE)
+[![Última versão](https://img.shields.io/github/v/release/Diego-ops501/PokeGrid-MultTela)](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest)
+
+[Baixar para Windows](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest) · [Manual](MANUAL.md) · [FAQ](FAQ.md) · [Changelog](CHANGELOG.md)
 
 <img src="docs/modo-simples.png" width="880" alt="Modo Simples do PokeGrid MultTela">
 
 </div>
 
-> Projeto independente, sem vínculo com o Poke Idle World. O uso deve respeitar as regras atuais do jogo. CAPTCHA e 2FA continuam sempre manuais.
+> Projeto comunitário e independente, sem vínculo com Poke Idle World, Nintendo, The Pokémon Company ou Game Freak. O uso deve respeitar as regras atuais do jogo. CAPTCHA e 2FA são sempre resolvidos manualmente.
 
-## Principais recursos
+## Origem e créditos
 
-- De uma a quatro contas, com partições persistentes e isoladas.
-- Login automático usando credenciais protegidas pelo `safeStorage` do Electron; não há fallback em texto puro.
-- Painel, modo Simples, histórico, métricas de gold/XP/kills, overkill, ETA, melhor hunt, tierlist e Ditto.
-- Alertas de shiny por popup, voz local, Windows e Discord, além de voz para Lendária e suprimentos baixos, com captura local opcional da tela do shiny.
+O PokeGrid MultTela deriva do projeto open source **[PokeGrid](https://github.com/soufoka/PokeGrid-source)**, criado e mantido por **soufoka** sob licença MIT. O histórico original, a licença e os créditos foram preservados.
+
+A base do PokeGrid forneceu a grade de quatro contas, sessões separadas, login assistido, modo Eco, painel, Hunt Analyzer, métricas, histórico, tierlist, Ditto e várias melhorias de qualidade de vida. O MultTela mantém essa base reconhecível e adiciona empacotamento, segurança, interface, atualizações e alertas próprios.
+
+Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [Poke Idle Launcher](https://github.com/AntonioFleck/poke-idle-launcher), igualmente MIT. Consulte [NOTICE.md](NOTICE.md) para os avisos completos.
+
+## Recursos
+
+### Quatro contas e login
+
+- Uma a quatro contas simultâneas, com teto rígido na interface e no processo principal.
+- Partição persistente e isolada para cada conta.
+- Login automático somente na página oficial do jogo.
+- Credenciais criptografadas pelo `safeStorage`/DPAPI do Windows, sem fallback em texto puro.
+- Reconexão e novo preenchimento quando uma sessão expira.
+- CAPTCHA, Cloudflare Turnstile e 2FA permanecem manuais; o aplicativo apenas aguarda a validação feita pelo usuário.
+
+### Interface e acompanhamento
+
+- Interface 2.0 com barra lateral, Dashboard, telas do jogo, resumo por conta e navegação direta.
+- Grade, foco individual, uma coluna ou uma linha.
+- Modo Simples de baixo consumo, mantendo o farm do servidor ativo.
 - Overlay flutuante somente-leitura, individual ou agregado.
-- Interface 2.0 com sidebar, Dashboard, lista de contas e navegação direta para as análises.
-- Compra de Pokébolas em ação única, com confirmação de conta, tipo, quantidade, custo e saldo.
-- Retorno experimental à mesma hunt após recarga, desligado por padrão, limitado a três tentativas espaçadas.
-- Atualizações consultadas no máximo uma vez por dia, com changelog antes do download e confirmação separada para baixar e instalar.
+- Estados de conexão claros e central de alertas.
+- Histórico de capturas, shinies, hunts, drops e resumos diários.
+- Exportação de configurações e histórico sem credenciais ou webhook.
 
-O PokeGrid MultTela não carrega userscripts arbitrários e não inclui refill, venda, rotação de hunts ou ações repetitivas. As únicas ações de jogo mantidas são o login preenchido localmente, a compra confirmada de Pokébolas e o retorno experimental à mesma hunt.
+### Métricas e análises
+
+- Gold/h líquido, XP/h, kills/h, capturas, gasto de Pokébolas e suprimentos.
+- Overkill, golpes por abate, dano relativo e ETA de nível/metas.
+- Recomendação de hunt usando medições da própria conta.
+- Hunt Analyzer, ranking de hunts, tierlist e painel especializado para Ditto.
+- Mochila por categoria, itens fixados, equipe, patrimônio e acompanhamento de alvo shiny.
+- Calculadora de IV integrada, com projeção de poder, tipos, golpes e classificação de potencial.
+- Helper de IV fixo e auditável, carregado somente depois do login; não há carregamento de userscripts externos.
+
+### Alertas
+
+- Popup, notificação do Windows, Discord e captura de tela local opcional para shiny.
+- Acordes sintetizados ou voz local instalada no Windows.
+- Voz para:
+  - shiny ainda vivo no campo;
+  - captura de shiny concluída ou perdida;
+  - Pokébolas, poções e revives acabando, com nome da conta e quantidade;
+  - captura exatamente na faixa de qualidade **Lendária** (`1,7 ≤ qualidade < 2,0`).
+- Fila e deduplicação impedem uma avalanche de falas quando várias contas alertam juntas.
+- Mítica, Anciã e Divina não são anunciadas incorretamente como Lendária.
+- Webhook opcional do próprio usuário, com fila e tratamento de limite do Discord.
+
+### Ações mantidas
+
+- Compra pontual de Pokébolas, sempre com confirmação de conta, tipo, quantidade, custo total e saldo.
+- Proteção contra quantidade inválida, saldo insuficiente, conta offline e resposta duplicada.
+- Venda protegida para shiny, qualidade alta e itens definidos pelo usuário.
+- Retorno experimental à mesma hunt após recarregamento, desligado por padrão, com slug validado, intervalo de 12 segundos e no máximo três tentativas.
+
+O aplicativo não inclui refill automático, venda automática, rotação de hunts, resolução de CAPTCHA ou novas ações repetitivas. As ações de jogo mantidas são o login assistido, a compra confirmada de Pokébolas e o retorno experimental à mesma hunt.
 
 ## Instalação no Windows
 
-Baixe o instalador x64 na [página pública de releases](https://github.com/Diego-ops501/PokeGrid-MultTela-Releases/releases). A primeira versão não possui assinatura de código, então o Windows SmartScreen pode pedir confirmação. O instalador já inclui o runtime necessário: o usuário não precisa instalar Node.js.
+Baixe o instalador x64 em [Releases](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest). Ele inclui o runtime necessário; não é preciso instalar Node.js.
 
-As configurações e o histórico ficam no perfil do Windows e são preservados em atualizações e reinstalações. Senhas protegidas pelo Windows não devem ser copiadas para outro computador.
+O executável ainda não possui certificado pago de assinatura de código. Por isso, o Windows SmartScreen pode exibir um aviso na primeira execução. As configurações, sessões e históricos ficam no perfil do Windows e são preservados durante atualizações e reinstalações.
 
-## Rodar a partir do código
+## Atualizações
 
-Para desenvolvimento, instale Node.js LTS e execute:
+- Consulta automática no máximo uma vez por dia.
+- Exibe versão, changelog e tamanho antes de baixar.
+- Download somente após confirmação.
+- Integridade validada pelo SHA-512 do `latest.yml`.
+- Reinício e instalação nunca são silenciosos.
+- Releases também publicam checksums SHA-256 para conferência manual.
+
+## Segurança e privacidade
+
+- `contextIsolation` e sandbox ligados, Node.js desativado nas janelas.
+- Navegação das contas restrita ao domínio oficial do jogo; links externos abrem no navegador padrão.
+- Permissões de câmera, microfone, localização e notificações do jogo são negadas.
+- Credenciais não entram em logs, backups ou exportações.
+- Screenshot de shiny aceita somente o `webview` oficial e é armazenado localmente.
+- Atualizador aceita somente HTTPS e o caminho oficial deste repositório.
+- Código arbitrário de terceiros e userscripts remotos permanecem bloqueados.
+
+## Executar a partir do código
+
+Requer Node.js LTS e Git:
 
 ```powershell
+git clone https://github.com/Diego-ops501/PokeGrid-MultTela.git
+cd PokeGrid-MultTela
 npm ci
 npm test
 npm start
 ```
 
-Para gerar o instalador NSIS x64:
+Gerar o instalador NSIS x64:
 
 ```powershell
 npm run dist
 ```
 
-## Segurança
+Os artefatos são criados em `dist/`. A suíte cobre inicialização, isolamento das quatro sessões, cofre, compra de bolas, retorno à hunt, coleta de métricas, voz, IV e atualização.
 
-- O limite de quatro contas é validado no renderer e no processo principal.
-- Cada conta usa uma partição persistente própria; as janelas locais usam `contextIsolation`, sandbox e Node desativado.
-- Navegação dos painéis fica restrita ao domínio oficial do jogo; links externos abrem no navegador padrão.
-- Credenciais são criptografadas via DPAPI no Windows e gravadas atomicamente, sem aparecer em logs ou exportações.
-- O download de atualização só aceita o canal público configurado e a integridade é validada pelo SHA-512 do manifesto.
+## Estrutura
+
+- `main.js`: processo principal, sessões, cofre, navegação, notificações e janelas.
+- `preload.js`: ponte IPC de operações explicitamente permitidas.
+- `index.html`: interface, contas, painel, alertas e coleta somente-leitura.
+- `src/domain/`: cálculos isolados, incluindo IV.
+- `src/main/`: gerenciador de atualização.
+- `presets/justpokedex.js`: helper local e fixo da calculadora de IV.
+- `test/`: testes automatizados.
+- `scripts/`: publicação de releases.
 
 ## Documentação
 
-- [Manual](MANUAL.md)
-- [FAQ](FAQ.md)
+- [Manual de uso](MANUAL.md)
+- [Perguntas frequentes](FAQ.md)
 - [Histórico de mudanças](CHANGELOG.md)
-- [Avisos e créditos](NOTICE.md)
+- [Créditos e avisos de terceiros](NOTICE.md)
+- [Licença MIT](LICENSE)
 
-## Créditos e licença
+## Licença
 
-Este projeto deriva de [`soufoka/PokeGrid-source`](https://github.com/soufoka/PokeGrid-source), preservando seu histórico, licença MIT e créditos. Alterações do PokeGrid MultTela também são distribuídas sob a [licença MIT](LICENSE).
+PokeGrid MultTela é distribuído sob a licença MIT. A licença original do PokeGrid e os créditos de soufoka são preservados. Consulte [LICENSE](LICENSE) e [NOTICE.md](NOTICE.md).

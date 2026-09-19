@@ -31,7 +31,7 @@ $hashLines = @($installer, $manifest, $blockMap) | ForEach-Object {
 Set-Content -LiteralPath $checksums -Value $hashLines -Encoding utf8
 
 & $Gh release create $tag $installer $manifest $blockMap $checksums "LICENSE" "NOTICE.md" "CHANGELOG.md" "MANUAL.md" "FAQ.md" `
-  --repo "$Owner/PokeGrid-MultTela-Releases" `
+  --repo "$Owner/PokeGrid-MultTela" `
   --title "PokeGrid MultTela $tag" `
   --notes-file "CHANGELOG.md" `
   --latest

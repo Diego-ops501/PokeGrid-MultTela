@@ -29,12 +29,13 @@ ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overla
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');
 
 console.log('\n--- Instalador e atualização ---');
-ok(pkg.name === 'pokegrid-multtela' && pkg.version === '1.1.1', 'produto personalizado está na versão 1.1.1');
+ok(pkg.name === 'pokegrid-multtela' && pkg.version === '1.1.2', 'produto personalizado está na versão 1.1.2');
 ok(html.includes('id="appSidebar"') && html.includes('id="pgNavDashboard"') && html.includes('id="pgSideAccounts"'), 'shell 2.0 expõe navegação e contas na sidebar');
 ok(pkg.build && pkg.build.win && pkg.build.nsis && pkg.build.nsis.deleteAppDataOnUninstall === false, 'instalador NSIS preserva dados');
 ok(pkg.dependencies['electron-updater'] && pkg.devDependencies['electron-builder'], 'dependências de build e update declaradas');
 ok(update.includes('autoDownload = false') && update.includes('autoInstallOnAppQuit = false'), 'atualização nunca baixa ou instala silenciosamente');
 ok(update.includes("feed.protocol !== 'https:'") && update.includes("feed.hostname !== 'github.com'"), 'feed de atualização tem lista de origem restrita');
+ok(update.includes('/Diego-ops501\\/PokeGrid-MultTela\\/releases') && !update.includes('PokeGrid-MultTela-Releases'), 'atualizador usa o repositório público unificado');
 ok(update.includes("ipcMain.handle('update:download'") && update.includes("ipcMain.handle('update:install'"), 'download e instalação exigem ações separadas');
 ok(update.includes('24 * 60 * 60 * 1000') && update.includes('checkAutomatic'), 'checagem automática é limitada a uma vez por dia');
 

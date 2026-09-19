@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2 — Código aberto e repositório unificado
+
+- Código-fonte e instaladores passam a viver no mesmo repositório público.
+- Canal de atualização migrado para o repositório principal, preservando confirmação de download, SHA-512 e instalação manual.
+- README refeito com todos os recursos, diferenças em relação ao PokeGrid original, segurança, limitações e créditos.
+
 ## 1.1.1 — Voz dos alertas e correção do IV
 
 - Voz local e configurável para shiny aparecendo, captura de shiny bem-sucedida ou perdida, Pokébolas/curas acabando e captura de Pokémon na faixa Lendária. A fala inclui o nome da conta e usa uma voz instalada no Windows, sem serviço externo.
