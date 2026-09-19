@@ -29,8 +29,8 @@ ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overla
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');
 
 console.log('\n--- Instalador e atualização ---');
-ok(pkg.name === 'pokegrid-multtela' && pkg.version === '1.1.2', 'produto personalizado está na versão 1.1.2');
-ok(html.includes('id="appSidebar"') && html.includes('id="pgNavDashboard"') && html.includes('id="pgSideAccounts"'), 'shell 2.0 expõe navegação e contas na sidebar');
+ok(pkg.name === 'pokegrid-multtela' && pkg.version === '1.1.3', 'produto personalizado está na versão 1.1.3');
+ok(!html.includes('id="appSidebar"') && !html.includes('--pg-sidebar') && html.includes('id="statsBtn"') && html.includes('id="cardsBtn"'), 'layout clássico remove a sidebar fixa e restaura os controles no topo');
 ok(pkg.build && pkg.build.win && pkg.build.nsis && pkg.build.nsis.deleteAppDataOnUninstall === false, 'instalador NSIS preserva dados');
 ok(pkg.dependencies['electron-updater'] && pkg.devDependencies['electron-builder'], 'dependências de build e update declaradas');
 ok(update.includes('autoDownload = false') && update.includes('autoInstallOnAppQuit = false'), 'atualização nunca baixa ou instala silenciosamente');

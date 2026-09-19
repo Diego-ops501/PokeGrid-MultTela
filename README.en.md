@@ -16,7 +16,7 @@
 
 PokeGrid MultTela is derived from **[soufoka/PokeGrid-source](https://github.com/soufoka/PokeGrid-source)** and preserves its MIT license, history and credits. The original PokeGrid supplied the four-account grid, isolated sessions, assisted login, Eco mode, dashboards, Hunt Analyzer, history, tier list, Ditto tools and many quality-of-life features.
 
-This edition adds a Windows installer and updater, a redesigned sidebar interface, hardened storage and navigation, local overlays, confirmed Poké Ball purchases, optional return to the same hunt, spoken alerts and a repaired bundled IV calculator. See [NOTICE.md](NOTICE.md) for third-party acknowledgements.
+This edition adds a Windows installer and updater, hardened storage and navigation, local overlays, confirmed Poké Ball purchases, optional return to the same hunt, spoken alerts and a repaired bundled IV calculator. It keeps the original PokeGrid-style top bar and uses the full window width for the game grid. See [NOTICE.md](NOTICE.md) for third-party acknowledgements.
 
 ## Highlights
 

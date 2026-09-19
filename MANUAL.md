@@ -2,17 +2,19 @@
 
 Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual, veja o [FAQ](FAQ.md).
 
-## Navegação lateral e barra do topo
+## Barra do topo
 
-A barra lateral troca entre o **Dashboard**, as **Telas do jogo** e o **Resumo da conta**. Ela também abre diretamente Hunt Analyzer, Tierlist, Ditto, calculadora de IV e overlay. Na parte inferior aparecem as quatro contas, com conexão e hunt atualizadas; clicar em uma conta abre sua tela.
-
-A barra do topo ficou reservada às ações operacionais:
+O PokeGrid MultTela usa o visual clássico do projeto original, sem uma barra lateral fixa. Assim, toda a largura da janela fica disponível para as telas do jogo. Os recursos ficam na barra superior e no menu **☰ Opções**:
 
 | Botão | O que faz |
 |---|---|
 | **▶ Logar equipe** | Loga as 4 contas de uma vez, com as senhas salvas |
 | **👤 Treinadores** | Cadastra e-mail e senha de cada conta. O 🗑 limpa o formulário; o 🧹 apaga os dados do jogo daquela conta (resolve conta bugada, a senha continua salva) |
 | **⟳ Atualizar tudo** | Recarrega os painéis ligados, ignorando o cache (resolve tela de login velha presa) |
+| **📊 Painel** | Abre o resumo da conta, onde fica a engrenagem de configuração e a compra de Pokébolas |
+| **🃏 Cartas** | Alterna para o Dashboard de baixo consumo com métricas das quatro contas |
+| **📌 Overlay** | Abre o resumo flutuante somente-leitura |
+| **IV's** | Abre a calculadora de IV integrada |
 | **☰ Opções** | Tudo o mais: Hunt, Tierlist, Ditto, Alertas, Venda protegida, Eco, atualização e FAQ... |
 
 Atalhos de teclado (só quando o foco está no app, não dentro do jogo): **H** Hunt, **C** Simples, **L** Limpar jogo, **R** Atualizar, **T** Treinadores, **G** Tierlist, **D** Ditto, **O** Opções, **M** menu do jogo, **E** Eco, **A** Alertas.

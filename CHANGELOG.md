@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.3 — Retorno ao layout original
+
+- Removida a navegação lateral fixa da Interface 2.0, recuperando toda a largura horizontal para as telas do jogo.
+- Restaurados o visual clássico do PokeGrid e os botões operacionais na barra superior.
+- Dashboard, Painel, Overlay, calculadora de IV e demais recursos continuam disponíveis pelos botões do topo e pelo menu Opções.
+- O painel de resumo mantém sua engrenagem, incluindo a compra confirmada de Pokébolas.
+
 ## 1.1.2 — Código aberto e repositório unificado
 
 - Código-fonte e instaladores passam a viver no mesmo repositório público.

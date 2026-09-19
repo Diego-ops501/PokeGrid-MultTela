@@ -40,7 +40,8 @@ Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [
 
 ### Interface e acompanhamento
 
-- Interface 2.0 com barra lateral, Dashboard, telas do jogo, resumo por conta e navegação direta.
+- Visual clássico do PokeGrid, sem barra lateral fixa, aproveitando toda a largura para as telas do jogo.
+- Barra superior com acesso direto ao Dashboard, Painel, Overlay, calculadora de IV e controles operacionais.
 - Grade, foco individual, uma coluna ou uma linha.
 - Modo Simples de baixo consumo, mantendo o farm do servidor ativo.
 - Overlay flutuante somente-leitura, individual ou agregado.
