@@ -2,6 +2,7 @@
 
 ## Próxima versão — PokeMux
 
+- Referral atualizado para **2G9B4BV** e botão **Ajude o projeto** direcionado ao link oficial do PokeMux no Mercado Pago.
 - Novo aviso sonoro e notificação do Windows ao obter **Strange Pheromones** ou **Boss Token**, com controle separado nas opções de alertas.
 - O HUD completo do jogo agora fica visível por padrão, inclusive após atualizar uma instalação existente; **🧼 Limpar jogo** continua disponível como opção para ocultá-lo.
 - Nova identidade visual **PokeMux**, com logotipo ciano, azul e violeta na interface, overlay, bandeja, executável, instalador e documentação.
@@ -250,7 +251,7 @@
 
 ## 1.5.14
 
-- **💚 Ajude o projeto**: card discreto no fim do Painel com o link oficial de apoio (https://link.mercadopago.com.br/pokegrid, Pix e cartão). Opcional, não desbloqueia nada; o app segue gratuito. E a lista do time agora mostra a **EXP %** de cada pokémon junto do HP, como no card do jogo.
+- **💚 Ajude o projeto**: card discreto no fim do Painel com o link oficial de apoio (https://link.mercadopago.com.br/POKEmux, Pix e cartão). Opcional, não desbloqueia nada; o app segue gratuito. E a lista do time agora mostra a **EXP %** de cada pokémon junto do HP, como no card do jogo.
   *Support-the-project card at the end of the Panel with the official donation link (optional, unlocks nothing), and the team list now shows each pokémons EXP % next to HP.*
 - **Atalhos de teclado** (PR do israeltduarte): H abre o Hunt Analyzer, L o Limpar jogo, C o Simples, E o Eco, A os Alertas, R atualiza tudo, T os Treinadores, M o menu do jogo, G a Tierlist e O as Opções. Só valem com o foco na interface: enquanto você digita em qualquer campo, ou com o jogo focado, as teclas não fazem nada.
   *Keyboard shortcuts (PR by israeltduarte), active only when the app interface has focus.*

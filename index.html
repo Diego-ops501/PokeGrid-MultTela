@@ -616,9 +616,9 @@ function lsGet(k) { try { return localStorage.getItem(k); } catch { return null;
   }
   function lsArr(k) { try { const v = JSON.parse(lsGet(k) || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } }
 function lsDel(k) { try { localStorage.removeItem(k); } catch {} }
-const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do referral (botao de copiar)
+const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do referral (botao de copiar)
   const LOGIN_URL = 'https://poke.idleworld.online/login';
-  const START_URL = LOGIN_URL + '?ref=CJNKGPB'; // abre na tela de login, mantendo o referral
+  const START_URL = LOGIN_URL + '?ref=2G9B4BV'; // abre na tela de login, mantendo o referral
   const grid = document.getElementById('grid');
 
   let accounts = [];
@@ -2098,7 +2098,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeMux/blob/main/FAQ.md');
   document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeMux/blob/main/MANUAL.md');
   const donTop = document.getElementById('donTop');
-  donTop.onclick = () => window.open('https://link.mercadopago.com.br/pokegrid');
+  donTop.onclick = () => window.open('https://link.mercadopago.com.br/POKEmux');
   // Versão e atualização confirmada. O processo principal valida o feed e o SHA-512 do latest.yml.
   try {
     const vAtual = window.pokeAPI && window.pokeAPI.appVersion;

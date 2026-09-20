@@ -25,6 +25,8 @@ ok(html.includes('let compraEmAndamento = false;') && html.includes('goldTem < c
 ok(html.includes('Number.isSafeInteger(ballId)') && html.includes('qtd > 10000'), 'compra valida identificador, quantidade e custo');
 ok(html.includes("let voltaHuntOn = lsGet('voltaHunt') === '1'"), 'retorno à hunt continua desligado por padrão');
 ok(html.includes("lsSet('cleanHud', '0')") && html.includes("let cleanOn = lsGet('cleanHud') === '1'") && !html.includes("lsGet('cleanHud') !== '0'"), 'HUD do jogo fica visível por padrão e Limpar jogo permanece opcional');
+ok(html.includes("https://poke.idleworld.online/?ref=2G9B4BV") && html.includes("LOGIN_URL + '?ref=2G9B4BV'") && !html.includes('CJNKGPB'), 'referral oficial usa a chave 2G9B4BV');
+ok(html.includes("window.open('https://link.mercadopago.com.br/POKEmux')") && !html.includes('link.mercadopago.com.br/pokegrid'), 'Ajude o projeto usa o link oficial do PokeMux');
 ok(html.includes("n>=3") && html.includes("},12000)"), 'retorno mantém três tentativas espaçadas');
 ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overlayBtn"'), 'overlay somente-leitura disponível');
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');

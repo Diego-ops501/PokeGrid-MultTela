@@ -52,7 +52,7 @@ Com o escudo ligado, o app pede confirmação antes de vender shiny, qualidade L
 ## Projeto
 
 ### Como apoio o projeto?
-Pelo botão **Ajude o projeto** ao lado do logo, no topo do app, ou direto em https://link.mercadopago.com.br/pokegrid (Pix e cartão). Apoio é opcional e não desbloqueia nada; o app é e continua gratuito. **Esse é o único link oficial**: desconfie de qualquer outro.
+Pelo botão **Ajude o projeto** ao lado do logo, no topo do app, ou direto em [link.mercadopago.com.br/POKEmux](https://link.mercadopago.com.br/POKEmux) (Pix e cartão). Apoio é opcional e não desbloqueia nada; o app é e continua gratuito. **Esse é o único link oficial**: desconfie de qualquer outro.
 
 
 ### Como contribuo?
