@@ -63,6 +63,7 @@ Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [
 
 - Popup, notificação do Windows, Discord e captura de tela local opcional para shiny.
 - Acordes sintetizados ou voz local instalada no Windows.
+- Toque e notificação próprios ao obter **Strange Pheromones** ou **Boss Token**, com opção individual para desativar.
 - Voz para:
   - shiny ainda vivo no campo;
   - captura de shiny concluída ou perdida;

@@ -118,6 +118,8 @@ console.log('\n--- pokebolas infinitas, vinculadas e com validade (lancamento de
   ok(normal.al.balls === 100, 'bolas comuns e vinculadas somam normal (' + normal.al.balls + ')');
   const comum = roda({ catalog, counts: { 1: 40 }, expires: {} }, { supGold: 300 });
   ok(comum.al.saldo === -300, 'o que o coletor somou entra no saldo: 300 de bola = saldo -300 (' + comum.al.saldo + ')');
+  const raros = roda({ catalog, counts: { 1: 40 }, expires: {} }, { drops: { 44417: { name: 'Strange Pheromones', qty: 2 }, 70001: { name: 'Boss Token', qty: 1 }, 3: { name: 'Common loot', qty: 99 } } });
+  ok(raros.al.rareDrops.length === 2 && raros.al.rareDrops.some(x => x.n === 'Strange Pheromones' && x.q === 2) && raros.al.rareDrops.some(x => x.n === 'Boss Token' && x.q === 1), 'alertas expõem somente Strange Pheromones e Boss Token, com suas quantidades');
   ok(!s.includes('ballPrice'), 'ballPrice sumiu do app (READ_ALERTS e READ_STATE nao recalculam mais o custo)');
   ok(s.includes("sBalls = g.items.some(x => x.inf) ? Math.max(g.total, 999999) : g.total"), 'Simples/Painel: bola infinita valida vira ilimitada (antes 1 no estoque disparava "poucas pokebolas" ali, mesmo com o READ_ALERTS ja tratando)');
   ok(s.includes("ballMap[x.id.slice(1)] = x.inf ? '∞' : x.qty") && s.includes("(qty === '∞' ? qty : nf(qty))"), 'itens fixados leem a mochila tratada: vencida some, infinita mostra ∞');

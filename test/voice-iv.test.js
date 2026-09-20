@@ -25,6 +25,8 @@ ok(html.includes("ballsLow: `As Pokébolas estão acabando na conta ${conta}. Re
 ok(html.includes("!x.sh && +x.q >= 1.7 && +x.q < 2"), 'voz de raridade fica somente na faixa Lendária, sem duplicar shiny');
 ok(html.includes("const fieldShiny=fs?") && html.includes("if (r.fieldShiny)"), 'detecção precoce lê o shiny vivo no campo');
 ok(html.includes('if (voiceQueue.length >= 8) voiceQueue.shift()') && html.includes("now - voiceLast.t < 5000"), 'fila e deduplicação impedem avalanche de voz');
+ok(html.includes("nk==='strange pheromone'||nk==='strange pheromones'||nk==='boss token'||nk==='boss tokens'") && html.includes("alerta(i, 'msgRareDrop'") && html.includes('function beepRareDrop()'), 'Strange Pheromones e Boss Token disparam aviso sonoro próprio');
+ok(html.includes("['shiny', 'rare', 'down', 'stalled', 'balls', 'faint']") && html.includes("alLocal_rare:"), 'drop raro pode ser ligado ou desligado separadamente');
 
 console.log('\n--- Calculadora de IV confiável e empacotada ---');
 ok(main.includes("ipcMain.handle('iv-helper:read'") && main.includes("path.join(__dirname, 'presets', 'justpokedex.js')"), 'IPC lê somente o helper fixo de IV');
