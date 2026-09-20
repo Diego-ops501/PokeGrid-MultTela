@@ -1,5 +1,9 @@
 # Changelog
 
+## Próxima versão — PokeMux
+
+- **Últimas capturas · todas as contas** agora mostra todas as capturas correspondentes aos filtros selecionados, sem o corte de 40 resultados, mantendo a seção compacta com rolagem interna e removendo alturas manuais antigas que deixavam o cartão gigante.
+
 ## 1.1.5 — PokeMux
 
 - Referral atualizado para **2G9B4BV** e botão **Ajude o projeto** direcionado ao link oficial do PokeMux no Mercado Pago.

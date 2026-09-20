@@ -3021,6 +3021,8 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   const cdW = (s) => Math.max(3, Math.min(12, +(cardsCfg.w[s]) || CDW_DEF[s] || 6));
   try { const c = lsObj('cardsCfg'); if (Array.isArray(c.order)) cardsCfg.order = c.order.filter(x => CDSECTS.includes(x)); CDSECTS.forEach(s => { if (!cardsCfg.order.includes(s)) cardsCfg.order.push(s); }); cardsCfg.hide = c.hide || {}; if (c.w && typeof c.w === 'object') cardsCfg.w = c.w; if (c.h && typeof c.h === 'object') cardsCfg.h = c.h; } catch {}
   const saveCardsCfg = () => { try { lsSet('cardsCfg', JSON.stringify(cardsCfg)); } catch {} };
+  // Últimas capturas tem rolagem própria: uma altura manual antiga só criava um cartão gigante vazio.
+  if (Object.prototype.hasOwnProperty.call(cardsCfg.h, 'catches')) { delete cardsCfg.h.catches; saveCardsCfg(); }
   // base medida por conta e hunt: media (EWMA) do que CADA conta realmente fez ali (gold/h, xp/h, capturas/h).
   // amostra a taxa acumulada da sessao (ja e uma media) quando a hunt rodou tempo suficiente pra estabilizar.
   // estrutura: huntStats[cid da conta][hunt normalizada] = { gph, xph, cph, n, t }
@@ -3471,7 +3473,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
         (!f.r || rarityKey(numLivre(x.q)) === f.r) &&
         numLivre(x.iv) >= f.iv &&
         numLivre(x.q) >= f.q &&
-        (+x.t || 0) >= corte).slice(-40).reverse();
+        (+x.t || 0) >= corte).reverse();
       return '<div class="cd-sec"><div class="cd-h">' + t('cdCatches') + '</div>'
         + '<div class="cd-cfg-row" style="flex-wrap:wrap;gap:4px;margin-bottom:6px">'
         + '<select id="cdFcP" class="cd-inp">' + optConta + '</select>'
@@ -3650,7 +3652,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     let secHtml = '';
     cardsCfg.order.forEach(sec => {
       if (cardsCfg.hide[sec] || !SB[sec]) return;
-      secHtml += '<div class="cd-it" data-s="' + sec + '" style="grid-column:span ' + cdW(sec) + '"><span class="cd-mv" draggable="true" title="' + t('cdMove') + '">⋮⋮</span><span class="cd-rz" title="' + t('cdResize') + '"></span><span class="cd-rz2" title="' + t('cdResizeV') + '"></span>' + SB[sec]() + '</div>';
+      secHtml += '<div class="cd-it" data-s="' + sec + '" style="grid-column:span ' + cdW(sec) + '"><span class="cd-mv" draggable="true" title="' + t('cdMove') + '">⋮⋮</span><span class="cd-rz" title="' + t('cdResize') + '"></span>' + (sec === 'catches' ? '' : '<span class="cd-rz2" title="' + t('cdResizeV') + '"></span>') + SB[sec]() + '</div>';
     });
     h += '<div class="cd-cols">' + secHtml + '</div>';
 
@@ -3660,7 +3662,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     cdHtmlAnt = h;
     const st0 = cardsEl.scrollTop, rolagem = {};
     cardsEl.querySelectorAll('.cd-it').forEach(it => {
-      const box = it.querySelector('.cd-sec, .cd-kpis');
+      const box = it.dataset.s === 'catches' ? it.querySelector('.cd-catches-list') : it.querySelector('.cd-sec, .cd-kpis');
       if (box && box.scrollTop) rolagem[it.dataset.s] = box.scrollTop;
     });
     cardsEl.innerHTML = h;
@@ -3746,16 +3748,17 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       const hSalva = +cardsCfg.h[it.dataset.s] || 0; // importado do disco: numero com clamp
       if (box && hSalva) hSet(Math.max(90, Math.min(1400, hSalva)));
       // devolve a rolagem interna que a secao tinha antes do refresh (depois da altura, senao nao rola ainda)
-      if (box && rolagem[it.dataset.s]) box.scrollTop = rolagem[it.dataset.s];
+      const scrollBox = it.dataset.s === 'catches' ? it.querySelector('.cd-catches-list') : box;
+      if (scrollBox && rolagem[it.dataset.s]) scrollBox.scrollTop = rolagem[it.dataset.s];
       const rz2 = it.querySelector('.cd-rz2');
-      rz2.addEventListener('mousedown', e => {
+      if (rz2) rz2.addEventListener('mousedown', e => {
         if (!box) return; e.preventDefault(); cdBusy = Date.now(); it.classList.add('rz-on');
         const h0 = box.getBoundingClientRect().height, y0 = e.clientY; let cur = null;
         const mv = ev => { cur = Math.max(90, Math.min(1400, Math.round(h0 + ev.clientY - y0))); hSet(cur); };
         const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); it.classList.remove('rz-on'); if (cur != null) cardsCfg.h[it.dataset.s] = cur; cdBusy = 0; saveCardsCfg(); refreshCards(); };
         document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
       });
-      rz2.addEventListener('dblclick', () => { delete cardsCfg.h[it.dataset.s]; saveCardsCfg(); refreshCards(); });
+      if (rz2) rz2.addEventListener('dblclick', () => { delete cardsCfg.h[it.dataset.s]; saveCardsCfg(); refreshCards(); });
     });
     // tabela
     cardsEl.querySelectorAll('th[data-k]').forEach(th => th.onclick = () => { const k = th.dataset.k; if (dsort.k === k) dsort.d *= -1; else dsort = { k, d: -1 }; refreshCards(true); });
