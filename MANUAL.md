@@ -1,10 +1,10 @@
-# Manual do PokeGrid MultTela
+# Manual do PokeMux
 
 Guia curto do que cada coisa faz. Se você só quer resolver um problema pontual, veja o [FAQ](FAQ.md).
 
 ## Barra do topo
 
-O PokeGrid MultTela usa o visual clássico do projeto original, sem uma barra lateral fixa. Assim, toda a largura da janela fica disponível para as telas do jogo. Os recursos ficam na barra superior e no menu **☰ Opções**:
+O PokeMux usa uma barra superior compacta, sem uma barra lateral fixa. Assim, toda a largura da janela fica disponível para as telas do jogo. Os recursos ficam na barra superior e no menu **☰ Opções**:
 
 | Botão | O que faz |
 |---|---|
@@ -61,7 +61,7 @@ Onde caçar com um Ditto e em que pokémon virar. Escolha **Shiny** ou **Comum**
 - **🔔 Alertas**: avisa quando aparece shiny, uma conta cai, para de farmar, fica sem suprimento ou tem pokémon derrubado. Na engrenagem do Simples você escolhe quais tipos avisam no Windows, um por um. Com webhook do Discord configurado, o aviso também chega no celular
 - **🗣️ Voz dos alertas**: usa uma voz instalada no Windows e fala a conta envolvida. Anuncia shiny aparecendo, sucesso ou falha final da captura, Pokébolas/curas acabando e capturas exatamente da faixa Lendária. Mítica, Anciã e Divina não são chamadas de Lendária
 - **📷 Print de shiny**: quando ligado, salva localmente uma imagem do painel em que o shiny apareceu
-- **💾 Exportar/Importar config**: leva suas configurações e seu histórico pra outro PC. Credenciais e webhook ficam de fora, de propósito. Importar troca o histórico pelo do arquivo e guarda uma cópia do seu antes. O app também salva um backup semanal na pasta de dados do PokeGrid MultTela
+- **💾 Exportar/Importar config**: leva suas configurações e seu histórico pra outro PC. Credenciais e webhook ficam de fora, de propósito. Importar troca o histórico pelo do arquivo e guarda uma cópia do seu antes. O app também salva um backup semanal na pasta de dados do PokeMux
 - **⬆ Atualização**: consulta o canal oficial uma vez por dia. Exibe versão, changelog e tamanho antes de perguntar se pode baixar; a instalação também exige confirmação
 
 ## Coisas que confundem no começo

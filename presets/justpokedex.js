@@ -5566,7 +5566,7 @@
         console.warn("[Poké Leitor] Erro ao carregar dados salvos:", e);
     }
 
-    // ===== Ponte pro card unico do PokeGrid =====
+    // ===== Ponte pro card unico do PokeMux =====
     // O card fica na janela do app (fora dos paineis), pra poder abrir no centro da tela e maior.
     // O calculo continua aqui, que e onde estao as formulas e a busca dos atributos-base, entao
     // nao existe formula duplicada: o app so pede o resultado e mostra.

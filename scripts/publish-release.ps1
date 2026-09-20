@@ -10,7 +10,7 @@ Set-Location -LiteralPath $root
 
 $version = (Get-Content -LiteralPath "package.json" -Raw | ConvertFrom-Json).version
 $tag = "v$version"
-$installer = Join-Path $root "dist\PokeGrid-MultTela-$version-x64.exe"
+$installer = Join-Path $root "dist\PokeMux-$version-x64.exe"
 $manifest = Join-Path $root "dist\latest.yml"
 $blockMap = "$installer.blockmap"
 $checksums = Join-Path $root "dist\CHECKSUMS-SHA256.txt"
@@ -31,8 +31,8 @@ $hashLines = @($installer, $manifest, $blockMap) | ForEach-Object {
 Set-Content -LiteralPath $checksums -Value $hashLines -Encoding utf8
 
 & $Gh release create $tag $installer $manifest $blockMap $checksums "LICENSE" "NOTICE.md" "CHANGELOG.md" "MANUAL.md" "FAQ.md" `
-  --repo "$Owner/PokeGrid-MultTela" `
-  --title "PokeGrid MultTela $tag" `
+  --repo "$Owner/PokeMux" `
+  --title "PokeMux $tag" `
   --notes-file "CHANGELOG.md" `
   --latest
 if ($LASTEXITCODE -ne 0) { throw "Falha ao publicar a release." }

@@ -1,9 +1,9 @@
 {
-  "name": "pokegrid-multtela",
+  "name": "pokemux",
   "version": "1.1.4",
-  "description": "PokeGrid MultTela: quatro contas de Poke Idle World, painel, alertas e ferramentas locais para Windows.",
+  "description": "PokeMux: quatro contas de Poke Idle World, painel, alertas e ferramentas locais para Windows.",
   "main": "main.js",
-  "author": "soufoka",
+  "author": "Diego-ops501",
   "scripts": {
     "start": "electron .",
     "test": "node test/iv-math.test.js && node test/boot.test.js && node test/atualizacao-jogo.test.js && node test/volta-hunt.test.js && node test/cacada-1521.test.js && node test/tierlist-ditto.test.js && node test/multtela-security.test.js && node test/voice-iv.test.js",
@@ -19,7 +19,7 @@
     "idle-game"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Diego-ops501/PokeGrid-MultTela",
+  "homepage": "https://github.com/Diego-ops501/PokeMux",
   "dependencies": {
     "electron-updater": "6.8.9"
   },
@@ -28,9 +28,9 @@
     "electron-builder": "26.15.3"
   },
   "build": {
-    "appId": "com.multtela.pokegrid",
-    "productName": "PokeGrid MultTela",
-    "artifactName": "PokeGrid-MultTela-${version}-${arch}.${ext}",
+    "appId": "com.pokemux.desktop",
+    "productName": "PokeMux",
+    "artifactName": "PokeMux-${version}-${arch}.${ext}",
     "asar": true,
     "files": [
       "main.js",
@@ -41,6 +41,9 @@
       "presets/justpokedex.js",
       "tray.png",
       "build-icon.png",
+      "pokemux-logo.png",
+      "pokemux-logo-ui.png",
+      "pokemux-icon.png",
       "LICENSE",
       "NOTICE.md",
       "README.md",
@@ -60,13 +63,13 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "PokeGrid MultTela",
+      "shortcutName": "PokeMux",
       "deleteAppDataOnUninstall": false
     },
     "publish": [
       {
         "provider": "generic",
-        "url": "https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest/download"
+        "url": "https://github.com/Diego-ops501/PokeMux/releases/latest/download"
       }
     ]
   }

@@ -52,7 +52,7 @@ const entre = (a, fim, incl) => { const i = b.indexOf(a); if (i < 0) throw new E
   const blocoTier = entre('  function tierCalc(nivel, comTm) {', '  const tlNameId = ', false);
   const api = new Function('window', 'R', 'lista',
     'let basesByName = R.bs, movesByName = R.mv, creaturesById = R.byId, huntsCache = lista, huntsCacheT = 1, tlCache = null;\n'
-    + blocoSug + '\n' + blocoDitto + '\n' + blocoTier + '\nreturn { sugCalc, tierCalc, dittoRegras, dittoAlvo, dittoSweep, dittoHunts, dittoVarre, ritmoDe };')({ PokeGridIvMath: M }, R, lista);
+    + blocoSug + '\n' + blocoDitto + '\n' + blocoTier + '\nreturn { sugCalc, tierCalc, dittoRegras, dittoAlvo, dittoSweep, dittoHunts, dittoVarre, ritmoDe };')({ PokeMuxIvMath: M }, R, lista);
 
   console.log('\n--- sugCalc: TM so entra pra quem aprendeu o disco ---');
   const czA = { sp: 'charizard', level: 100, q: 1.5, ivt: 120, tlv: 0, mult: 1 };

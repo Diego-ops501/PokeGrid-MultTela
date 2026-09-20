@@ -1,19 +1,19 @@
 <div align="center">
 
-<img src="tray.png" width="72" alt="PokeGrid MultTela">
+<img src="pokemux-logo-ui.png" width="460" alt="PokeMux">
 
-# PokeGrid MultTela
+# PokeMux
 
 **Até quatro contas de Poke Idle World em uma janela, com sessões isoladas, painel completo e ferramentas locais.**
 
-[![Windows](https://img.shields.io/badge/Windows%2010%20%7C%2011-0078D6)](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest)
+[![Windows](https://img.shields.io/badge/Windows%2010%20%7C%2011-0078D6)](https://github.com/Diego-ops501/PokeMux/releases/latest)
 [![Electron](https://img.shields.io/badge/Electron-43-47848F)](package.json)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)](LICENSE)
-[![Última versão](https://img.shields.io/github/v/release/Diego-ops501/PokeGrid-MultTela)](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest)
+[![Última versão](https://img.shields.io/github/v/release/Diego-ops501/PokeMux)](https://github.com/Diego-ops501/PokeMux/releases/latest)
 
-[Baixar para Windows](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest) · [Manual](MANUAL.md) · [FAQ](FAQ.md) · [Changelog](CHANGELOG.md)
+[Baixar para Windows](https://github.com/Diego-ops501/PokeMux/releases/latest) · [Manual](MANUAL.md) · [FAQ](FAQ.md) · [Changelog](CHANGELOG.md)
 
-<img src="docs/modo-simples.png" width="880" alt="Modo Simples do PokeGrid MultTela">
+<img src="docs/modo-simples.png" width="880" alt="Modo Simples do PokeMux">
 
 </div>
 
@@ -21,9 +21,9 @@
 
 ## Origem e créditos
 
-O PokeGrid MultTela deriva do projeto open source **[PokeGrid](https://github.com/soufoka/PokeGrid-source)**, criado e mantido por **soufoka** sob licença MIT. O histórico original, a licença e os créditos foram preservados.
+O **PokeMux** deriva do projeto open source **[PokeGrid](https://github.com/soufoka/PokeGrid-source)**, criado e mantido por **soufoka** sob licença MIT. O histórico original, a licença e os créditos foram preservados.
 
-A base do PokeGrid forneceu a grade de quatro contas, sessões separadas, login assistido, modo Eco, painel, Hunt Analyzer, métricas, histórico, tierlist, Ditto e várias melhorias de qualidade de vida. O MultTela mantém essa base reconhecível e adiciona empacotamento, segurança, interface, atualizações e alertas próprios.
+A base do PokeGrid forneceu a grade de quatro contas, sessões separadas, login assistido, modo Eco, painel, Hunt Analyzer, métricas, histórico, tierlist, Ditto e várias melhorias de qualidade de vida. O PokeMux preserva essa base e adiciona identidade visual, empacotamento, segurança, interface, atualizações e alertas próprios.
 
 Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [Poke Idle Launcher](https://github.com/AntonioFleck/poke-idle-launcher), igualmente MIT. Consulte [NOTICE.md](NOTICE.md) para os avisos completos.
 
@@ -40,7 +40,7 @@ Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [
 
 ### Interface e acompanhamento
 
-- Visual clássico do PokeGrid, sem barra lateral fixa, aproveitando toda a largura para as telas do jogo.
+- Interface compacta sem barra lateral fixa, aproveitando toda a largura para as telas do jogo.
 - Barra superior com acesso direto ao Dashboard, Painel, Overlay, calculadora de IV e controles operacionais.
 - Grade, foco individual, uma coluna ou uma linha.
 - Modo Simples de baixo consumo, mantendo o farm do servidor ativo.
@@ -83,7 +83,7 @@ O aplicativo não inclui refill automático, venda automática, rotação de hun
 
 ## Instalação no Windows
 
-Baixe o instalador x64 em [Releases](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest). Ele inclui o runtime necessário; não é preciso instalar Node.js.
+Baixe o instalador x64 em [Releases](https://github.com/Diego-ops501/PokeMux/releases/latest). Ele inclui o runtime necessário; não é preciso instalar Node.js.
 
 O executável ainda não possui certificado pago de assinatura de código. Por isso, o Windows SmartScreen pode exibir um aviso na primeira execução. As configurações, sessões e históricos ficam no perfil do Windows e são preservados durante atualizações e reinstalações.
 
@@ -111,8 +111,8 @@ O executável ainda não possui certificado pago de assinatura de código. Por i
 Requer Node.js LTS e Git:
 
 ```powershell
-git clone https://github.com/Diego-ops501/PokeGrid-MultTela.git
-cd PokeGrid-MultTela
+git clone https://github.com/Diego-ops501/PokeMux.git
+cd PokeMux
 npm ci
 npm test
 npm start
@@ -147,4 +147,4 @@ Os artefatos são criados em `dist/`. A suíte cobre inicialização, isolamento
 
 ## Licença
 
-PokeGrid MultTela é distribuído sob a licença MIT. A licença original do PokeGrid e os créditos de soufoka são preservados. Consulte [LICENSE](LICENSE) e [NOTICE.md](NOTICE.md).
+PokeMux é distribuído sob a licença MIT. A licença original do PokeGrid e os créditos de soufoka são preservados. Consulte [LICENSE](LICENSE) e [NOTICE.md](NOTICE.md).

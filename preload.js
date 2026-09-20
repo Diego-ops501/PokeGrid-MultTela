@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('pokeAPI', {
   downloadUpdate: () => ipcRenderer.invoke('update:download'),
   installUpdate: () => ipcRenderer.invoke('update:install'),
   onUpdateStatus: (cb) => ipcRenderer.on('update:status', (_e, state) => cb(state)),
-  // versao do app: vem do processo principal (a UA nao carrega mais o token pokegrid/x, e o
+  // versao do app: vem do processo principal (a UA nao carrega mais o token do app, e o
   // preload roda em sandbox, entao require de arquivo local nao e confiavel)
   appVersion: (() => { try { return ipcRenderer.sendSync('app:version'); } catch { return ''; } })()
 });

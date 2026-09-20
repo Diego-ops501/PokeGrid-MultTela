@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="tray.png" width="72" alt="PokeGrid MultTela">
+<img src="pokemux-logo-ui.png" width="460" alt="PokeMux">
 
-# PokeGrid MultTela
+# PokeMux
 
 **Up to four isolated Poke Idle World accounts, dashboards and local tools in one Windows app.**
 
-[Download for Windows](https://github.com/Diego-ops501/PokeGrid-MultTela/releases/latest) · [Português](README.md) · [License](LICENSE)
+[Download for Windows](https://github.com/Diego-ops501/PokeMux/releases/latest) · [Português](README.md) · [License](LICENSE)
 
 </div>
 
@@ -14,9 +14,9 @@
 
 ## Credits
 
-PokeGrid MultTela is derived from **[soufoka/PokeGrid-source](https://github.com/soufoka/PokeGrid-source)** and preserves its MIT license, history and credits. The original PokeGrid supplied the four-account grid, isolated sessions, assisted login, Eco mode, dashboards, Hunt Analyzer, history, tier list, Ditto tools and many quality-of-life features.
+**PokeMux** is derived from **[soufoka/PokeGrid-source](https://github.com/soufoka/PokeGrid-source)** and preserves its MIT license, history and credits. The original PokeGrid supplied the four-account grid, isolated sessions, assisted login, Eco mode, dashboards, Hunt Analyzer, history, tier list, Ditto tools and many quality-of-life features.
 
-This edition adds a Windows installer and updater, hardened storage and navigation, local overlays, confirmed Poké Ball purchases, optional return to the same hunt, spoken alerts and a repaired bundled IV calculator. It keeps the original PokeGrid-style top bar and uses the full window width for the game grid. See [NOTICE.md](NOTICE.md) for third-party acknowledgements.
+PokeMux adds a Windows installer and updater, hardened storage and navigation, local overlays, confirmed Poké Ball purchases, optional return to the same hunt, spoken alerts and a repaired bundled IV calculator. Its compact top bar uses the full window width for the game grid. See [NOTICE.md](NOTICE.md) for third-party acknowledgements.
 
 ## Highlights
 
@@ -36,8 +36,8 @@ The app does not solve CAPTCHA, automate 2FA, load arbitrary userscripts, rotate
 ## Run from source
 
 ```powershell
-git clone https://github.com/Diego-ops501/PokeGrid-MultTela.git
-cd PokeGrid-MultTela
+git clone https://github.com/Diego-ops501/PokeMux.git
+cd PokeMux
 npm ci
 npm test
 npm start
@@ -61,4 +61,4 @@ Build the Windows x64 NSIS installer with `npm run dist`.
 - [Third-party notices](NOTICE.md)
 - [MIT license](LICENSE)
 
-PokeGrid MultTela is not affiliated with Poke Idle World, Nintendo, The Pokémon Company or Game Freak.
+PokeMux is not affiliated with Poke Idle World, Nintendo, The Pokémon Company or Game Freak.

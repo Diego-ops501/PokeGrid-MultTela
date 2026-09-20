@@ -47,7 +47,7 @@ const eletronFalso = {
   app: Object.assign(eventos(), {
     whenReady: () => Promise.resolve(),
     getPath: (n) => { if (!(n in CAMINHOS)) throw new Error("path desconhecido: " + n); return CAMINHOS[n]; },
-    getVersion: () => '0.0.0-teste', getName: () => 'PokeGrid', getAppPath: () => RAIZ, isPackaged: false,
+    getVersion: () => '0.0.0-teste', getName: () => 'PokeMux', getAppPath: () => RAIZ, isPackaged: false,
     quit() {}, focus() {}, setAppUserModelId() {}, setLoginItemSettings() {},
     getLoginItemSettings: () => ({ openAtLogin: false }), requestSingleInstanceLock: () => true,
     userAgentFallback: 'Mozilla/5.0 Chrome/150.0.0.0 Electron/43.1.1 Safari/537.36',

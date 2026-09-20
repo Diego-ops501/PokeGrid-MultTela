@@ -5,9 +5,16 @@
 <!-- Defesa em profundidade: a interface nao faz rede (fetch/XHR/WS bloqueados), so carrega img do jogo/data.
      Se algum dado escapar do escape, nao ha canal pra vazar as contas salvas. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: https://poke.idleworld.online https://raw.githubusercontent.com https://pokexguides.com; font-src 'self' data:; connect-src https://api.github.com; frame-src https://poke.idleworld.online; child-src https://poke.idleworld.online; base-uri 'none'; form-action 'none'">
-<title>PokeGrid MultTela</title>
+<title>PokeMux</title>
 <script src="src/domain/iv-math.js"></script>
 <style>
+  :root {
+    --brand-cyan: #22d3ee;
+    --brand-blue: #3b82f6;
+    --brand-violet: #7c3aed;
+    --brand-magenta: #d946ef;
+    --brand-gradient: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue) 52%, var(--brand-violet));
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; background: #0d1117; color: #e6edf3; font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; overflow: hidden; }
   button, input { font-family: inherit; }
@@ -15,25 +22,25 @@
 
   #topbar {
     display: flex; align-items: center; gap: 8px;
-    padding: 8px 14px; background: #161b22; border-bottom: 1px solid #21262d; flex-shrink: 0;
+    padding: 6px 14px; background: linear-gradient(90deg, #111827, #161b2e 55%, #171426); border-bottom: 1px solid #29335c; flex-shrink: 0;
   }
-  #topbar .logo { display: flex; align-items: center; gap: 8px; font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 2.5px; }
-  #topbar .logo svg { display: block; }
+  #topbar .logo { display: flex; align-items: center; gap: 6px; min-width: 154px; }
+  #topbar .logo img { display: block; width: 142px; height: 34px; object-fit: contain; object-position: left center; }
   #topbar .logo .ver { font-size: 10px; font-weight: 400; letter-spacing: 0; color: #6e7681; align-self: flex-end; padding-bottom: 1px; }
   button {
     background: #21262d; color: #e6edf3; border: 1px solid #30363d;
     border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600; letter-spacing: .2px; cursor: pointer;
   }
   button:hover { background: #30363d; }
-  button.primary { background: #e3350d; border-color: #e3350d; color: #fff; font-weight: 600; }
-  button.primary:hover { background: #f0491f; }
+  button.primary { background: var(--brand-gradient); border-color: #3b82f6; color: #fff; font-weight: 700; box-shadow: 0 0 14px rgba(34,211,238,.12); }
+  button.primary:hover { filter: brightness(1.12); }
   button.on { background: #238636; border-color: #238636; }
   #refBtn { margin-left: 14px; }
   #donTop { margin-right: auto; margin-left: 12px; padding: 4px 12px; font-size: 12px; font-weight: 600; background: #1f6f3d; border: 1px solid #2ea043; color: #fff; }
   #donTop:hover { background: #278a4b; border-color: #3fb950; }
   /* pílula IV's: mesmo visual do botão da extensão dentro do jogo */
-  #ivsBtn { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #e3350d, #b91c1c); border-color: #8f1408; border-radius: 999px; color: #fff; font-weight: 700; }
-  #ivsBtn:hover { background: linear-gradient(135deg, #f0491f, #d42020); border-color: #e3350d; }
+  #ivsBtn { display: inline-flex; align-items: center; gap: 6px; background: var(--brand-gradient); border-color: #4f7cff; border-radius: 999px; color: #fff; font-weight: 700; }
+  #ivsBtn:hover { filter: brightness(1.14); border-color: #67e8f9; }
   #ivsBtn svg { flex: none; }
 
   /* Dropdown de opções */
@@ -150,7 +157,7 @@
     background: #0d1117; border-right: 1px solid #232a33; display: flex; flex-direction: column;
     transform: translateX(-100%); transition: transform .18s ease; box-shadow: 8px 0 40px rgba(0,0,0,.55); }
   #stats.show { transform: none; }
-  #stats .sb-top { height: 3px; background: linear-gradient(90deg, #e3350d, #ff7a4d); flex-shrink: 0; }
+  #stats .sb-top { height: 3px; background: linear-gradient(90deg, #22d3ee, #3b82f6, #7c3aed, #d946ef); flex-shrink: 0; }
   #stats .st-head { display: flex; align-items: center; gap: 8px; padding: 8px 13px; background: #0b0f15;
     font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #7d8590; flex-shrink: 0; }
   #stats .st-head .st-reset { margin-left: auto; padding: 2px 8px; font-size: 13px; }
@@ -471,15 +478,7 @@
 <body>
   <div id="topbar">
     <span class="logo">
-      <svg width="24" height="24" viewBox="0 0 32 32">
-        <circle cx="16" cy="16" r="15" fill="#f6f8fa" stroke="#0b0f14" stroke-width="2"/>
-        <path d="M1.6 16a14.4 14.4 0 0 1 28.8 0Z" fill="#e3350d"/>
-        <path d="M4 12.5a12.4 12.4 0 0 1 10-6" fill="none" stroke="#ff6b4d" stroke-width="2" stroke-linecap="round" opacity=".8"/>
-        <rect x="1.2" y="14.4" width="29.6" height="3.2" fill="#0b0f14"/>
-        <circle cx="16" cy="16" r="4.6" fill="#f6f8fa" stroke="#0b0f14" stroke-width="2"/>
-        <circle cx="16" cy="16" r="2" fill="#cfe8ff"/>
-      </svg>
-      POKEGRID <small style="font-size:9px;color:#8b949e;letter-spacing:.08em">MULTTELA</small>
+      <img src="pokemux-logo-ui.png" alt="PokeMux">
       <span class="ver" id="appVer"></span>
     </span>
     <button id="donTop">Ajude o projeto</button>
@@ -506,7 +505,7 @@
         <button id="eco">⚡ Eco</button>
         <button id="awake" title="Impede o PC de dormir enquanto farma (a tela ainda pode desligar)">💤 Dormir</button>
         <button id="minTray" title="O que o botão minimizar faz: esconder na bandeja ou minimizar normal na barra de tarefas">📥 Minimiza p/ bandeja</button>
-        <button id="autoStart" style="display:none" title="Cria um atalho na pasta Inicializar do Windows pra abrir o PokeGrid junto com o sistema">🚀 Abrir com o Windows</button>
+        <button id="autoStart" style="display:none" title="Cria um atalho na pasta Inicializar do Windows pra abrir o PokeMux junto com o sistema">🚀 Abrir com o Windows</button>
         <button id="sndShiny" title="Toca um som quando um shiny aparece (além da notificação)">✨🔊 Som do shiny</button>
         <button id="voiceAlerts" title="Fala alertas importantes usando uma voz instalada no Windows">🗣️ Voz dos alertas</button>
         <button id="shotShiny" title="Salva localmente um print quando aparece um shiny">📷 Print de shiny: off</button>
@@ -625,7 +624,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
   let accounts = [];
   const webviews = [];
   const off = [false, false, false, false];
-  // PokeGrid MultTela não carrega código arbitrário nas sessões autenticadas.
+  // PokeMux não carrega código arbitrário nas sessões autenticadas.
   const injectScripts = async () => {};
   const usNoLoginUrl = () => true;
   const lastLogin = [0, 0, 0, 0]; // cooldown do auto-login por painel (evita ressubmeter em loop)
@@ -637,7 +636,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
   // ----- Idioma (interface + jogo) -----
   const I18N = {
     pt: {
-      loginAll:'▶ Logar equipe', accounts:'👤 Treinadores', reloadAll:'⟳ Atualizar tudo', layout:'▦ Grade', layoutCol:'▤ Uma coluna', propOn:'🖼 Proporção original', asOn:'🚀 Abre com o Windows', asOff:'🚀 Abrir com o Windows', asTitle:'Cria um atalho do PokeGrid na pasta Inicializar do Windows, o mesmo lugar onde você colocaria um atalho à mão. Não mexe no registro e você pode remover pelo Win+R > shell:startup.', propOff:'🖼 Esticar na tela', propTitle:'Mantém a proporção original do jogo, sem esticar a imagem. Sobra fundo escuro quando o painel não bate com a proporção; desligado, a imagem preenche tudo mas distorce.', layoutRow:'▥ Uma linha', layoutTitle:'Como os painéis se organizam. Clique pra alternar: grade, uma coluna (empilhado) ou uma linha (lado a lado).',
+      loginAll:'▶ Logar equipe', accounts:'👤 Treinadores', reloadAll:'⟳ Atualizar tudo', layout:'▦ Grade', layoutCol:'▤ Uma coluna', propOn:'🖼 Proporção original', asOn:'🚀 Abre com o Windows', asOff:'🚀 Abrir com o Windows', asTitle:'Cria um atalho do PokeMux na pasta Inicializar do Windows, o mesmo lugar onde você colocaria um atalho à mão. Não mexe no registro e você pode remover pelo Win+R > shell:startup.', propOff:'🖼 Esticar na tela', propTitle:'Mantém a proporção original do jogo, sem esticar a imagem. Sobra fundo escuro quando o painel não bate com a proporção; desligado, a imagem preenche tudo mas distorce.', layoutRow:'▥ Uma linha', layoutTitle:'Como os painéis se organizam. Clique pra alternar: grade, uma coluna (empilhado) ou uma linha (lado a lado).',
       sound:'🔊 Som', muted:'🔇 Mudo', eco:'⚡ Eco', ecoOff:'⚡ Eco off', sleep:'💤 Dormir', awake:'☕ Acordado',
       chatHidden:'💬 Chat oculto', chatShown:'💬 Chat visível',
       optionsBtn:'☰ Opções', errlog:'🐞 Erros', errlogTitle:'Abre o relatório de erros. Se o app travar ou fechar sozinho, envie esse arquivo pro suporte.',
@@ -648,7 +647,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       dtByHunt:'Por hunt', dtByType:'Por tipo', dtMine:'Meu Ditto…', dtNoMine:'Nenhum Ditto no time das contas ligadas', dtVira:'vira', dtFolga:'folga', dtHidden:'{n} hunts acima do nível da conta ficaram de fora',
       hunt:'🎯 Hunt', huntTitle:'Abre o Hunt Analyzer em todos os painéis', tier:'\u{1F3C6} Tierlist', tierTitle:'Ranking de eficácia por elemento, calculado contra as hunts disponíveis', tlTitle:'Tierlist por elemento', tlLevelLbl:'Seu nível', tlTm:'com TM', tlTmTip:'Considerar golpes de TM (poder 600, Dragão 300). Desligado, a tierlist usa só golpes naturais: TM é item, só serve no estágio final e o Ditto não aprende.', tlHint:'Escolha seu nível ao lado: só entram as hunts que você alcança, e cada pokémon é avaliado no nível de cada hunt. Golpe físico bate na defesa física da hunt; especial, na especial; a vida do defensor segura o ritmo. XP de Orre já multiplicado.', tlAll:'Resumo', tlGeral:'Geral', scAddUrl:'+ Adicionar pelo GitHub', scBaixando:'Baixando…', scReloadAviso:'Isso recarrega os painéis ligados, e o jogo larga as contas na cidade: elas param de farmar até você voltar pra hunt. Continuar?', scRemover:'Remover este script?', scTrust:'Adicione só scripts de autores em que você confia: eles têm acesso total à página do jogo.\\n\\nContinuar?', scFalhou:'Não deu pra baixar o script.', scAtualizar:'Atualizar', scAtualizarTip:'Busca a versão mais recente no GitHub (só quando você clica)', scAtualizado:'Script atualizado!', scValeNoReload:'A versão nova só entra quando os painéis recarregarem (⟳ Atualizar tudo).', scJaAtual:'O script já está na versão mais recente.', scSoUser:'Solte um arquivo .user.js', scGrande:'Script grande demais: passa de 2 MB, ou os scripts somados passam de 4 MB.', tlFis:'FÍS', tlEsp:'ESP', tlFisTip:'Golpe físico: enfrenta a defesa física da hunt', tlEspTip:'Golpe especial: enfrenta a defesa especial da hunt', tlGeralHint:'Nota geral = rendimento somado em todas as hunts; o melhor do jogo é 100.', tlWait:'Aguardando os dados do jogo. Deixe uma conta logada e tente de novo.', tlBest:'melhor em', tlOut:'Melhor hunt em Outland (fora de Orre), pra quem ainda não alcança a região; o número é a nota nela', accClear:'Limpar os campos deste formulário', accWipe:'Limpar os dados do jogo desta conta (cookies e cache). Use se a conta bugou. A senha salva fica.', accWipeConfirm:'Limpar os dados do jogo da conta {n}?\\nResolve conta bugada (mapa, filtros, pokémon sumidos). A senha salva não é apagada; a conta desloga e loga de novo.', accWipeOk:'Dados limpos. A conta vai recarregar do zero.', accWipeErr:'Não deu pra limpar. Tente fechar e abrir o app.', whMention:'ID do usuário do Discord pra mencionar no alerta de shiny (opcional)', ivsTitle:'Abre a calculadora de IV do app: uma só, no centro da tela, alimentada por qualquer painel', ivcTitle:"Calculadora de IV", ivcHint:'Passe o mouse sobre um pokémon em qualquer painel.<br>Os dados aparecem aqui, e você pode ajustar nível e atributos pra recalcular.', ivcLevel:'Nível', ivcQuality:'Qualidade', ivcIvTotal:'IV total', ivcPower:'Poder estimado', ivcStats:'Atributos e IV por stat', ivcCurrent:'atual', ivcBase:'base', ivcPowerGame:'Poder no jogo', ivcFooter:'edite qualquer campo pra recalcular', ivcOpenPanel:'Abrir a calculadora dentro do painel (comparar)', ivcMoves:'Golpes', ivcMovePower:'poder do golpe', ivcMoveLast:'último dano observado em batalha',
       alerts:'🔔 Alertas', alertsTitle:'Liga e desliga todos os avisos do Windows: shiny, conta caiu, parou de farmar, suprimento baixo e pokémon derrubado', msgDown:'caiu', msgBalls:'está sem pokébolas', count:'🔢 Painéis', stats:'📊 Painel', statsTitle:'Resumo da conta em foco (gold/h, XP/h, bag, drops)', statsResumo:'Resumo', statsWaiting:'Aguardando dados do jogo…', statsWaiting2:'Deixe o painel logado e farmando alguns segundos.', statsOff:'Painel desligado.',
-      stLevel:'Nível', stSession:'Sessão', stDefeated:'Derrotados', stXpGain:'XP ganha', stCaptures:'Capturas', stGold:'Ouro da sessão', stLoot:'Loot (venda)', stCapSell:'Capturas (venda)', stSupply:'Suprimentos gastos', stBalls:'bolas', stPots:'cura', stBalance:'Saldo da sessão', stDrops:'Drops da sessão', stAccount:'Conta', stProfession:'Profissão', stMail:'Presentes no correio', stCatchTotal:'Capturas totais', stTeam:'Time', donTitle:'Ajude o projeto', donText:'O PokeGrid é gratuito e feito nas horas vagas. Se ele facilita o seu farm, um apoio de qualquer valor ajuda a manter o projeto vivo.', donBtn:'Apoiar via Pix / Mercado Pago \u2197', stTeamPick:'Clique pra colocar na frente (vira o líder que caça)', stTeamLead:'Líder atual',
+      stLevel:'Nível', stSession:'Sessão', stDefeated:'Derrotados', stXpGain:'XP ganha', stCaptures:'Capturas', stGold:'Ouro da sessão', stLoot:'Loot (venda)', stCapSell:'Capturas (venda)', stSupply:'Suprimentos gastos', stBalls:'bolas', stPots:'cura', stBalance:'Saldo da sessão', stDrops:'Drops da sessão', stAccount:'Conta', stProfession:'Profissão', stMail:'Presentes no correio', stCatchTotal:'Capturas totais', stTeam:'Time', donTitle:'Ajude o projeto', donText:'O PokeMux é gratuito e feito nas horas vagas. Se ele facilita o seu farm, um apoio de qualquer valor ajuda a manter o projeto vivo.', donBtn:'Apoiar via Pix / Mercado Pago \u2197', stTeamPick:'Clique pra colocar na frente (vira o líder que caça)', stTeamLead:'Líder atual',
       cards:'🍃 Simples', cardsShort:'Simples', cardsTitle:'Modo simples e ultra leve: esconde o jogo e mostra só os números, gastando o mínimo do PC (o farm continua)', cdGold:'gold/h líquido', cdXp:'XP/h total', cdKills:'kills/h', cdCaps:'capturas (sessão)', cdShiny:'shiny enc/cap', cdActive:'contas ativas', cdByAcc:'Por conta · clique no cabeçalho pra ordenar, na linha pra abrir o jogo', cdTrend:'Tendência · última hora', cdCatches:'Últimas capturas · todas as contas', cdShinies:'Aparições de shiny ✨', cdConta:'Conta', cdHunt:'Hunt', cdStatus:'Status', cdBest:'Melhor catch', cdLast:'Último catch', cdWaiting:'aguardando…', cdOff:'desligado', cdHunting:'caçando', cdTotal:'Total', cdSeen:'apareceram', cdCaught:'capturados', cdLost:'perdidos', cdNone:'nada ainda',
       cdHunts:'Ranking de hunts', cdShared:'Compartilhados no chat', cdFirst:'1ª captura da espécie', cdSortPrice:'Valor ↓', cdSortXp:'XP ↓', cdSortEff:'Efetividade ↓', cdSortMeasured:'Medido: gold/h ↓', cdMeasured:'sua média', cdHitsKill:'golpes/kill', cdEffOf:'efetividade vs líder de', cdLoading:'carregando dados do jogo…', stLastCatch:'Último catch', stSince:'bolas desde então',
       cdShinyTried:'Shinies tentados (bolas jogadas)', cdConfig:'Configurar o painel', cdConfigH:'Seções (arraste pra reordenar, marque pra mostrar)', cdSecKpis:'Resumo (KPIs)', cdByAcc2:'Tabela por conta', cdScopeMine:'Minhas hunts', cdScopeAll:'Todas as hunts', cdHide:'Ocultar esta hunt', cdUnhide:'Voltar a mostrar', cdShowHiddenN:'mostrar ocultas ({n})', cdHideHidden:'esconder as ocultas',
@@ -676,11 +675,11 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       msgStalled:'parece ter parado de farmar (10 min sem kills)',
       cdToday:'Hoje', cdWeek:'7 dias', cdAllTime:'Total', goalG:'Meta gold/dia', goalC:'Meta capturas/dia', csvTitle:'Baixa o resumo por dia em CSV (planilha)', csvDia:'Dia', csvHunts:'Hunts', csvHuntsTitle:'Baixa duas planilhas: uma linha por hunt (tempo, kills/h, XP/h, capturas, gold) e uma linha por item dropado, com drop por kill pra calcular a porcentagem. O registro é automático: cada vez que você troca de hunt, a anterior entra no log.', cdLifeHint:'contadores: sessão · lista: histórico',
       cdTargets:'Alvos', cdCritIvQ:'IV × qual.', cdCritIv:'IV', cdCritQ:'Qualidade', cdBestCritTitle:'Critério do melhor catch. A qualidade multiplica os stats e o poder, então IV × qualidade reflete melhor a força real.', cdTargetsHint:'Sem alvos ainda: no modo Total, passe o mouse num card e clique na ★ para marcar', cdTargetsMark:'Marcar/desmarcar como alvo',
-      whTitle:'Webhook do Discord: cole a URL do seu servidor pra receber avisos', whTest:'Testar', whTestOk:'✅ Chegou!', whTestErr:'❌ Falhou', sgAviso:'PokeGrid: voce esta vendendo coisas valiosas:', sgConfirma:'Confirmar a venda?', whShiny:'Avisar shiny', alLocalTitle:'\u{1F514} Alertas no Windows (por tipo)', alLocalHint:'O botão \u{1F514} no topo liga/desliga tudo. Aqui você escolhe quais tipos avisam na sua máquina (o Discord tem as opções próprias abaixo).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Conta caiu', alLocal_stalled:'\u{1F7E0} Parou de farmar', alLocal_balls:'\u{1F535} Suprimento baixo (pokébola, potion, revive)', alLocal_faint:'\u{1F480} Pokémon derrubado', whProb:'Avisar problema (conta caiu, parou de farmar, sem bola)', whSum:'Resumo diário', whDay:'📊 Resumo de', whCaught:'CAPTURADO ✅', whLost:'perdido ✕', whTestMsg:'✅ PokeGrid conectado! Os avisos vão chegar aqui.',
+      whTitle:'Webhook do Discord: cole a URL do seu servidor pra receber avisos', whTest:'Testar', whTestOk:'✅ Chegou!', whTestErr:'❌ Falhou', sgAviso:'PokeMux: voce esta vendendo coisas valiosas:', sgConfirma:'Confirmar a venda?', whShiny:'Avisar shiny', alLocalTitle:'\u{1F514} Alertas no Windows (por tipo)', alLocalHint:'O botão \u{1F514} no topo liga/desliga tudo. Aqui você escolhe quais tipos avisam na sua máquina (o Discord tem as opções próprias abaixo).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Conta caiu', alLocal_stalled:'\u{1F7E0} Parou de farmar', alLocal_balls:'\u{1F535} Suprimento baixo (pokébola, potion, revive)', alLocal_faint:'\u{1F480} Pokémon derrubado', whProb:'Avisar problema (conta caiu, parou de farmar, sem bola)', whSum:'Resumo diário', whDay:'📊 Resumo de', whCaught:'CAPTURADO ✅', whLost:'perdido ✕', whTestMsg:'✅ PokeMux conectado! Os avisos vão chegar aqui.',
       bkExp:'💾 Exportar config', bkImp:'📂 Importar config', bkExpTitle:'Salva um arquivo com todas as configurações e o histórico (senhas ficam fora)', bkImpTitle:'Restaura configurações e histórico de um arquivo exportado', bkConfirm:'Substituir as configurações e o histórico (hunts, shinies, gráficos) pelos do arquivo? Uma cópia do estado atual é salva antes. O app vai recarregar. (Senhas não são afetadas.)', bkBad:'Arquivo inválido.', bkNoCopy:'Não foi possível salvar a cópia do estado atual (pasta de backups inacessível, disco cheio ou histórico acima de 2 MB). Importar mesmo assim? O histórico atual será perdido.'
     },
     en: {
-      loginAll:'▶ Log in all', accounts:'👤 Accounts', reloadAll:'⟳ Reload all', layout:'▦ Grid', layoutCol:'▤ Single column', propOn:'🖼 Original aspect', asOn:'🚀 Opens with Windows', asOff:'🚀 Open with Windows', asTitle:'Creates a PokeGrid shortcut in the Windows Startup folder, the same place you would put one by hand. It does not touch the registry and you can remove it via Win+R > shell:startup.', propOff:'🖼 Stretch to fill', propTitle:'Keeps the game original aspect ratio instead of stretching the image. Dark bars appear when the panel does not match the ratio; turned off, the image fills everything but gets distorted.', layoutRow:'▥ Single row', layoutTitle:'How the panels are arranged. Click to cycle: grid, single column (stacked) or single row (side by side).',
+      loginAll:'▶ Log in all', accounts:'👤 Accounts', reloadAll:'⟳ Reload all', layout:'▦ Grid', layoutCol:'▤ Single column', propOn:'🖼 Original aspect', asOn:'🚀 Opens with Windows', asOff:'🚀 Open with Windows', asTitle:'Creates a PokeMux shortcut in the Windows Startup folder, the same place you would put one by hand. It does not touch the registry and you can remove it via Win+R > shell:startup.', propOff:'🖼 Stretch to fill', propTitle:'Keeps the game original aspect ratio instead of stretching the image. Dark bars appear when the panel does not match the ratio; turned off, the image fills everything but gets distorted.', layoutRow:'▥ Single row', layoutTitle:'How the panels are arranged. Click to cycle: grid, single column (stacked) or single row (side by side).',
       sound:'🔊 Sound', muted:'🔇 Muted', eco:'⚡ Eco', ecoOff:'⚡ Eco off', sleep:'💤 Sleep', awake:'☕ Awake',
       chatHidden:'💬 Chat hidden', chatShown:'💬 Chat shown',
       optionsBtn:'☰ Options', errlog:'🐞 Errors', errlogTitle:'Opens the error report. If the app freezes or closes on its own, send this file to support.',
@@ -691,7 +690,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       dtByHunt:'By hunt', dtByType:'By type', dtMine:'My Ditto…', dtNoMine:'No Ditto in the team of the online accounts', dtVira:'becomes', dtFolga:'margin', dtHidden:'{n} hunts above the account level were left out',
       hunt:'🎯 Hunt', huntTitle:'Opens the Hunt Analyzer in all panels', tier:'\u{1F3C6} Tierlist', tierTitle:'Effectiveness ranking per element, computed against the available hunts', tlTitle:'Tierlist by element', tlLevelLbl:'Your level', tlTm:'with TM', tlTmTip:'Include TM moves (power 600, Dragon 300). Off, the tierlist uses natural moves only: a TM is an item, only final stages can learn it and Ditto cannot.', tlHint:'Pick your level on the side: only hunts you can reach count, and each pokemon is rated at each hunt\'s level. Physical moves hit physical defense; special hit special; defender HP holds the pace. Orre XP already multiplied.', tlAll:'Summary', tlGeral:'Overall', scAddUrl:'+ Add from GitHub', scBaixando:'Downloading…', scReloadAviso:'This reloads the active panels, and the game drops the accounts in town: they stop farming until you re-enter the hunt. Continue?', scRemover:'Remove this script?', scTrust:'Only add scripts from authors you trust: they get full access to the game page.\\n\\nContinue?', scFalhou:'Could not download the script.', scAtualizar:'Update', scAtualizarTip:'Fetches the latest version from GitHub (only when you click)', scAtualizado:'Script updated!', scValeNoReload:'The new version only runs after the panels reload (⟳ Reload all).', scJaAtual:'The script is already up to date.', scSoUser:'Drop a .user.js file', scGrande:'Script too large: over 2 MB, or all scripts together exceed 4 MB.', tlFis:'PHY', tlEsp:'SPE', tlFisTip:'Physical move: faces the hunts physical defense', tlEspTip:'Special move: faces the hunts special defense', tlGeralHint:'Overall = yield summed across all hunts; the games best is 100.', tlWait:'Waiting for game data. Keep an account logged in and try again.', tlBest:'best at', tlOut:'Best Outland hunt (outside Orre) for those who cannot reach the region yet; the number is its score', accClear:'Clear this form', accWipe:'Clear this accounts game data (cookies and cache). Use it if the account glitched. Saved password stays.', accWipeConfirm:'Clear game data for account {n}?\\nFixes a glitched account (map, filters, missing Pokémon). The saved password is kept; the account logs out and back in.', accWipeOk:'Data cleared. The account will reload from scratch.', accWipeErr:'Could not clear. Try restarting the app.', whMention:'Discord user ID to mention in the shiny alert (optional)', ivsTitle:'Opens the app IV calculator: a single one, centered, fed by any panel', ivcTitle:"IV calculator", ivcHint:'Hover a Pokémon in any panel.<br>The data shows up here, and you can adjust level and stats to recalculate.', ivcLevel:'Level', ivcQuality:'Quality', ivcIvTotal:'Total IV', ivcPower:'Estimated power', ivcStats:'Stats and IV per stat', ivcCurrent:'current', ivcBase:'base', ivcPowerGame:'Power in game', ivcFooter:'edit any field to recalculate', ivcOpenPanel:'Open the calculator inside the panel (compare)', ivcMoves:'Moves', ivcMovePower:'move power', ivcMoveLast:'last damage seen in battle',
       alerts:'🔔 Alerts', alertsTitle:'Turns every Windows alert on or off: shiny, dropped account, stopped farming, low supplies and fainted Pokémon', msgDown:'disconnected', msgBalls:'is out of Pokéballs', count:'🔢 Panels', stats:'📊 Panel', statsTitle:'Summary of the focused account (gold/h, XP/h, bag, drops)', statsResumo:'Summary', statsWaiting:'Waiting for game data…', statsWaiting2:'Keep the panel logged in and farming for a few seconds.', statsOff:'Panel is off.',
-      stLevel:'Level', stSession:'Session', stDefeated:'Defeated', stXpGain:'XP gained', stCaptures:'Captures', stGold:'Session gold', stLoot:'Loot (sell)', stCapSell:'Captures (sell)', stSupply:'Supplies used', stBalls:'balls', stPots:'heals', stBalance:'Session balance', stDrops:'Session drops', stAccount:'Account', stProfession:'Profession', stMail:'Gifts in mail', stCatchTotal:'Total catches', stTeam:'Team', donTitle:'Support the project', donText:'PokeGrid is free and built in spare time. If it makes your farming easier, a contribution of any size helps keep the project alive.', donBtn:'Support via Pix / Mercado Pago \u2197', stTeamPick:'Click to put it in front (becomes the hunting leader)', stTeamLead:'Current leader',
+      stLevel:'Level', stSession:'Session', stDefeated:'Defeated', stXpGain:'XP gained', stCaptures:'Captures', stGold:'Session gold', stLoot:'Loot (sell)', stCapSell:'Captures (sell)', stSupply:'Supplies used', stBalls:'balls', stPots:'heals', stBalance:'Session balance', stDrops:'Session drops', stAccount:'Account', stProfession:'Profession', stMail:'Gifts in mail', stCatchTotal:'Total catches', stTeam:'Team', donTitle:'Support the project', donText:'PokeMux is free and built in spare time. If it makes your farming easier, a contribution of any size helps keep the project alive.', donBtn:'Support via Pix / Mercado Pago \u2197', stTeamPick:'Click to put it in front (becomes the hunting leader)', stTeamLead:'Current leader',
       cards:'🍃 Simple', cardsShort:'Simple', cardsTitle:'Simple, ultra-light mode: hides the game and shows only the numbers, using the least PC possible (farming continues)', cdGold:'net gold/h', cdXp:'total XP/h', cdKills:'kills/h', cdCaps:'captures (session)', cdShiny:'shiny enc/cap', cdActive:'active accounts', cdByAcc:'Per account · click a header to sort, a row to open the game', cdTrend:'Trend · last hour', cdCatches:'Latest captures · all accounts', cdShinies:'Shiny appearances ✨', cdConta:'Account', cdHunt:'Hunt', cdStatus:'Status', cdBest:'Best catch', cdLast:'Last catch', cdWaiting:'waiting…', cdOff:'off', cdHunting:'hunting', cdTotal:'Total', cdSeen:'appeared', cdCaught:'caught', cdLost:'lost', cdNone:'nothing yet',
       cdHunts:'Hunt ranking', cdShared:'Shared in chat', cdFirst:'first capture of the species', cdSortPrice:'Value ↓', cdSortXp:'XP ↓', cdSortEff:'Effectiveness ↓', cdSortMeasured:'Measured: gold/h ↓', cdMeasured:'your average', cdHitsKill:'hits/kill', cdEffOf:'effectiveness vs leader of', cdLoading:'loading game data…', stLastCatch:'Last catch', stSince:'balls since then',
       cdShinyTried:'Shinies attempted (balls thrown)', cdConfig:'Configure the panel', cdConfigH:'Sections (drag to reorder, check to show)', cdSecKpis:'Summary (KPIs)', cdByAcc2:'Per-account table', cdScopeMine:'My hunts', cdScopeAll:'All hunts', cdHide:'Hide this hunt', cdUnhide:'Show again', cdShowHiddenN:'show hidden ({n})', cdHideHidden:'hide the hidden ones',
@@ -720,11 +719,11 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       msgStalled:'seems to have stopped farming (10 min without kills)',
       cdToday:'Today', cdWeek:'7 days', cdAllTime:'All time', goalG:'Gold goal/day', goalC:'Catch goal/day', csvTitle:'Downloads the daily summary as a CSV (spreadsheet)', csvDia:'Day', csvHunts:'Hunts', csvHuntsTitle:'Downloads two spreadsheets: one row per hunt (time, kills/h, XP/h, captures, gold) and one row per dropped item, with drop per kill so you can work out the percentage. Logging is automatic: every time you switch hunts, the previous one is recorded.', cdLifeHint:'counters: session · list: all-time',
       cdTargets:'Targets', cdCritIvQ:'IV × qual.', cdCritIv:'IV', cdCritQ:'Quality', cdBestCritTitle:'Best-catch criterion. Quality multiplies stats and power, so IV × quality reflects real strength better.', cdTargetsHint:'No targets yet: in Total mode, hover a card and click the ★ to mark it', cdTargetsMark:'Mark/unmark as target',
-      whTitle:'Discord webhook: paste your server URL to receive alerts', whTest:'Test', whTestOk:'✅ Delivered!', whTestErr:'❌ Failed', sgAviso:'PokeGrid: you are selling valuable things:', sgConfirma:'Confirm the sale?', whShiny:'Shiny alerts', alLocalTitle:'\u{1F514} Windows alerts (by type)', alLocalHint:'The \u{1F514} button at the top turns everything on/off. Here you pick which types notify on this machine (Discord has its own options below).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Account dropped', alLocal_stalled:'\u{1F7E0} Stopped farming', alLocal_balls:'\u{1F535} Low supplies (balls, potions, revives)', alLocal_faint:'\u{1F480} Pokémon fainted', whProb:'Problem alerts (dropped, stopped farming, out of balls)', whSum:'Daily summary', whDay:'📊 Summary of', whCaught:'CAUGHT ✅', whLost:'lost ✕', whTestMsg:'✅ PokeGrid connected! Alerts will arrive here.',
+      whTitle:'Discord webhook: paste your server URL to receive alerts', whTest:'Test', whTestOk:'✅ Delivered!', whTestErr:'❌ Failed', sgAviso:'PokeMux: you are selling valuable things:', sgConfirma:'Confirm the sale?', whShiny:'Shiny alerts', alLocalTitle:'\u{1F514} Windows alerts (by type)', alLocalHint:'The \u{1F514} button at the top turns everything on/off. Here you pick which types notify on this machine (Discord has its own options below).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Account dropped', alLocal_stalled:'\u{1F7E0} Stopped farming', alLocal_balls:'\u{1F535} Low supplies (balls, potions, revives)', alLocal_faint:'\u{1F480} Pokémon fainted', whProb:'Problem alerts (dropped, stopped farming, out of balls)', whSum:'Daily summary', whDay:'📊 Summary of', whCaught:'CAUGHT ✅', whLost:'lost ✕', whTestMsg:'✅ PokeMux connected! Alerts will arrive here.',
       bkExp:'💾 Export config', bkImp:'📂 Import config', bkExpTitle:'Saves a file with all settings and history (passwords stay out)', bkImpTitle:'Restores settings and history from an exported file', bkConfirm:'Replace the current settings and history (hunts, shinies, charts) with the file? A copy of the current state is saved first. The app will reload. (Passwords are not affected.)', bkBad:'Invalid file.', bkNoCopy:'Could not save a copy of the current state (backup folder unavailable, disk full or history above 2 MB). Import anyway? The current history will be lost.'
     },
     es: {
-      loginAll:'▶ Iniciar equipo', accounts:'👤 Entrenadores', reloadAll:'⟳ Recargar todo', layout:'▦ Cuadrícula', layoutCol:'▤ Una columna', propOn:'🖼 Proporción original', asOn:'🚀 Abre con Windows', asOff:'🚀 Abrir con Windows', asTitle:'Crea un acceso directo de PokeGrid en la carpeta Inicio de Windows, el mismo lugar donde lo pondrías a mano. No toca el registro y puedes quitarlo con Win+R > shell:startup.', propOff:'🖼 Estirar en pantalla', propTitle:'Mantiene la proporción original del juego, sin estirar la imagen. Queda fondo oscuro cuando el panel no coincide con la proporción; apagado, la imagen llena todo pero se distorsiona.', layoutRow:'▥ Una fila', layoutTitle:'Cómo se organizan los paneles. Clic para alternar: cuadrícula, una columna (apilado) o una fila (lado a lado).',
+      loginAll:'▶ Iniciar equipo', accounts:'👤 Entrenadores', reloadAll:'⟳ Recargar todo', layout:'▦ Cuadrícula', layoutCol:'▤ Una columna', propOn:'🖼 Proporción original', asOn:'🚀 Abre con Windows', asOff:'🚀 Abrir con Windows', asTitle:'Crea un acceso directo de PokeMux en la carpeta Inicio de Windows, el mismo lugar donde lo pondrías a mano. No toca el registro y puedes quitarlo con Win+R > shell:startup.', propOff:'🖼 Estirar en pantalla', propTitle:'Mantiene la proporción original del juego, sin estirar la imagen. Queda fondo oscuro cuando el panel no coincide con la proporción; apagado, la imagen llena todo pero se distorsiona.', layoutRow:'▥ Una fila', layoutTitle:'Cómo se organizan los paneles. Clic para alternar: cuadrícula, una columna (apilado) o una fila (lado a lado).',
       sound:'🔊 Sonido', muted:'🔇 Silencio', eco:'⚡ Eco', ecoOff:'⚡ Eco off', sleep:'💤 Dormir', awake:'☕ Despierto',
       chatHidden:'💬 Chat oculto', chatShown:'💬 Chat visible',
       optionsBtn:'☰ Opciones', errlog:'🐞 Errores', errlogTitle:'Abre el informe de errores. Si la app se congela o se cierra sola, envía este archivo al soporte.',
@@ -735,7 +734,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       dtByHunt:'Por hunt', dtByType:'Por tipo', dtMine:'Mi Ditto…', dtNoMine:'Ningún Ditto en el equipo de las cuentas conectadas', dtVira:'se vuelve', dtFolga:'margen', dtHidden:'{n} hunts por encima del nivel de la cuenta quedaron fuera',
       hunt:'🎯 Hunt', huntTitle:'Abre el Hunt Analyzer en todos los paneles', tier:'\u{1F3C6} Tierlist', tierTitle:'Ranking de eficacia por elemento, calculado contra las hunts disponibles', tlTitle:'Tierlist por elemento', tlLevelLbl:'Tu nivel', tlTm:'con TM', tlTmTip:'Considerar golpes de TM (poder 600, Dragón 300). Apagado, la tierlist usa solo golpes naturales: el TM es un ítem, solo sirve en la etapa final y Ditto no aprende.', tlHint:'Elige tu nivel al lado: solo entran las hunts que alcanzas, y cada pokémon se evalúa al nivel de cada hunt. Golpe físico golpea la defensa física; especial, la especial; la vida del defensor frena el ritmo. XP de Orre ya multiplicado.', tlAll:'Resumen', tlGeral:'General', scAddUrl:'+ Añadir desde GitHub', scBaixando:'Descargando…', scReloadAviso:'Esto recarga los paneles activos, y el juego deja las cuentas en la ciudad: dejan de farmear hasta que vuelvas a la hunt. ¿Continuar?', scRemover:'¿Quitar este script?', scTrust:'Añade solo scripts de autores en los que confías: tienen acceso total a la página del juego.\\n\\n¿Continuar?', scFalhou:'No se pudo descargar el script.', scAtualizar:'Actualizar', scAtualizarTip:'Busca la versión más reciente en GitHub (solo cuando haces clic)', scAtualizado:'¡Script actualizado!', scValeNoReload:'La versión nueva solo entra cuando los paneles se recarguen (⟳ Actualizar todo).', scJaAtual:'El script ya está en la versión más reciente.', scSoUser:'Suelta un archivo .user.js', scGrande:'Script demasiado grande: supera 2 MB, o los scripts sumados superan 4 MB.', tlFis:'FÍS', tlEsp:'ESP', tlFisTip:'Golpe físico: enfrenta la defensa física de la hunt', tlEspTip:'Golpe especial: enfrenta la defensa especial de la hunt', tlGeralHint:'Nota general = rendimiento sumado en todas las hunts; el mejor del juego es 100.', tlWait:'Esperando los datos del juego. Deja una cuenta conectada e intenta de nuevo.', tlBest:'mejor en', tlOut:'Mejor hunt en Outland (fuera de Orre) para quien aún no alcanza la región; el número es su nota', accClear:'Limpiar los campos de este formulario', accWipe:'Limpia los datos del juego de esta cuenta (cookies y caché). Úsalo si la cuenta se bugueó. La contraseña guardada queda.', accWipeConfirm:'\u00bfLimpiar los datos del juego de la cuenta {n}?\\nArregla una cuenta bugueada. La contraseña guardada no se borra; la cuenta sale y vuelve a entrar.', accWipeOk:'Datos limpios. La cuenta recargará desde cero.', accWipeErr:'No se pudo limpiar. Prueba reiniciar la app.', whMention:'ID del usuario de Discord para mencionar en la alerta de shiny (opcional)', ivsTitle:'Abre la calculadora de IV del app: una sola, en el centro, alimentada por cualquier panel', ivcTitle:"Calculadora de IV", ivcHint:'Pasa el mouse sobre un pokémon en cualquier panel.<br>Los datos aparecen aquí, y puedes ajustar nivel y atributos para recalcular.', ivcLevel:'Nivel', ivcQuality:'Calidad', ivcIvTotal:'IV total', ivcPower:'Poder estimado', ivcStats:'Atributos e IV por stat', ivcCurrent:'actual', ivcBase:'base', ivcPowerGame:'Poder en el juego', ivcFooter:'edita cualquier campo para recalcular', ivcOpenPanel:'Abrir la calculadora dentro del panel (comparar)', ivcMoves:'Golpes', ivcMovePower:'poder del golpe', ivcMoveLast:'último daño observado en batalla',
       alerts:'🔔 Alertas', alertsTitle:'Enciende y apaga todos los avisos de Windows: shiny, cuenta caída, dejó de farmear, suministro bajo y Pokémon debilitado', msgDown:'se desconectó', msgBalls:'se quedó sin Pokéballs', count:'🔢 Paneles', stats:'📊 Panel', statsTitle:'Resumen de la cuenta enfocada (oro/h, XP/h, bolsa, drops)', statsResumo:'Resumen', statsWaiting:'Esperando datos del juego…', statsWaiting2:'Deja el panel conectado y farmeando unos segundos.', statsOff:'Panel apagado.',
-      stLevel:'Nivel', stSession:'Sesión', stDefeated:'Derrotados', stXpGain:'XP ganada', stCaptures:'Capturas', stGold:'Oro de la sesión', stLoot:'Loot (venta)', stCapSell:'Capturas (venta)', stSupply:'Suministros gastados', stBalls:'bolas', stPots:'curas', stBalance:'Balance de la sesión', stDrops:'Drops de la sesión', stAccount:'Cuenta', stProfession:'Profesión', stMail:'Regalos en el correo', stCatchTotal:'Capturas totales', stTeam:'Equipo', donTitle:'Apoya el proyecto', donText:'PokeGrid es gratuito y hecho en el tiempo libre. Si te facilita el farmeo, un aporte de cualquier valor ayuda a mantener el proyecto vivo.', donBtn:'Apoyar vía Pix / Mercado Pago \u2197', stTeamPick:'Clic para ponerlo al frente (será el líder que caza)', stTeamLead:'Líder actual',
+      stLevel:'Nivel', stSession:'Sesión', stDefeated:'Derrotados', stXpGain:'XP ganada', stCaptures:'Capturas', stGold:'Oro de la sesión', stLoot:'Loot (venta)', stCapSell:'Capturas (venta)', stSupply:'Suministros gastados', stBalls:'bolas', stPots:'curas', stBalance:'Balance de la sesión', stDrops:'Drops de la sesión', stAccount:'Cuenta', stProfession:'Profesión', stMail:'Regalos en el correo', stCatchTotal:'Capturas totales', stTeam:'Equipo', donTitle:'Apoya el proyecto', donText:'PokeMux es gratuito y hecho en el tiempo libre. Si te facilita el farmeo, un aporte de cualquier valor ayuda a mantener el proyecto vivo.', donBtn:'Apoyar vía Pix / Mercado Pago \u2197', stTeamPick:'Clic para ponerlo al frente (será el líder que caza)', stTeamLead:'Líder actual',
       cards:'🍃 Simple', cardsShort:'Simple', cardsTitle:'Modo simple y ultraligero: oculta el juego y muestra solo los números, gastando lo mínimo del PC (el farmeo sigue)', cdGold:'oro/h neto', cdXp:'XP/h total', cdKills:'kills/h', cdCaps:'capturas (sesión)', cdShiny:'shiny enc/cap', cdActive:'cuentas activas', cdByAcc:'Por cuenta · clic en el encabezado para ordenar, en la fila para abrir el juego', cdTrend:'Tendencia · última hora', cdCatches:'Últimas capturas · todas las cuentas', cdShinies:'Apariciones de shiny ✨', cdConta:'Cuenta', cdHunt:'Hunt', cdStatus:'Estado', cdBest:'Mejor catch', cdLast:'Último catch', cdWaiting:'esperando…', cdOff:'apagado', cdHunting:'cazando', cdTotal:'Total', cdSeen:'aparecieron', cdCaught:'capturados', cdLost:'perdidos', cdNone:'nada todavía',
       cdHunts:'Ranking de hunts', cdShared:'Compartidos en el chat', cdFirst:'1ª captura de la especie', cdSortPrice:'Valor ↓', cdSortXp:'XP ↓', cdSortEff:'Efectividad ↓', cdSortMeasured:'Medido: oro/h ↓', cdMeasured:'tu promedio', cdHitsKill:'golpes/kill', cdEffOf:'efectividad vs líder de', cdLoading:'cargando datos del juego…', stLastCatch:'Último catch', stSince:'balls desde entonces',
       cdShinyTried:'Shinies intentados (balls lanzadas)', cdConfig:'Configurar el panel', cdConfigH:'Secciones (arrastra para reordenar, marca para mostrar)', cdSecKpis:'Resumen (KPIs)', cdByAcc2:'Tabla por cuenta', cdScopeMine:'Mis hunts', cdScopeAll:'Todas las hunts', cdHide:'Ocultar esta hunt', cdUnhide:'Volver a mostrar', cdShowHiddenN:'mostrar ocultas ({n})', cdHideHidden:'esconder las ocultas',
@@ -763,7 +762,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=CJNKGPB'; // link do refer
       msgStalled:'parece haber dejado de farmear (10 min sin kills)',
       cdToday:'Hoy', cdWeek:'7 días', cdAllTime:'Total', goalG:'Meta oro/día', goalC:'Meta capturas/día', csvTitle:'Descarga el resumen por día en CSV (planilla)', csvDia:'Día', csvHunts:'Hunts', csvHuntsTitle:'Descarga dos planillas: una fila por hunt (tiempo, kills/h, XP/h, capturas, oro) y una fila por ítem dropeado, con drop por kill para calcular el porcentaje. El registro es automático: cada vez que cambias de hunt, la anterior queda guardada.', cdLifeHint:'contadores: sesión · lista: histórico',
       cdTargets:'Objetivos', cdCritIvQ:'IV × cal.', cdCritIv:'IV', cdCritQ:'Calidad', cdBestCritTitle:'Criterio del mejor catch. La calidad multiplica los stats y el poder, así que IV × calidad refleja mejor la fuerza real.', cdTargetsHint:'Sin objetivos aún: en modo Total, pasa el mouse por un card y haz clic en la ★ para marcarlo', cdTargetsMark:'Marcar/desmarcar como objetivo',
-      whTitle:'Webhook de Discord: pega la URL de tu servidor para recibir avisos', whTest:'Probar', whTestOk:'✅ ¡Llegó!', whTestErr:'❌ Falló', sgAviso:'PokeGrid: estas vendiendo cosas valiosas:', sgConfirma:'¿Confirmar la venta?', whShiny:'Avisar shiny', alLocalTitle:'\u{1F514} Alertas en Windows (por tipo)', alLocalHint:'El botón \u{1F514} de arriba enciende/apaga todo. Aquí eliges qué tipos avisan en tu máquina (Discord tiene sus propias opciones abajo).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Cuenta caída', alLocal_stalled:'\u{1F7E0} Dejó de farmear', alLocal_balls:'\u{1F535} Suministro bajo (bolas, pociones, revivires)', alLocal_faint:'\u{1F480} Pokémon debilitado', whProb:'Avisar problema (cuenta caída, dejó de farmear, sin bolas)', whSum:'Resumen diario', whDay:'📊 Resumen de', whCaught:'CAPTURADO ✅', whLost:'perdido ✕', whTestMsg:'✅ ¡PokeGrid conectado! Los avisos llegarán aquí.',
+      whTitle:'Webhook de Discord: pega la URL de tu servidor para recibir avisos', whTest:'Probar', whTestOk:'✅ ¡Llegó!', whTestErr:'❌ Falló', sgAviso:'PokeMux: estas vendiendo cosas valiosas:', sgConfirma:'¿Confirmar la venta?', whShiny:'Avisar shiny', alLocalTitle:'\u{1F514} Alertas en Windows (por tipo)', alLocalHint:'El botón \u{1F514} de arriba enciende/apaga todo. Aquí eliges qué tipos avisan en tu máquina (Discord tiene sus propias opciones abajo).', alLocal_shiny:'\u2728 Shiny', alLocal_down:'\u{1F534} Cuenta caída', alLocal_stalled:'\u{1F7E0} Dejó de farmear', alLocal_balls:'\u{1F535} Suministro bajo (bolas, pociones, revivires)', alLocal_faint:'\u{1F480} Pokémon debilitado', whProb:'Avisar problema (cuenta caída, dejó de farmear, sin bolas)', whSum:'Resumen diario', whDay:'📊 Resumen de', whCaught:'CAPTURADO ✅', whLost:'perdido ✕', whTestMsg:'✅ ¡PokeMux conectado! Los avisos llegarán aquí.',
       bkExp:'💾 Exportar config', bkImp:'📂 Importar config', bkExpTitle:'Guarda un archivo con todas las configuraciones y el historial (las contraseñas quedan fuera)', bkImpTitle:'Restaura configuraciones e historial desde un archivo exportado', bkConfirm:'¿Reemplazar las configuraciones y el historial (hunts, shinies, gráficos) por los del archivo? Antes se guarda una copia del estado actual. La app se recargará. (Las contraseñas no se ven afectadas.)', bkBad:'Archivo inválido.', bkNoCopy:'No se pudo guardar la copia del estado actual (carpeta de backups inaccesible, disco lleno o historial de más de 2 MB). ¿Importar igual? El historial actual se perderá.'
     }
   };
@@ -1205,9 +1204,9 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
             its.forEach(x => { const nm = nomeItem(x.itemId); if (nm && PROT.includes(nm.toLowerCase())) avisos.push(nm + ' x' + (x.qty || 1)); });
           }
           if (avisos.length && window.__pgSellGuardOn !== false) {
-            const T = window.__pgSellTxt || ['PokeGrid: voce esta vendendo coisas valiosas:', 'Confirmar a venda?'];
+            const T = window.__pgSellTxt || ['PokeMux: voce esta vendendo coisas valiosas:', 'Confirmar a venda?'];
             const ok = window.confirm(T[0] + '\\n\\n' + avisos.join('\\n') + '\\n\\n' + T[1]);
-            if (!ok) return Promise.reject(new Error('Venda cancelada pelo PokeGrid'));
+            if (!ok) return Promise.reject(new Error('Venda cancelada pelo PokeMux'));
           }
         }
       } catch (x) {}
@@ -1543,7 +1542,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   function alerta(i, chave, meta) {
     if (!alertsOn) return;
     const nome = (accounts[i] && accounts[i].name) || defName(i);
-    if (alLocal[alCat(chave)] !== false) { try { window.pokeAPI.notify('PokeGrid MultTela', nome + ' ' + t(chave)); } catch {} } // notify local so se o tipo estiver ligado
+    if (alLocal[alCat(chave)] !== false) { try { window.pokeAPI.notify('PokeMux', nome + ' ' + t(chave)); } catch {} } // notify local so se o tipo estiver ligado
     const vozTipo = { msgShiny: 'shinyAppear', msgShinyCap: 'shinySuccess', msgBallsLow: 'ballsLow', msgPotionsLow: 'healsLow', msgRevivesLow: 'revivesLow' }[chave];
     if (vozTipo && alLocal[alCat(chave)] !== false) falaAlerta(vozTipo, i, meta || {});
     // pedido do Arthur: o mesmo aviso vai pro Discord, pra chegar no celular quando uma conta
@@ -1844,8 +1843,8 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
           csvNum(porKill, 4), csvNum(porKill * 100, 3)]);
       });
     });
-    baixa('pokegrid-hunts.csv', a);
-    baixa('pokegrid-drops.csv', b);
+    baixa('pokemux-hunts.csv', a);
+    baixa('pokemux-drops.csv', b);
   }
   function exportCSV() {
     let csv = csvLinha(['Dia', 'Conta', 'Gold', 'XP', 'Kills', 'Capturas', 'Shiny apareceu', 'Shiny capturado']);
@@ -1854,7 +1853,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       const b = histDay[k][i2];
       csv += csvLinha([diaBR(k), csvCel(tabNames[i2] || stName(+i2)), csvNum(b.g), csvNum(b.x), csvNum(b.kl), csvNum(b.c), csvNum(b.sf), csvNum(b.sc)]);
     }));
-    baixa('pokegrid-historico.csv', csv);
+    baixa('pokemux-historico.csv', csv);
   }
 
   // ----- Logs vitalicios: shinies e capturas sobrevivem ao fechar o app -----
@@ -2063,8 +2062,8 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   document.getElementById('reloadAll').onclick = () => webviews.forEach((w, i) => { if (!off[i]) { try { w.reloadIgnoringCache(); } catch { w.reload(); } } }); // ignora cache: resolve pagina de login velha em cache (sem captcha)
   const overlayBtn = document.getElementById('overlayBtn');
   overlayBtn.onclick = async () => { try { const on = await window.pokeAPI.toggleOverlay(); overlayBtn.classList.toggle('on', !!on); if (on) pushOverlay(); } catch {} };
-  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela/blob/main/FAQ.md');
-  document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeGrid-MultTela/blob/main/MANUAL.md');
+  document.getElementById('faqBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeMux/blob/main/FAQ.md');
+  document.getElementById('manBtn').onclick = () => window.open('https://github.com/Diego-ops501/PokeMux/blob/main/MANUAL.md');
   const donTop = document.getElementById('donTop');
   donTop.onclick = () => window.open('https://link.mercadopago.com.br/pokegrid');
   // Versão e atualização confirmada. O processo principal valida o feed e o SHA-512 do latest.yml.
@@ -2085,7 +2084,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
       if (!updateState) return;
       if (updateState.status === 'available') {
         const notes = String(updateState.releaseNotes || '').replace(/<[^>]+>/g, '').slice(0, 1200);
-        if (!window.confirm('Baixar PokeGrid MultTela v' + updateState.version + '?\n\n' + notes)) return;
+        if (!window.confirm('Baixar PokeMux v' + updateState.version + '?\n\n' + notes)) return;
         ub.disabled = true; await window.pokeAPI.downloadUpdate();
       } else if (updateState.status === 'downloaded' && window.confirm('Reiniciar agora e instalar a atualização?')) await window.pokeAPI.installUpdate();
       else if (updateState.status === 'error') await window.pokeAPI.checkUpdate();
@@ -2132,7 +2131,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     const o = coletaConfig();
     const a = document.createElement('a');
     a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(o));
-    a.download = 'pokegrid-config.json'; a.click(); menu.classList.remove('show');
+    a.download = 'pokemux-config.json'; a.click(); menu.classList.remove('show');
   };
   document.getElementById('bkImp').onclick = () => {
     menu.classList.remove('show');
@@ -2314,7 +2313,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   let cfg = loadStatsCfg();
   let lastData = null; // ultimo d valido (pra listar itens da bag na config)
   const saveStatsCfg = () => { try { lsSet('statsCfg', JSON.stringify(cfg)); } catch {} };
-  // Shinies encontrados na vida da conta (acumulado pelo PokeGrid, por id de personagem)
+  // Shinies encontrados na vida da conta (acumulado pelo PokeMux, por id de personagem)
   const loadShinyLife = () => { try { return lsObj('shinyLife'); } catch { return {}; } };
   const addShinyLife = (cid, n) => { if (!cid || !n) return; const m = loadShinyLife(); m[cid] = (m[cid] || 0) + n; try { lsSet('shinyLife', JSON.stringify(m)); } catch {} };
   // Emblema/nome do clã no header (defensivo: o formato do clã varia; tenta os campos comuns)
@@ -2833,7 +2832,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     return RITMO_TAB[i] * (1 - f) + RITMO_TAB[i + 1] * f;
   };
   const sugCalc = (A, x) => {
-    const M2 = window.PokeGridIvMath;
+    const M2 = window.PokeMuxIvMath;
     const aB = A && basesByName[A.sp], am = A && movesByName[A.sp];
     const dB = basesByName[x.sp], dm = movesByName[x.sp] || {};
     if (!M2 || !aB || !am || !dB) return null;
@@ -3466,7 +3465,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
         + '</div><div class="cd-catches-list">'
         + (catches.length ? catches.map(x => '<div class="cd-row"><span class="cd-dot" style="background:' + x.dot + '"></span><span class="rn">' + (x.fx ? '<span title="' + t('cdFirst') + '">🆕</span> ' : '') + (x.sh ? '✨ ' : '') + esc(x.n) + raroHtml(x.q) + ' <span style="color:#7d8590">· ' + esc(x.acc) + '</span></span><span style="color:#55e6d3">' + (+x.iv || 0) + '/192</span>' + (+x.q ? '<span style="color:#f2c665">×' + (+x.q).toFixed(2) + '</span>' : '') + '<span class="rt">' + fmtDT(x.t) + '</span></div>').join('') : '<div class="cd-empty">' + t('cdNone') + '</div>') + '</div></div>'; };
     SB.teams = () => {
-      const M = window.PokeGridIvMath;
+      const M = window.PokeMuxIvMath;
       const alvo = Math.max(1, Math.min(500, +(lsGet('cdPjLv') || 500)));
       const cols = ordered.filter(r => r.st === 'on' && (r.team || []).length);
       const poder = (p) => { // mesmo modulo do card de IV; sem base/qualidade/IV nao inventa numero
@@ -3950,7 +3949,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   // carregado ou faltar dado, cai no valor que o painel mandou.
   function poderFiel(d) {
     try {
-      const M = window.PokeGridIvMath;
+      const M = window.PokeMuxIvMath;
       if (!M || !d || !d.bases) return null;
       const b = d.bases, nv = +d.nivel || 0, q = +d.qualidade || 0, tot = +d.ivTotal || 0;
       if (!(nv > 0) || !(q > 0) || !(tot > 0)) return null;

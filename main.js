@@ -3,6 +3,30 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 
+// Rebranding sem perda de dados: na primeira execução do PokeMux, copia o perfil local da
+// instalação anterior (contas criptografadas, sessões, preferências e históricos). O nome antigo
+// fica restrito a esta ponte de migração e pode ser removido depois que a base instalada atualizar.
+(function migrateLegacyProfile() {
+  try {
+    const target = app.getPath('userData');
+    const appData = app.getPath('appData');
+    const marker = path.join(target, '.pokemux-migrated');
+    if (fs.existsSync(marker)) return;
+    const targetHasData = fs.existsSync(target) && fs.readdirSync(target).length > 0;
+    if (!targetHasData) {
+      const legacyNames = ['PokeGrid MultTela', 'pokegrid-multtela', 'PokeGrid', 'pokegrid'];
+      const source = legacyNames.map((name) => path.join(appData, name))
+        .find((candidate) => path.resolve(candidate) !== path.resolve(target) && fs.existsSync(candidate));
+      if (source) {
+        fs.mkdirSync(target, { recursive: true });
+        fs.cpSync(source, target, { recursive: true, force: false, errorOnExist: false });
+      }
+    }
+    fs.mkdirSync(target, { recursive: true });
+    fs.writeFileSync(marker, '1');
+  } catch {}
+})();
+
 // Silencia o spam do Chromium no terminal (ex.: STUN/WebRTC do jogo que a rede nao resolve).
 // E so log, nao afeta o app. Mantem so erros fatais.
 app.commandLine.appendSwitch('log-level', '3');
@@ -17,7 +41,7 @@ function logErro(origem, detalhe) {
     let txt = '';
     if (!errCabecalho) {
       errCabecalho = true;
-      txt += `\n=== sessao de ${new Date().toLocaleString('pt-BR')} · PokeGrid MultTela v${app.getVersion()} · Electron ${process.versions.electron} · ${process.platform} ${require('os').release()} ===\n`;
+      txt += `\n=== sessao de ${new Date().toLocaleString('pt-BR')} · PokeMux v${app.getVersion()} · Electron ${process.versions.electron} · ${process.platform} ${require('os').release()} ===\n`;
     }
     txt += `[${new Date().toLocaleString('pt-BR')}] [${origem}] ${String(detalhe).slice(0, 4000)}\n`;
     fs.appendFileSync(f, txt);
@@ -191,8 +215,7 @@ ipcMain.handle('creds:save', (_e, accounts) => {
 // Deriva da versão real do Chromium, então acompanha upgrades do Electron sozinho.
 app.userAgentFallback = app.userAgentFallback
   .replace(/ Electron\/[\d.]+/, '')
-  // tira tambem o token do proprio app (pokegrid/1.5.x): a UA nao precisa entregar quem usa o
-  // PokeGrid pro servidor do jogo
+  // tira tambem o token do proprio app: a UA nao precisa entregar qual cliente acessa o jogo
   .replace(/ [\w.-]+\/[\d.]+ (?=Chrome\/)/i, ' ')
   .replace(/(Chrome\/\d+)[\d.]+/, '$1.0.0.0');
 
@@ -236,17 +259,20 @@ ipcMain.handle('mintray:set', (_e, on) => { minToTray = !!on; return minToTray; 
 // comportamentos que antivirus tratam como persistencia suspeita. O atalho fica num lugar que o
 // usuario ve e pode apagar sozinho (Win+R > shell:startup), e o app abre com a janela visivel.
 const startupDir = () => path.join(app.getPath('appData'), 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup');
-const startupLnk = () => path.join(startupDir(), 'PokeGrid MultTela.lnk');
-const autoStartOn = () => { try { return process.platform === 'win32' && fs.existsSync(startupLnk()); } catch { return false; } };
+const startupLnk = () => path.join(startupDir(), 'PokeMux.lnk');
+const legacyStartupLnk = () => path.join(startupDir(), 'PokeGrid MultTela.lnk');
+const autoStartOn = () => { try { return process.platform === 'win32' && (fs.existsSync(startupLnk()) || fs.existsSync(legacyStartupLnk())); } catch { return false; } };
 function setAutoStart(on) {
   if (process.platform !== 'win32') return false;
   try {
     if (on) {
-      const opts = { target: process.execPath, description: 'PokeGrid MultTela', appUserModelId: 'com.multtela.pokegrid' };
+      const opts = { target: process.execPath, description: 'PokeMux', appUserModelId: 'com.pokemux.desktop' };
       if (!app.isPackaged) opts.args = `"${app.getAppPath()}"`; // rodando pelo codigo: electron + a pasta do app
       shell.writeShortcutLink(startupLnk(), 'create', opts);
+      try { fs.unlinkSync(legacyStartupLnk()); } catch {}
     } else {
       try { fs.unlinkSync(startupLnk()); } catch {}
+      try { fs.unlinkSync(legacyStartupLnk()); } catch {}
     }
   } catch (e) { logErro('autostart', String((e && e.message) || e)); }
   return autoStartOn();
@@ -336,7 +362,7 @@ app.whenReady().then(() => {
   // Nada aqui pode derrubar a criacao da janela: se qualquer peca do sistema falhar (registro,
   // particao de sessao corrompida, bandeja), o app tem que abrir assim mesmo. Antes destas
   // guardas, uma excecao aqui deixava o processo vivo e SEM JANELA, que e o pior sintoma possivel.
-  try { app.setAppUserModelId('com.multtela.pokegrid'); } catch (e) { logErro('boot', 'appUserModelId: ' + e.message); } // notificacoes do Windows com o nome certo
+  try { app.setAppUserModelId('com.pokemux.desktop'); } catch (e) { logErro('boot', 'appUserModelId: ' + e.message); } // notificacoes do Windows com o nome certo
 
   // Nega pedidos de permissao dos jogos (mic, camera, localizacao, notificacao...).
   for (let i = 1; i <= 4; i++)
@@ -394,7 +420,7 @@ app.whenReady().then(() => {
   const prepararBandeja = () => {
     // versao portatil movida de pasta deixa o atalho da Inicializar apontando pra um exe que nao
     // existe mais, e o botao seguia dizendo "ligado": regrava quando o alvo mudou
-    try { if (autoStartOn() && shell.readShortcutLink(startupLnk()).target !== process.execPath) setAutoStart(true); } catch {}
+    try { if (autoStartOn() && (!fs.existsSync(startupLnk()) || shell.readShortcutLink(startupLnk()).target !== process.execPath)) setAutoStart(true); } catch {}
     // limpeza do autostart antigo (chave Run, que abria com --hidden): uma unica vez na vida
     try {
       const marca = path.join(app.getPath('userData'), 'runkey-limpo');
@@ -407,7 +433,7 @@ app.whenReady().then(() => {
   // segue funcionando sem bandeja em vez de morrer no boot.
   try {
     tray = new Tray(path.join(__dirname, 'tray.png'));
-    tray.setToolTip('PokeGrid MultTela');
+    tray.setToolTip('PokeMux');
     tray.setContextMenu(Menu.buildFromTemplate([
       { label: 'Mostrar', click: mostrar },
       { label: 'Abrir com o Windows', type: 'checkbox',

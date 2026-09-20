@@ -11,7 +11,7 @@ const update = read('src/main/update-manager.js');
 let failed = false;
 const ok = (condition, label) => { console.log((condition ? 'OK  ' : 'FAIL') + ' ' + label); if (!condition) failed = true; };
 
-console.log('\n--- PokeGrid MultTela: limites e segurança ---');
+console.log('\n--- PokeMux: limites e segurança ---');
 ok(main.includes('const MAX_ACCOUNTS = 4;') && main.includes('.slice(0, MAX_ACCOUNTS)'), 'cofre limita os dados a quatro contas');
 ok(html.includes('Math.min(4, Math.max(1, +lsGet(\'count\') || 4))'), 'renderer limita a grade a quatro contas');
 ok(!main.includes("JSON.parse(buf.toString('utf8'))"), 'credenciais não têm fallback em texto puro');
@@ -29,7 +29,7 @@ ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overla
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');
 
 console.log('\n--- Instalador e atualização ---');
-ok(pkg.name === 'pokegrid-multtela' && pkg.version === '1.1.4', 'produto personalizado está na versão 1.1.4');
+ok(pkg.name === 'pokemux' && pkg.build.productName === 'PokeMux' && pkg.version === '1.1.4', 'produto PokeMux está na versão 1.1.4');
 ok(!html.includes('id="appSidebar"') && !html.includes('--pg-sidebar') && html.includes('id="statsBtn"') && html.includes('id="cardsBtn"'), 'layout clássico remove a sidebar fixa e restaura os controles no topo');
 ok(html.includes('class="cd-catches-list"') && html.includes('.cd-catches-list { max-height: clamp(') && html.includes('overflow-y: auto'), 'últimas capturas têm altura responsiva e rolagem interna');
 ok(html.includes('id="cdFcR"') && html.includes('rarityKey(numLivre(x.q)) === f.r') && html.includes("['legendary', 'Lendária', 'Legendary'"), 'últimas capturas filtram pela faixa exata de raridade');
@@ -37,7 +37,7 @@ ok(pkg.build && pkg.build.win && pkg.build.nsis && pkg.build.nsis.deleteAppDataO
 ok(pkg.dependencies['electron-updater'] && pkg.devDependencies['electron-builder'], 'dependências de build e update declaradas');
 ok(update.includes('autoDownload = false') && update.includes('autoInstallOnAppQuit = false'), 'atualização nunca baixa ou instala silenciosamente');
 ok(update.includes("feed.protocol !== 'https:'") && update.includes("feed.hostname !== 'github.com'"), 'feed de atualização tem lista de origem restrita');
-ok(update.includes('/Diego-ops501\\/PokeGrid-MultTela\\/releases') && !update.includes('PokeGrid-MultTela-Releases'), 'atualizador usa o repositório público unificado');
+ok(update.includes('/Diego-ops501\\/PokeMux\\/releases'), 'atualizador usa o repositório público PokeMux');
 ok(update.includes("ipcMain.handle('update:download'") && update.includes("ipcMain.handle('update:install'"), 'download e instalação exigem ações separadas');
 ok(update.includes('24 * 60 * 60 * 1000') && update.includes('checkAutomatic'), 'checagem automática é limitada a uma vez por dia');
 

@@ -1,4 +1,4 @@
-' Abre o PokeGrid sem a janela preta do cmd.
+' Abre o PokeMux sem a janela preta do cmd.
 ' Dica: clique com o botao direito neste arquivo > Enviar para > Area de trabalho (criar atalho).
 ' Nenhuma janela de terminal precisa ficar aberta: o app roda solto.
 Set fso = CreateObject("Scripting.FileSystemObject")
@@ -10,13 +10,13 @@ sh.CurrentDirectory = pasta
 If sh.Run("cmd /c where npm >nul 2>nul", 0, True) <> 0 Then
   MsgBox "O Node.js nao esta instalado." & vbCrLf & _
          "Baixe a versao LTS em https://nodejs.org e instale." & vbCrLf & _
-         "Depois abra este arquivo de novo.", 48, "PokeGrid"
+         "Depois abra este arquivo de novo.", 48, "PokeMux"
   WScript.Quit
 End If
 
 ' primeira vez: instala com a janela visivel (ela fecha sozinha ao terminar)
 If Not fso.FolderExists(pasta & "\node_modules") Then
-  sh.Run "cmd /c title PokeGrid - primeira instalacao && echo Instalando o necessario, aguarde... && npm install", 1, True
+  sh.Run "cmd /c title PokeMux - primeira instalacao && echo Instalando o necessario, aguarde... && npm install", 1, True
 End If
 
 ' abre o app sem janela nenhuma (0 = oculta); fechar terminais nao afeta o app

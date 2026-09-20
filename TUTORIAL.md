@@ -1,4 +1,4 @@
-# Como usar a PokeGrid (versão sem instalador)
+# Como usar o PokeMux (versão sem instalador)
 
 Guia para quem nunca mexeu com isso. Essa versão roda direto do código. Parece complicado, mas são 3 passos e a parte "difícil" você só faz uma vez.
 
@@ -12,7 +12,7 @@ O Node.js é o "motor" que faz o app rodar.
 
 Pronto, isso não precisa fazer de novo.
 
-## Passo 2: baixar a PokeGrid
+## Passo 2: baixar o PokeMux
 
 1. Aqui em cima nesta página, clique no botão verde **Code**
 2. Clique em **Download ZIP**
@@ -21,14 +21,14 @@ Pronto, isso não precisa fazer de novo.
 ## Passo 3: abrir o app
 
 1. Entre na pasta que apareceu
-2. Dê **dois cliques** no arquivo **Abrir PokeGrid** (`.vbs`). Ele abre o app **sem janela preta**.
+2. Dê **dois cliques** no arquivo **Abrir PokeMux** (`.vbs`). Ele abre o app **sem janela preta**.
 3. Na **primeira vez** ele demora um pouquinho (está baixando o que precisa) e abre sozinho. Nas próximas vezes abre rápido e sem terminal nenhum.
 
 > Se o Windows mostrar uma tela azul ("O Windows protegeu seu computador"), clique em **Mais informações** e depois **Executar assim mesmo**. Isso acontece porque o app não tem assinatura paga, mas o código é aberto e você pode conferir tudo aqui.
 
-**Quer um atalho na área de trabalho?** Clique com o **botão direito** no arquivo **Abrir PokeGrid** e escolha **Enviar para: Área de trabalho (criar atalho)**. Pronto, vira um clique só.
+**Quer um atalho na área de trabalho?** Clique com o **botão direito** no arquivo **Abrir PokeMux** e escolha **Enviar para: Área de trabalho (criar atalho)**. Pronto, vira um clique só.
 
-> O `iniciar.bat` continua na pasta e funciona igual, mas ele deixa uma janela preta aberta: se você fechar essa janela, o app fecha junto. Pelo **Abrir PokeGrid** isso não acontece.
+> O `iniciar.bat` continua na pasta e funciona igual, mas ele deixa uma janela preta aberta: se você fechar essa janela, o app fecha junto. Pelo **Abrir PokeMux** isso não acontece.
 
 **No Mac ou Linux:** abra o Terminal dentro da pasta e digite `bash iniciar.sh`.
 

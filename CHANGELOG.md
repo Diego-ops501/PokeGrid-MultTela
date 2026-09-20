@@ -1,5 +1,12 @@
 # Changelog
 
+## Próxima versão — PokeMux
+
+- Nova identidade visual **PokeMux**, com logotipo ciano, azul e violeta na interface, overlay, bandeja, executável, instalador e documentação.
+- Produto, atalhos, notificações, exportações e textos em português, inglês e espanhol renomeados para PokeMux.
+- Migração automática do perfil e do atalho de inicialização das instalações anteriores, preservando contas, sessões, preferências e históricos.
+- Referência ao projeto PokeGrid original, licença MIT e créditos de soufoka preservados.
+
 ## 1.1.4 — Lista de capturas compacta
 
 - A seção **Últimas capturas · todas as contas** no modo Simples deixa de crescer com até 40 linhas e ocupar a página inteira.
