@@ -3,7 +3,7 @@
 ## Próxima versão — PokeMux
 
 - Referral atualizado para **2G9B4BV** e botão **Ajude o projeto** direcionado ao link oficial do PokeMux no Mercado Pago.
-- Novo aviso sonoro e notificação do Windows ao obter **Strange Pheromones** ou **Boss Token**, com controle separado nas opções de alertas.
+- Novo aviso por voz, informando a conta e o item, e notificação do Windows ao obter **Strange Pheromones** ou **Boss Token**, com controle separado nas opções de alertas.
 - O HUD completo do jogo agora fica visível por padrão, inclusive após atualizar uma instalação existente; **🧼 Limpar jogo** continua disponível como opção para ocultá-lo.
 - Nova identidade visual **PokeMux**, com logotipo ciano, azul e violeta na interface, overlay, bandeja, executável, instalador e documentação.
 - Produto, atalhos, notificações, exportações e textos em português, inglês e espanhol renomeados para PokeMux.

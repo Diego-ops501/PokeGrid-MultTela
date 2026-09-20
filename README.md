@@ -63,11 +63,12 @@ Algumas ideias de interface e leitura de eventos também foram inspiradas pelo [
 
 - Popup, notificação do Windows, Discord e captura de tela local opcional para shiny.
 - Acordes sintetizados ou voz local instalada no Windows.
-- Toque e notificação próprios ao obter **Strange Pheromones** ou **Boss Token**, com opção individual para desativar.
+- Voz informando a conta e o item, além da notificação, ao obter **Strange Pheromones** ou **Boss Token**, com opção individual para desativar.
 - Voz para:
   - shiny ainda vivo no campo;
   - captura de shiny concluída ou perdida;
   - Pokébolas, poções e revives acabando, com nome da conta e quantidade;
+  - Strange Pheromones ou Boss Token, com nome da conta e do item;
   - captura exatamente na faixa de qualidade **Lendária** (`1,7 ≤ qualidade < 2,0`).
 - Fila e deduplicação impedem uma avalanche de falas quando várias contas alertam juntas.
 - Mítica, Anciã e Divina não são anunciadas incorretamente como Lendária.
