@@ -1,6 +1,6 @@
 # Changelog
 
-## Próxima versão — PokeMux
+## 1.1.5 — PokeMux
 
 - Referral atualizado para **2G9B4BV** e botão **Ajude o projeto** direcionado ao link oficial do PokeMux no Mercado Pago.
 - Novo aviso por voz, informando a conta e o item, e notificação do Windows ao obter **Strange Pheromones** ou **Boss Token**, com controle separado nas opções de alertas.
