@@ -2,6 +2,7 @@
 
 ## Próxima versão — PokeMux
 
+- O HUD completo do jogo agora fica visível por padrão, inclusive após atualizar uma instalação existente; **🧼 Limpar jogo** continua disponível como opção para ocultá-lo.
 - Nova identidade visual **PokeMux**, com logotipo ciano, azul e violeta na interface, overlay, bandeja, executável, instalador e documentação.
 - Produto, atalhos, notificações, exportações e textos em português, inglês e espanhol renomeados para PokeMux.
 - Migração automática do perfil e do atalho de inicialização das instalações anteriores, preservando contas, sessões, preferências e históricos.

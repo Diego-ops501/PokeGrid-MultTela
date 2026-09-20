@@ -68,6 +68,6 @@ Onde caçar com um Ditto e em que pokémon virar. Escolha **Shiny** ou **Comum**
 
 - **Calculadora de IV vazia**: passe o mouse sobre um Pokémon no jogo para alimentar o card. O helper embutido só entra depois do login e nunca roda na tela que contém senha, CAPTCHA ou 2FA
 - **A opção marcada não mudou nada?** Provavelmente é uma seção que precisa de configuração (Fixados e Alvo shiny). Elas agora dizem isso na tela
-- **Não consigo trocar a pokébola**: é o **🧼 Limpar jogo** escondendo o Auto-Helper. Passe o mouse no canto que ele aparece
+- **Não consigo trocar a pokébola**: confira se o **🧼 Limpar jogo** está verde. Essa opção vem desligada por padrão; quando ativada, esconde o Auto-Helper até você passar o mouse no canto
 - **O ouro da sessão**: desde a 1.5.16 vem do próprio servidor do jogo, então é o mesmo número do Hunt Analyzer
 - **Conta travada quando saio do PC**: corrigido na 1.5.16; atualize

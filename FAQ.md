@@ -26,7 +26,7 @@ Electron (Chromium, o motor do Chrome). Cada conta roda numa sessão separada.
 Bug corrigido na **1.5.11**: o painel segurava a atualização enquanto o foco ficava no seletor. Fora isso, o Simples atualiza a cada 10s de propósito, pra pesar menos.
 
 ### Não consigo mudar a pokébola!
-É o "sabonete": o botão **🧼 Limpar jogo** esconde o Auto-Helper do jogo, que é onde fica o seletor de pokébola. Desde a 1.5.13 basta **passar o mouse** no canto onde ele fica que ele aparece; em versões antigas, desligue o 🧼 na barra do topo, troque a bola e ligue de novo.
+O botão **🧼 Limpar jogo** pode esconder o Auto-Helper do jogo, onde fica o seletor de pokébola. A opção vem **desligada por padrão**, deixando todo o HUD visível. Se você a ativou (botão verde), passe o mouse no canto para revelar o Auto-Helper ou clique novamente no 🧼 para manter o HUD visível.
 
 ### Posso instalar userscripts?
 Não. O PokeMux não carrega código arbitrário dentro das contas conectadas. Essa decisão protege as credenciais e mantém o conjunto de automações limitado ao que o projeto declara.
