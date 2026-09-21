@@ -1,6 +1,6 @@
 # Changelog
 
-## Próxima versão — PokeMux
+## 1.1.6 — Lista de capturas completa e compacta
 
 - **Últimas capturas · todas as contas** agora mostra todas as capturas correspondentes aos filtros selecionados, sem o corte de 40 resultados, mantendo a seção compacta com rolagem interna e removendo alturas manuais antigas que deixavam o cartão gigante.
 
