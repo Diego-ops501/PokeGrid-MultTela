@@ -210,14 +210,9 @@ ipcMain.handle('creds:save', (_e, accounts) => {
   }
 });
 
-// UA consistente pra passar na Cloudflare: remove o token "Electron/..." e
-// congela a versão do Chrome em .0.0.0, casando com os client hints (navigator.userAgentData).
-// Deriva da versão real do Chromium, então acompanha upgrades do Electron sozinho.
-app.userAgentFallback = app.userAgentFallback
-  .replace(/ Electron\/[\d.]+/, '')
-  // tira tambem o token do proprio app: a UA nao precisa entregar qual cliente acessa o jogo
-  .replace(/ [\w.-]+\/[\d.]+ (?=Chrome\/)/i, ' ')
-  .replace(/(Chrome\/\d+)[\d.]+/, '$1.0.0.0');
+// Mantem o User-Agent nativo e estavel do Electron. O Turnstile compara varios sinais do
+// navegador; mascarar apenas a string da UA pode deixa-la incoerente com Client Hints e com o
+// restante do ambiente. As paginas de autenticacao tambem ficam livres das injecoes do PokeMux.
 
 // Notificacao do SO (alertas de queda e de sem pokebola).
 // versao do app pro badge do topo (sendSync: disponivel no load, mesmo com o preload em sandbox)

@@ -21,6 +21,10 @@ ok(main.includes("origin !== GAME") && main.includes("target.getType() !== 'webv
 ok(!main.includes("ipcMain.handle('userscript:fetch'") && !preload.includes('fetchUserScript'), 'não existe canal de userscript');
 
 console.log('\n--- Compra, retorno e recursos locais ---');
+ok(!main.includes('app.userAgentFallback ='), 'Turnstile recebe o User-Agent nativo e estável do Electron');
+ok(html.includes('const podeModificarPagina = (wv) =>') && html.includes('const authPage = !podeModificarPagina(wv);'), 'rotas de autenticação ficam sem coletores e modificações do navegador');
+ok(html.includes('if (authPage) {') && html.includes('wv.executeJavaScript(scrollLoginScript)') && html.includes('return;'), 'login só recebe enquadramento visual, sem automação do CAPTCHA');
+ok(html.includes("if (wv.__pgAuthPage) { wv.__pgAuthPage = false; wv.reload(); }"), 'coletor é instalado apenas depois que a SPA entra no jogo');
 ok(html.includes('let compraEmAndamento = false;') && html.includes('goldTem < custo'), 'compra bloqueia duplicidade e saldo insuficiente');
 ok(html.includes('Number.isSafeInteger(ballId)') && html.includes('qtd > 10000'), 'compra valida identificador, quantidade e custo');
 ok(html.includes("let voltaHuntOn = lsGet('voltaHunt') === '1'"), 'retorno à hunt continua desligado por padrão');
@@ -32,7 +36,7 @@ ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overla
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');
 
 console.log('\n--- Instalador e atualização ---');
-ok(pkg.name === 'pokemux' && pkg.build.productName === 'PokeMux' && pkg.version === '1.1.6', 'produto PokeMux está na versão 1.1.6');
+ok(pkg.name === 'pokemux' && pkg.build.productName === 'PokeMux' && pkg.version === '1.1.7', 'produto PokeMux está na versão 1.1.7');
 ok(!html.includes('id="appSidebar"') && !html.includes('--pg-sidebar') && html.includes('id="statsBtn"') && html.includes('id="cardsBtn"'), 'layout clássico remove a sidebar fixa e restaura os controles no topo');
 ok(html.includes('class="cd-catches-list"') && html.includes('.cd-catches-list { max-height: clamp(') && html.includes('overflow-y: auto'), 'últimas capturas têm altura responsiva e rolagem interna');
 ok(html.includes('(+x.t || 0) >= corte).reverse()') && !html.includes('(+x.t || 0) >= corte).slice(-40)'), 'últimas capturas mostram todos os resultados que passam pelos filtros');

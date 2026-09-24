@@ -76,7 +76,7 @@ console.log('\n--- o slug nao vira injecao de codigo ---');
   try { r = roda(hostil); } catch (e) { explodiu = true; }
   ok(!explodiu, 'slug hostil nao quebra o script (passa por JSON.stringify)');
   ok(!r || r.enviados.every((e) => e.slug === hostil), 'e se sair, sai como texto, nao como codigo');
-  ok(b.includes("/^[a-z0-9_-]{1,60}$/i.test(snv.slug || '')"), 'e antes disso o renderer so aceita slug simples (letras, numeros, _ e -)');
+  ok(b.includes("/^[a-z0-9_-]{1,60}$/i.test(slugVolta || '')"), 'e antes disso o renderer so aceita slug simples (letras, numeros, _ e -)');
 }
 
 console.log('\n--- quando arma (no dom-ready) ---');
@@ -84,9 +84,9 @@ ok(b.includes("let voltaHuntOn = lsGet('voltaHunt') === '1';"), 'DESLIGADO por p
 ok(b.includes('Date.now() - ((snv.s && snv.s.lastKillT) || 0) < 600e3') && b.includes('S.kills++;S.lastKillT=Date.now();'),
   'so se houve KILL DE VERDADE nos ultimos 10 min: o carimbo vem do coletor e viaja na foto da sessao (o lastKT antigo era renovado sem kill)');
 ok(b.includes('Date.now() - snv.t < 600e3'), 'e a foto da sessao tem menos de 10 min (e so e tirada de conta viva)');
-ok(b.indexOf('wv.executeJavaScript(VOLTA_JS(snv.slug))') > b.indexOf('coletor de estado + sessao'), 'injetado DEPOIS do coletor (precisa do window.__poke)');
+ok(b.indexOf('wv.executeJavaScript(VOLTA_JS(slugVolta))') > b.indexOf('coletor de estado + sessao'), 'injetado DEPOIS do coletor (precisa do window.__poke)');
 ok(b.includes("m.type==='field-init'){const sl=m.slug||'';P.fiT=Date.now();"), 'o coletor carimba a hora do field-init');
-ok(b.includes('recarregou farmando, volta pra hunt'), 'fica registrado no relatorio de erros quando age');
+ok(b.includes("(recOk ? 'watchdog recuperando' : 'recarregou farmando')"), 'fica registrado no relatorio de erros quando age');
 
 console.log('\n--- interface ---');
 ok(s.includes('<button id="voltaHunt">'), 'botao no menu');

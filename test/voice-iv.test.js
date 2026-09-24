@@ -18,6 +18,9 @@ function ok(value, message) {
 }
 
 console.log('\n--- Voz local e eventos anunciados ---');
+ok(html.includes("if (sndShinyOn) beepShiny()") && html.includes("if (sndShinyOn) beepShiny(true)") && !html.includes('sndShinyOn && !voiceOn'), 'acorde de shiny funciona junto com a voz');
+ok(html.includes("if (_ac.state === 'suspended') await _ac.resume()") && html.includes("_ac.state !== 'running'"), 'WebAudio suspenso é reativado antes do alerta');
+ok(html.includes('function beepVoiceFallback()') && html.includes("logError('audio-alerta'") && html.includes("fim('tempo esgotado')"), 'falha ou travamento da voz gera fallback e diagnóstico');
 ok(html.includes('new SpeechSynthesisUtterance(item.text)') && html.includes("u.lang = lang === 'en' ? 'en-US'"), 'usa a voz local do sistema e escolhe o idioma');
 ok(html.includes("shinyAppear: `Apareceu um ${poke} shiny na conta ${conta}.`") && html.includes("shinySuccess: `O shiny ${poke} foi capturado com sucesso na conta ${conta}.`"), 'fala aparição e captura bem-sucedida com Pokémon e conta');
 ok(html.includes("shinyFail: `A captura do shiny ${poke} falhou na conta ${conta}.`"), 'fala a falha final da captura de shiny');

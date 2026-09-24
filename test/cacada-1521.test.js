@@ -282,7 +282,7 @@ const espera = () => new Promise((r) => setTimeout(r, 20));
   ok(b.includes("const discos = comTm ? [...new Set((movesByName[sp].a || []).map(g => g[6]).filter(Boolean))] : []") && b.includes("if (discos.length) soma = Math.max(...somas);"), 'aba Geral com TM: um disco por vez (o jogo so deixa 1 TM por pokemon), fica a melhor soma');
   ok(b.includes('(x2.sug.tm ? \' <b style="color:#f2c665;font-size:9px">TM</b>\' : \'\')'), 'linha do Sugerido marca quando o golpe e de TM');
   ok(s.split('poder 600, Dragão 300').length - 1 === 1 && s.includes('power 600, Dragon 300') && s.includes('poder 600, Dragón 300'), 'texto do TM cita o Dragao com 300');
-  ok(b.includes("(wv.getURL() || '').startsWith('https://poke.idleworld.online/play') && /^[a-z0-9_-]{1,60}$/i.test(snv.slug || '')"), 'Voltar pra hunt so arma na pagina do jogo (manutencao/namelock nao recebem enter-hunt)');
+  ok(b.includes("(wv.getURL() || '').startsWith('https://poke.idleworld.online/play') && /^[a-z0-9_-]{1,60}$/i.test(slugVolta || '')"), 'Voltar pra hunt so arma na pagina do jogo (manutencao/namelock nao recebem enter-hunt)');
   ok(b.includes("name: 'JustPokédex: Calculadora de IV'"), 'preset sem travessao');
   ok(b.includes("podadas.forEach(h => { h.drops = []; }); salvaHuntLog();"), 'drops esvaziados vao pro disco na hora (crash no meio nao reanexa)');
 

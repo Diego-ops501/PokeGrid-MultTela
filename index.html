@@ -786,6 +786,12 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
     const p = u.slice('https://poke.idleworld.online'.length);
     return ['/login', '/register', '/forgot-password', '/verify-email'].some(x => p === x || p.startsWith(x + '?') || p.startsWith(x + '/') || p.startsWith(x + '#'));
   };
+  // Login, cadastro, recuperação e 2FA precisam manter o ambiente nativo do Chromium para o
+  // Turnstile oficial. Nessas rotas não substituímos fetch, WebSocket, requestAnimationFrame nem
+  // instalamos observadores do jogo. A coleta começa somente depois de entrar em /play.
+  const podeModificarPagina = (wv) => {
+    try { return !ivHelperBloqueado(wv.getURL()); } catch { return false; }
+  };
   async function injectIvHelper(wv) {
     let url = ''; try { url = wv.getURL(); } catch {}
     if (ivHelperBloqueado(url)) { wv.__pgSemIv = true; return false; }
@@ -869,6 +875,14 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
         if (!off[i] && !falhou) { dot.className = 'dot ok'; status.textContent = t('stOnline'); fails = 0; alertedDown = false; } // carregou DE VERDADE: zera o watchdog (a pagina de erro tambem emite dom-ready)
         try {
           wv.setAudioMuted(muted || cardsOn); wv.setZoomFactor(zoom);
+          const authPage = !podeModificarPagina(wv);
+          wv.__pgAuthPage = authPage;
+          if (authPage) {
+            // Apenas enquadra o formulario. Não toca no widget, nas APIs do navegador nem tenta
+            // resolver o CAPTCHA: a verificação automática continua sendo a oficial do site.
+            wv.executeJavaScript(scrollLoginScript).catch(() => {});
+            return;
+          }
           // reload nao zera a sessao: o jogo continua no servidor, entao re-semeia os contadores de antes
           try {
             const sn = sessSnap[i];
@@ -877,18 +891,22 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
               wv.executeJavaScript('window.__pokeSeed=' + j).catch(() => {});
             }
           } catch {}
-          wv.executeJavaScript(`(()=>{if(window.__poke)return;const nL=v=>{const m=String(v==null?'':v).match(/[0-9]+([.,][0-9]+)?/);return m?+m[0].replace(',','.'):0};const mk=()=>({start:Date.now(),kills:0,xp:0,balls:0,captures:0,drops:{},shinyN:0,shinySeen:{},shinyCapN:0,faintN:0,sellG:0,supGold:0,supN:0,slug:'',hp:{}});const P={ws:{},api:{},sess:mk(),prev:null,knownPokes:{},pokesBaselined:false};window.__poke=P;try{const sd=window.__pokeSeed;delete window.__pokeSeed;if(sd&&sd.s&&sd.s.start&&Date.now()-(sd.t||0)<600e3){P.sess=sd.s;if(sd.slug)P.lastSlug=sd.slug;if(sd.cl&&sd.cl.length)P.catchLog=sd.cl;if(sd.sl&&sd.sl.length)P.shinyLog=sd.sl;if(sd.ab&&typeof sd.ab==='object')P.anBase=sd.ab;}}catch(x){}let auth=null;const OW=window.WebSocket;window.WebSocket=function(...ar){const s=Reflect.construct(OW,ar);P.sock=s;s.addEventListener('message',e=>{try{if(typeof e.data==='string'){const m=JSON.parse(e.data);if(m&&m.type){P.ws[m.type]=m;const S=P.sess;if(m.type==='field-init'){const sl=m.slug||'';P.fiT=Date.now();if(P.lastSlug!==sl){P.prev=P.sess;P.prev.end=Date.now();P.sess=mk();P.sess.slug=sl;P.lastSlug=sl;}}else if(m.type==='field-kill'){S.kills++;S.lastKillT=Date.now();S.xp+=m.xpGained||0;(m.loot||[]).forEach(l=>{const d=S.drops[l.itemId]||(S.drops[l.itemId]={name:l.name,qty:0});d.qty+=l.qty||0;});if(m.shiny){S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:m.speciesName||m.name||'',sid:m.speciesId||m.pokeId||0,def:1,t:Date.now()});if(SL.length>30)SL.shift();}}else if(m.type==='catch-result'){S.balls++;S.sinceCatch=(S.sinceCatch||0)+1;const bbc=((P.ws.balls&&P.ws.balls.catalog)||[]).find(x=>x.id===m.ballId);if(bbc&&!bbc.infinite)S.supGold=(S.supGold||0)+(+bbc.priceGold||0);if(m.success){S.captures++;S.lastCatchT=Date.now();S.sinceCatch=0;}}else if(m.type==='field'){/* golpes do seu pokemon: hits[].slot>=0. Salva de area do TM = mesmo golpe em 2+ alvos no mesmo tick (premissa: um tick traz no maximo um golpe normal por alvo); crit/bloqueio contam como golpe mas ficam fora da media de dano */if(m.mobs&&m.mobs.length){for(const mb of m.mobs){if(mb&&+mb.maxHp>0)(S.slotHp=S.slotHp||{})[mb.slot]=+mb.maxHp;}}if(m.hits&&m.hits.length){const bm={};for(const h of m.hits){if(h&&h.slot>=0&&h.move){const k=String(h.move);(bm[k]=bm[k]||new Set()).add(h.slot);}}for(const h of m.hits){if(!(h&&h.slot>=0&&+h.amount>0)||(h.move&&bm[String(h.move)].size>=2))continue;S.hits=(S.hits||0)+1;const mh=S.slotHp&&S.slotHp[h.slot];if(mh>0&&!h.crit&&!h.blocked){S.pct=(S.pct||0)+(+h.amount)/mh;S.pctN=(S.pctN||0)+1;}}}}else if(m.type==='poke-delta'){const pk=m.poke;if(pk){const LP=P.ws.pokes&&P.ws.pokes.list;if(LP){const ix=LP.findIndex(x=>x.id===pk.id);if(ix>=0)Object.assign(LP[ix],pk);else LP.push(pk);}const was=S.hp[pk.id];if(pk.team&&pk.hp===0&&was>0)S.faintN++;S.hp[pk.id]=pk.hp;if(P.pokesBaselined&&!P.knownPokes[pk.id]){S.sellG=(S.sellG||0)+(pk.sellValue||0);if(pk.shiny){S.shinyCapN++;S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:pk.name||'',sid:pk.speciesId||pk.pokeId||0,cap:1,t:Date.now()});if(SL.length>30)SL.shift();}const CL=P.catchLog=P.catchLog||[];const sd=pk.speciesId||pk.pokeId||0;const UL=P.usedList||[];CL.push({n:pk.name||'?',iv:nL(pk.ivTotal),q:nL(pk.quality),sh:!!pk.shiny,fx:!!(sd&&UL.length&&!UL.some(u=>u.sid===sd&&u.caught)),t:Date.now()});if(CL.length>50)CL.shift()}P.knownPokes[pk.id]=1;}}else if(m.type==='pokes'){(m.list||[]).forEach(pk=>{const was=S.hp[pk.id];if(pk.team&&pk.hp===0&&was>0)S.faintN++;S.hp[pk.id]=pk.hp;if(P.pokesBaselined&&!P.knownPokes[pk.id]){S.sellG=(S.sellG||0)+(pk.sellValue||0);if(pk.shiny){S.shinyCapN++;S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:pk.name||'',sid:pk.speciesId||pk.pokeId||0,cap:1,t:Date.now()});if(SL.length>30)SL.shift();}const CL=P.catchLog=P.catchLog||[];const sd=pk.speciesId||pk.pokeId||0;const UL=P.usedList||[];CL.push({n:pk.name||'?',iv:nL(pk.ivTotal),q:nL(pk.quality),sh:!!pk.shiny,fx:!!(sd&&UL.length&&!UL.some(u=>u.sid===sd&&u.caught)),t:Date.now()});if(CL.length>50)CL.shift()}P.knownPokes[pk.id]=1;});if(!P.pokesBaselined)P.pokesBaselined=true;}else if(m.type==='inventory'){const S=P.sess;let now=0;const doc0=P.api['/game/items.json'];const cat0={};if(doc0&&doc0.items)doc0.items.forEach(it=>cat0[it.id]=it);const cur={};(m.items||[]).forEach(it=>{if(it.itemId===59195)now=it.quantity||0;const c=(cat0[it.itemId]||{}).category;if(c==='heal'||c==='potion'||c==='revive')cur[it.itemId]=it.quantity||0;});
+          wv.executeJavaScript(`(()=>{if(window.__poke)return;const nL=v=>{const m=String(v==null?'':v).match(/[0-9]+([.,][0-9]+)?/);return m?+m[0].replace(',','.'):0};const mk=()=>({start:Date.now(),kills:0,xp:0,balls:0,captures:0,drops:{},shinyN:0,shinySeen:{},shinyCapN:0,faintN:0,sellG:0,supGold:0,supN:0,slug:'',hp:{}});const P={ws:{},api:{},sess:mk(),prev:null,knownPokes:{},pokesBaselined:false,hunting:false};window.__poke=P;try{const sd=window.__pokeSeed;delete window.__pokeSeed;if(sd&&sd.s&&sd.s.start&&Date.now()-(sd.t||0)<600e3){P.sess=sd.s;if(sd.slug)P.lastSlug=sd.slug;if(sd.cl&&sd.cl.length)P.catchLog=sd.cl;if(sd.sl&&sd.sl.length)P.shinyLog=sd.sl;if(sd.ab&&typeof sd.ab==='object')P.anBase=sd.ab;}}catch(x){}let auth=null;const OW=window.WebSocket;window.WebSocket=function(...ar){const s=Reflect.construct(OW,ar);P.sock=s;const OS=s.send.bind(s);s.send=function(v){try{if(typeof v==='string'){const q=JSON.parse(v);if(q&&['set-city','leave-hunt','exit-hunt'].includes(q.type)){P.hunting=false;P.huntLeftT=Date.now();}else if(q&&q.type==='enter-hunt')P.huntPendingT=Date.now();}}catch(x){}return OS(v);};s.addEventListener('message',e=>{try{if(typeof e.data==='string'){const m=JSON.parse(e.data);if(m&&m.type){P.ws[m.type]=m;if(['set-city','city','leave-hunt','exit-hunt'].includes(m.type)){P.hunting=false;P.huntLeftT=Date.now();}const S=P.sess;if(m.type==='field-init'){const sl=m.slug||'';P.fiT=Date.now();P.hunting=true;P.huntSince=Date.now();if(P.lastSlug!==sl){P.prev=P.sess;P.prev.end=Date.now();P.sess=mk();P.sess.slug=sl;P.lastSlug=sl;}}else if(m.type==='field-kill'){P.hunting=true;P.lastCombatT=Date.now();S.kills++;S.lastKillT=Date.now();S.xp+=m.xpGained||0;(m.loot||[]).forEach(l=>{const d=S.drops[l.itemId]||(S.drops[l.itemId]={name:l.name,qty:0});d.qty+=l.qty||0;});if(m.shiny){S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:m.speciesName||m.name||'',sid:m.speciesId||m.pokeId||0,def:1,t:Date.now()});if(SL.length>30)SL.shift();}}else if(m.type==='catch-result'){S.balls++;S.sinceCatch=(S.sinceCatch||0)+1;const bbc=((P.ws.balls&&P.ws.balls.catalog)||[]).find(x=>x.id===m.ballId);if(bbc&&!bbc.infinite)S.supGold=(S.supGold||0)+(+bbc.priceGold||0);if(m.success){S.captures++;S.lastCatchT=Date.now();S.sinceCatch=0;}}else if(m.type==='field'){P.lastFieldT=Date.now();/* golpes do seu pokemon: hits[].slot>=0. Salva de area do TM = mesmo golpe em 2+ alvos no mesmo tick (premissa: um tick traz no maximo um golpe normal por alvo); crit/bloqueio contam como golpe mas ficam fora da media de dano */if(m.mobs&&m.mobs.length){for(const mb of m.mobs){if(mb&&+mb.maxHp>0)(S.slotHp=S.slotHp||{})[mb.slot]=+mb.maxHp;}}if(m.hits&&m.hits.length){const bm={};for(const h of m.hits){if(h&&h.slot>=0&&h.move){const k=String(h.move);(bm[k]=bm[k]||new Set()).add(h.slot);}}for(const h of m.hits){if(!(h&&h.slot>=0&&+h.amount>0)||(h.move&&bm[String(h.move)].size>=2))continue;S.hits=(S.hits||0)+1;const mh=S.slotHp&&S.slotHp[h.slot];if(mh>0&&!h.crit&&!h.blocked){S.pct=(S.pct||0)+(+h.amount)/mh;S.pctN=(S.pctN||0)+1;}}}}else if(m.type==='poke-delta'){const pk=m.poke;if(pk){const LP=P.ws.pokes&&P.ws.pokes.list;if(LP){const ix=LP.findIndex(x=>x.id===pk.id);if(ix>=0)Object.assign(LP[ix],pk);else LP.push(pk);}const was=S.hp[pk.id];if(pk.team&&pk.hp===0&&was>0)S.faintN++;S.hp[pk.id]=pk.hp;if(P.pokesBaselined&&!P.knownPokes[pk.id]){S.sellG=(S.sellG||0)+(pk.sellValue||0);if(pk.shiny){S.shinyCapN++;S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:pk.name||'',sid:pk.speciesId||pk.pokeId||0,cap:1,t:Date.now()});if(SL.length>30)SL.shift();}const CL=P.catchLog=P.catchLog||[];const sd=pk.speciesId||pk.pokeId||0;const UL=P.usedList||[];CL.push({n:pk.name||'?',iv:nL(pk.ivTotal),q:nL(pk.quality),sh:!!pk.shiny,fx:!!(sd&&UL.length&&!UL.some(u=>u.sid===sd&&u.caught)),t:Date.now()});if(CL.length>50)CL.shift()}P.knownPokes[pk.id]=1;}}else if(m.type==='pokes'){(m.list||[]).forEach(pk=>{const was=S.hp[pk.id];if(pk.team&&pk.hp===0&&was>0)S.faintN++;S.hp[pk.id]=pk.hp;if(P.pokesBaselined&&!P.knownPokes[pk.id]){S.sellG=(S.sellG||0)+(pk.sellValue||0);if(pk.shiny){S.shinyCapN++;S.shinyN=(S.shinyN||0)+1;const SL=P.shinyLog=P.shinyLog||[];SL.push({n:pk.name||'',sid:pk.speciesId||pk.pokeId||0,cap:1,t:Date.now()});if(SL.length>30)SL.shift();}const CL=P.catchLog=P.catchLog||[];const sd=pk.speciesId||pk.pokeId||0;const UL=P.usedList||[];CL.push({n:pk.name||'?',iv:nL(pk.ivTotal),q:nL(pk.quality),sh:!!pk.shiny,fx:!!(sd&&UL.length&&!UL.some(u=>u.sid===sd&&u.caught)),t:Date.now()});if(CL.length>50)CL.shift()}P.knownPokes[pk.id]=1;});if(!P.pokesBaselined)P.pokesBaselined=true;}else if(m.type==='inventory'){const S=P.sess;let now=0;const doc0=P.api['/game/items.json'];const cat0={};if(doc0&&doc0.items)doc0.items.forEach(it=>cat0[it.id]=it);const cur={};(m.items||[]).forEach(it=>{if(it.itemId===59195)now=it.quantity||0;const c=(cat0[it.itemId]||{}).category;if(c==='heal'||c==='potion'||c==='revive')cur[it.itemId]=it.quantity||0;});
 /* consumo de cura vira gasto: queda na quantidade x preco em gold. ponytail: o inventario e lido a cada 30s,
    entao item usado e reposto no intervalo passa batido, e vender potion no mercado conta como consumo.
    E estimativa, nao extrato. Upgrade: rastrear pelo evento de uso do item, se o jogo expor um. */
 if(S.supBase){for(const id in S.supBase){const antes=S.supBase[id]||0,agora=(cur[id]!=null?cur[id]:0),d=antes-agora;if(d>0){const it=cat0[id]||{};S.supGold=(S.supGold||0)+d*(it.priceGold||it.npcPrice||0);S.supN=(S.supN||0)+d;}}}
 S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const doc=P.api['/game/items.json'];const it=doc&&doc.items&&doc.items.find(x=>x.id===59195);const d=S.drops[59195]||(S.drops[59195]={name:(it&&it.name)||'Rare Pokémon Picture',qty:0});d.qty+=(now-S.picBase);}S.picBase=now;}}else if(m.type==='chat'||m.type==='history'){const chS=(mm)=>{try{if(!mm||!mm.body)return;const re=/\\[poke!([A-Za-z0-9_-]+)\\]/g;let mt;while((mt=re.exec(mm.body))){try{const j=JSON.parse(atob(mt[1].replace(/-/g,'+').replace(/_/g,'/')));if(j&&j.k==='poke'){const CS=P.chatShares=P.chatShares||[];const N=(v)=>{v=Number(v);return isFinite(v)?v:0;};const cn=String(j.n||'?').slice(0,40),cf=String(mm.fromName||'').slice(0,40);if(!CS.some(c=>c.n===cn&&c.iv===N(j.iv)&&c.lv===N(j.lv)&&c.fr===cf)){CS.push({fr:cf,n:cn,sh:!!j.sh,lv:N(j.lv),q:N(j.q),iv:N(j.iv),pw:N(j.pw),t:Date.now()});if(CS.length>15)CS.shift();}}}catch(x){}}}catch(x){}};if(m.type==='chat')chS(m.msg);else['world','trade','help'].forEach(c2=>(m[c2]||[]).forEach(chS));}}}}catch(x){}});return s;};window.WebSocket.prototype=OW.prototype;['CONNECTING','OPEN','CLOSING','CLOSED'].forEach(k=>{try{window.WebSocket[k]=OW[k]}catch(x){}});const OF=window.fetch;window.fetch=function(...a){try{let H;const r0=a[0],ini=a[1];if(ini&&ini.headers)H=ini.headers;else if(r0&&typeof r0==='object'&&r0.headers)H=r0.headers;if(H){let au;if(typeof H.get==='function')au=H.get('authorization');else au=H.Authorization||H.authorization;if(au){auth=au;P.auth=au;}}}catch(x){}const p=OF.apply(this,a);try{let u=(a[0]&&a[0].url)||a[0];if(typeof u==='string'&&/\\/api\\/|items\\.json/.test(u)){p.then(r=>{const c=r.clone();c.json().then(j=>{const key=u.split('?')[0];if(key==='/api/game/used-balls'){if(j&&j.pokemons){P.shinyEnc=j.pokemons.reduce((s,p)=>s+(p.shiny?(p.attempts||0):0),0);P.usedList=j.pokemons.map(p=>({sid:p.speciesId,name:p.name,shiny:!!p.shiny,attempts:p.attempts||0,total:p.total||0,caught:!!p.caught}));}return;}if(key==='/api/characters/me'){if(!j||!j.character){P.meMiss=(P.meMiss||0)+1;return;}P.meMiss=0;}P.api[key]=j}).catch(()=>{})}).catch(()=>{})}}catch(x){}return p;};const poll=()=>{try{while(P.catchLog&&P.catchLog.length>400)P.catchLog.shift();while(P.shinyLog&&P.shinyLog.length>300)P.shinyLog.shift();const o=auth?{headers:{Authorization:auth}}:undefined;fetch('/api/characters/me',o).catch(()=>{});fetch('/api/game/used-balls',o).catch(()=>{});try{if(P.sock&&P.sock.readyState===1){P.sock.send(JSON.stringify({type:'inv-get'}));P.sock.send(JSON.stringify({type:'analyzer-get'}));}}catch(x){}}catch(x){}};setInterval(poll,30000);setTimeout(poll,9000);})()`).catch(() => {}); // coletor de estado + sessao (refetch autenticado de gold/nivel a cada 30s)
-          // volta pra hunt (experimental): so se a conta estava farmando ha pouco (kill nos ultimos 10 min),
-          // senao quem estacionou na cidade de proposito seria mandado de volta
+          // Volta opcional apos reload comum. O watchdog de hunt usa huntRecovery somente quando
+          // confirmou que a conta estava cacando e os abates ficaram 10 min sem mudar.
           try {
             const snv = sessSnap[i];
-            if (voltaHuntOn && snv && (wv.getURL() || '').startsWith('https://poke.idleworld.online/play') && /^[a-z0-9_-]{1,60}$/i.test(snv.slug || '') && Date.now() - snv.t < 600e3 && Date.now() - ((snv.s && snv.s.lastKillT) || 0) < 600e3) {
-              wv.executeJavaScript(VOLTA_JS(snv.slug)).then(r => { if (r === 'armado') { try { window.pokeAPI.logError('painel', 'painel ' + (i + 1) + ': recarregou farmando, volta pra hunt ' + snv.slug + ' em 12s'); } catch {} } }).catch(() => {});
+            const rec = huntRecovery[i], recOk = !!(rec && Date.now() - rec.t < 900e3);
+            const slugVolta = recOk ? rec.slug : (snv && snv.slug);
+            const voltaComum = !!(voltaHuntOn && snv && Date.now() - snv.t < 600e3 && Date.now() - ((snv.s && snv.s.lastKillT) || 0) < 600e3);
+            if ((recOk || voltaComum) && (wv.getURL() || '').startsWith('https://poke.idleworld.online/play') && /^[a-z0-9_-]{1,60}$/i.test(slugVolta || '')) {
+              if (recOk) delete huntRecovery[i];
+              wv.executeJavaScript(VOLTA_JS(slugVolta)).then(r => { if (r === 'armado') { try { window.pokeAPI.logError('painel', 'painel ' + (i + 1) + ': ' + (recOk ? 'watchdog recuperando' : 'recarregou farmando') + ', volta pra hunt ' + slugVolta + ' em 12s'); } catch {} } }).catch(() => {});
             }
           } catch {}
           wv.executeJavaScript(ecoScript(ecoFps())).catch(() => {});
@@ -903,8 +921,6 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
           wv.executeJavaScript(QOL_UI).catch(() => {});
           wv.executeJavaScript(chatScript(chatHidden || cardsOn)).catch(() => {});
           wv.executeJavaScript(dockScript(dockHidden)).catch(() => {});
-          // so na tela de login, pra nao rodar a toa dentro do jogo
-          if ((wv.getURL() || '').startsWith(LOGIN_URL)) wv.executeJavaScript(scrollLoginScript).catch(() => {});
           wv.executeJavaScript(`localStorage.setItem('poke_lang', ${JSON.stringify(lang === 'pt' ? 'pt' : 'en')})`).catch(() => {}); // mantem o jogo no idioma escolhido (es usa en, o jogo so tem pt/en)
           injectIvHelper(wv); // somente o helper de IV auditado e empacotado
         } catch {}
@@ -927,8 +943,16 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
       };
       wv.addEventListener('did-navigate', autoLogin);
       wv.addEventListener('did-navigate-in-page', (e) => { if (e.isMainFrame !== false) autoLogin(e); }); // Sair pelo dock: rota interna pra /login, sem did-navigate
-      // saiu do /login por rota interna da SPA (sem novo dom-ready): agora sim os userscripts entram
-      wv.addEventListener('did-navigate-in-page', (e) => { try { if (e.isMainFrame && wv.__pgSemIv && !ivHelperBloqueado(e.url)) injectIvHelper(wv); } catch {} });
+      // O login e o jogo usam a mesma SPA. Ao sair de uma rota protegida, recarrega uma única vez
+      // já em /play para que o dom-ready instale o coletor omitido deliberadamente no login.
+      wv.addEventListener('did-navigate-in-page', (e) => {
+        try {
+          if (e.isMainFrame === false) return;
+          if (ivHelperBloqueado(e.url)) { wv.__pgAuthPage = true; return; }
+          if (wv.__pgAuthPage) { wv.__pgAuthPage = false; wv.reload(); }
+          else if (wv.__pgSemIv) injectIvHelper(wv);
+        } catch {}
+      });
 
       panel.querySelector('.reload').onclick = () => { if (!off[i]) { try { wv.reloadIgnoringCache(); } catch { wv.reload(); } } };
       panel.querySelector('.expand').onclick = () => toggleExpand(i);
@@ -1172,7 +1196,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
     ecoBtn.textContent = eco ? t('eco') : t('ecoOff');
     ecoBtn.classList.toggle('on', eco);
     webviews.forEach((w, i) => {
-      if (off[i]) return;
+      if (off[i] || !podeModificarPagina(w)) return;
       try { w.executeJavaScript(ecoScript(ecoFps())).catch(() => {}); } catch {}
     });
     lsSet('eco', eco ? '1' : '0');
@@ -1327,7 +1351,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   function applyChat() {
     chatBtn.textContent = chatHidden ? t('chatHidden') : t('chatShown');
     chatBtn.classList.toggle('on', !chatHidden);
-    webviews.forEach((w, i) => { if (off[i]) return; try { w.executeJavaScript(chatScript(chatHidden || cardsOn)).catch(() => {}); } catch {} });
+    webviews.forEach((w, i) => { if (off[i] || !podeModificarPagina(w)) return; try { w.executeJavaScript(chatScript(chatHidden || cardsOn)).catch(() => {}); } catch {} });
     lsSet('chatHidden', chatHidden ? '1' : '0');
   }
   chatBtn.onclick = () => { chatHidden = !chatHidden; applyChat(); };
@@ -1369,7 +1393,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   function applyDock() {
     dockBtn.textContent = t('dockLabel'); // estado vai pela cor (.on = visível), igual o Eco
     dockBtn.classList.toggle('on', !dockHidden);
-    webviews.forEach((w, i) => { if (off[i]) return; try { w.executeJavaScript(dockScript(dockHidden)).catch(() => {}); } catch {} });
+    webviews.forEach((w, i) => { if (off[i] || !podeModificarPagina(w)) return; try { w.executeJavaScript(dockScript(dockHidden)).catch(() => {}); } catch {} });
     lsSet('dockHidden', dockHidden ? '1' : '0');
   }
   dockBtn.onclick = () => { dockHidden = !dockHidden; applyDock(); };
@@ -1395,7 +1419,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
   function applyClean() {
     cleanBtn.textContent = t('clean'); cleanBtn.title = t('cleanTitle');
     cleanBtn.classList.toggle('on', cleanOn);
-    webviews.forEach((w, i) => { if (off[i] || !w) return; try { w.executeJavaScript(cleanScript(cleanOn)).catch(() => {}); } catch {} });
+    webviews.forEach((w, i) => { if (off[i] || !w || !podeModificarPagina(w)) return; try { w.executeJavaScript(cleanScript(cleanOn)).catch(() => {}); } catch {} });
     lsSet('cleanHud', cleanOn ? '1' : '0');
   }
   cleanBtn.onclick = () => { cleanOn = !cleanOn; applyClean(); };
@@ -1542,7 +1566,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
     sgBtn.title = t('sellguardTitle');
     sgBtn.classList.toggle('on', sellGuardOn);
     lsSet('sellguard', sellGuardOn ? '1' : '0');
-    webviews.forEach((w, i) => { if (off[i] || !w) return; try { w.executeJavaScript('window.__pgSellGuardOn=' + (sellGuardOn ? 'true' : 'false') + ';window.__pgSellLock=' + JSON.stringify(sellLock) + ';window.__pgSellTxt=' + JSON.stringify([t('sgAviso'), t('sgConfirma')])).catch(() => {}); } catch {} });
+    webviews.forEach((w, i) => { if (off[i] || !w || !podeModificarPagina(w)) return; try { w.executeJavaScript('window.__pgSellGuardOn=' + (sellGuardOn ? 'true' : 'false') + ';window.__pgSellLock=' + JSON.stringify(sellLock) + ';window.__pgSellTxt=' + JSON.stringify([t('sgAviso'), t('sgConfirma')])).catch(() => {}); } catch {} });
   }
   sgBtn.onclick = () => { sellGuardOn = !sellGuardOn; applySellGuard(); };
   function alerta(i, chave, meta) {
@@ -1570,7 +1594,7 @@ const resumo=(X)=>{if(!X||!X.start||!X.kills)return null;let lg=0;const dr=[];fo
 return {start:X.start,end:X.end||Date.now(),slug:X.slug||'',kills:X.kills||0,xp:X.xp||0,caps:X.captures||0,sf:X.shinyN||0,sc:X.shinyCapN||0,balls:X.balls||0,pots:X.supN||0,loot:lg,sell:X.sellG||0,sup:(X.supGold||0),drops:dr};};
 const fm=(ws.field&&Array.isArray(ws.field.mobs))?ws.field.mobs:[];const fs=fm.find(x=>x&&x.shiny&&!x.dead);const fieldShiny=fs?{n:fs.speciesName||fs.name||'',sid:fs.speciesId||fs.pokeId||0}:null;
 const rareDrops=[];for(const id in (S.drops||{})){const dd=S.drops[id]||{};const nm=String(dd.name||(cat[id]||{}).name||'').trim();const nk=nm.toLowerCase();if(nk==='strange pheromone'||nk==='strange pheromones'||nk==='boss token'||nk==='boss tokens')rareDrops.push({n:nm,q:+dd.qty||0});}
-return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shinyN:S.shinyN||0,fieldShiny,rareDrops,faintN:S.faintN||0,cid:ch.id||'',kills:S.kills||0,xp:S.xp||0,caps:S.captures||0,shinyCapN:S.shinyCapN||0,saldo:(()=>{const A=ws.analyzer;if(A&&typeof A==='object'&&+A.seconds>0&&Number.isFinite(+A.balance)){const B=P.anBase;return (+A.balance||0)-((B&&+B.balance)||0);}return lootGold+(S.sellG||0)-(S.supGold||0);})(),shinyLog:P.shinyLog||[],catchLog:P.catchLog||[],sess:S,slug:P.lastSlug||'',anBase:(P.anBase&&typeof P.anBase==='object')?P.anBase:null};})()`;
+return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shinyN:S.shinyN||0,fieldShiny,rareDrops,faintN:S.faintN||0,cid:ch.id||'',kills:S.kills||0,xp:S.xp||0,caps:S.captures||0,shinyCapN:S.shinyCapN||0,saldo:(()=>{const A=ws.analyzer;if(A&&typeof A==='object'&&+A.seconds>0&&Number.isFinite(+A.balance)){const B=P.anBase;return (+A.balance||0)-((B&&+B.balance)||0);}return lootGold+(S.sellG||0)-(S.supGold||0);})(),shinyLog:P.shinyLog||[],catchLog:P.catchLog||[],sess:S,slug:P.lastSlug||'',hunting:P.hunting===true,huntSince:+P.huntSince||0,lastKillT:+S.lastKillT||0,anBase:(P.anBase&&typeof P.anBase==='object')?P.anBase:null};})()`;
   const BALL_MIN = 100, POTION_MIN = 15, REVIVE_MIN = 5; // limites do "está com poucos ..."
   const lastShiny = [], shinyFieldOn = [], shinyFalouEm = [], lastFaint = [], lowOn = [{}, {}, {}, {}];
   function checkLow(i, key, val, min, msgKey) {
@@ -1583,7 +1607,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   let voiceOn = lsGet('voiceAlerts') !== '0';
   const voiceBtn = document.getElementById('voiceAlerts');
   const voiceQueue = [];
-  let voiceBusy = false, voiceLast = { key: '', t: 0 };
+  let voiceBusy = false, voiceTimer = null, voiceLast = { key: '', t: 0 };
   const vozLimpa = (v, n) => String(v == null ? '' : v).replace(/[<>\[\]{}]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n || 50);
   function fraseVoz(tipo, i, meta) {
     const conta = vozLimpa((accounts[i] && accounts[i].name) || defName(i), 35);
@@ -1609,17 +1633,40 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     })[tipo] || '';
   }
   function proximaFala() {
-    if (!voiceOn || voiceBusy || !voiceQueue.length || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    if (!voiceOn || voiceBusy || !voiceQueue.length) return;
     const item = voiceQueue.shift(); voiceBusy = true;
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+      voiceBusy = false; beepVoiceFallback();
+      try { window.pokeAPI.logError('audio-alerta', 'sintese de voz indisponivel neste sistema'); } catch {}
+      setTimeout(proximaFala, 120); return;
+    }
     try {
       const u = new SpeechSynthesisUtterance(item.text);
       u.lang = lang === 'en' ? 'en-US' : lang === 'es' ? 'es-ES' : 'pt-BR';
       const vs = speechSynthesis.getVoices();
       u.voice = vs.find(v => String(v.lang).toLowerCase() === u.lang.toLowerCase()) || vs.find(v => String(v.lang).toLowerCase().startsWith(u.lang.slice(0, 2).toLowerCase())) || null;
       u.rate = .96; u.pitch = 1; u.volume = 1;
-      const fim = () => { voiceBusy = false; setTimeout(proximaFala, 120); };
-      u.onend = fim; u.onerror = fim; speechSynthesis.speak(u);
-    } catch { voiceBusy = false; }
+      let terminou = false;
+      const fim = (erro) => {
+        if (terminou) return; terminou = true; clearTimeout(voiceTimer); voiceTimer = null;
+        voiceBusy = false;
+        if (erro && voiceOn) {
+          beepVoiceFallback();
+          try { window.pokeAPI.logError('audio-alerta', 'falha na voz: ' + String(erro).slice(0, 100)); } catch {}
+        }
+        setTimeout(proximaFala, 120);
+      };
+      u.onend = () => fim('');
+      u.onerror = (e) => fim((e && e.error) || 'erro desconhecido');
+      try { speechSynthesis.resume(); } catch {}
+      speechSynthesis.speak(u);
+      // Alguns drivers de voz não emitem onend/onerror. Sem o teto, a primeira fala prende a fila.
+      voiceTimer = setTimeout(() => { try { speechSynthesis.cancel(); } catch {} fim('tempo esgotado'); }, 15000);
+    } catch (error) {
+      clearTimeout(voiceTimer); voiceTimer = null; voiceBusy = false; beepVoiceFallback();
+      try { window.pokeAPI.logError('audio-alerta', 'excecao na voz: ' + String((error && error.message) || error).slice(0, 100)); } catch {}
+      setTimeout(proximaFala, 120);
+    }
   }
   function falaAlerta(tipo, i, meta) {
     if (!voiceOn || !alertsOn) return;
@@ -1633,7 +1680,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   function applyVoice() {
     voiceBtn.textContent = t(voiceOn ? 'voiceOn' : 'voiceOff'); voiceBtn.title = t('voiceTitle');
     voiceBtn.classList.toggle('on', voiceOn); lsSet('voiceAlerts', voiceOn ? '1' : '0');
-    if (!voiceOn) { voiceQueue.length = 0; voiceBusy = false; try { speechSynthesis.cancel(); } catch {} }
+    if (!voiceOn) { voiceQueue.length = 0; voiceBusy = false; clearTimeout(voiceTimer); voiceTimer = null; try { speechSynthesis.cancel(); } catch {} }
   }
   voiceBtn.onclick = () => { voiceOn = !voiceOn; applyVoice(); if (voiceOn) { voiceQueue.push({ text: lang === 'en' ? 'Alert voice enabled.' : lang === 'es' ? 'Voz de alertas activada.' : 'Voz dos alertas ativada.' }); proximaFala(); } };
 
@@ -1663,19 +1710,30 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
   voltaBtn.onclick = () => { voltaHuntOn = !voltaHuntOn; applyVoltaHunt(); };
   const VOLTA_JS = (slug) => `(()=>{const P=window.__poke;if(!P)return 'sem-coletor';if(window.__pgVolta)return 'ja';window.__pgVolta=1;const sl=${JSON.stringify(String(slug))};if(!sl||['cerulean','pewter','viridian','cassino','arena_pvp'].includes(sl))return 'cidade';let t0=Date.now(),n=0,tk=0,kl=(P.sess||{}).kills||0;const iv=setInterval(()=>{try{const k=(P.sess||{}).kills||0;if((P.fiT||0)>t0||k>kl||n>=3||++tk>10){clearInterval(iv);return;}kl=k;if(P.sock&&P.sock.readyState===1){P.sock.send(JSON.stringify({type:'enter-hunt',slug:sl}));n++;t0=Date.now();}}catch(e){}},12000);return 'armado';})()`;
   let _ac = null;
-  function beepShiny(festa) { // festa = captura: acorde mais longo, pra nao confundir com "apareceu"
+  async function tocaNotas(notas, volume) {
     try {
-      _ac = _ac || new AudioContext();
-      const notas = festa ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568] : [523.25, 659.25, 783.99, 1046.5];
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) throw new Error('WebAudio indisponivel');
+      _ac = _ac || new AudioCtx();
+      if (_ac.state === 'suspended') await _ac.resume();
+      if (_ac.state !== 'running') throw new Error('AudioContext em estado ' + _ac.state);
       notas.forEach((f, i) => { // C5 E5 G5 C6 (+ E6 G6 na captura)
         const o = _ac.createOscillator(), g = _ac.createGain();
         o.frequency.value = f; o.type = 'triangle'; o.connect(g); g.connect(_ac.destination);
         const t0 = _ac.currentTime + i * 0.12;
-        g.gain.setValueAtTime(0.001, t0); g.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.32);
+        g.gain.setValueAtTime(0.001, t0); g.gain.exponentialRampToValueAtTime(volume, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.32);
         o.start(t0); o.stop(t0 + 0.35);
       });
-    } catch {}
+      return true;
+    } catch (error) {
+      try { window.pokeAPI.logError('audio-alerta', String((error && error.message) || error).slice(0, 120)); } catch {}
+      return false;
+    }
   }
+  function beepShiny(festa) { // festa = captura: acorde mais longo, pra nao confundir com "apareceu"
+    return tocaNotas(festa ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568] : [523.25, 659.25, 783.99, 1046.5], .22);
+  }
+  function beepVoiceFallback() { return tocaNotas([392, 523.25], .13); }
   // ----- Shiny CAPTURADO: aviso na tela que fica ate ser fechado (evento raro, nao pode passar batido) -----
   function festaShiny(o) {
     const wrap = document.getElementById('shinyParty');
@@ -1694,7 +1752,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     el.querySelector('.sp-x').onclick = () => el.remove();
     wrap.appendChild(el);
     while (wrap.children.length > 3) wrap.firstChild.remove(); // varias capturas: mantem as 3 mais recentes
-    if (sndShinyOn && !voiceOn) beepShiny(true);
+    if (sndShinyOn) beepShiny(true);
   }
 
   // ----- Webhook do Discord (opcional): a URL e do proprio usuario, envio via main (CSP nao deixa daqui) -----
@@ -1915,12 +1973,31 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     }
   }
 
-  // ----- Farm parado: conta online mas os kills nao andam ha 10 min -----
-  const lastK = [], lastKT = [], stallOn = [];
-  function checkStall(i, r) {
-    const now = Date.now();
-    if (lastK[i] === undefined || r.kills !== lastK[i]) { lastK[i] = r.kills; lastKT[i] = now; stallOn[i] = false; return; }
-    if (r.kills > 0 && !stallOn[i] && alertsOn && now - (lastKT[i] != null ? lastKT[i] : now) > 600e3) { stallOn[i] = true; alerta(i, 'msgStalled'); }
+  // ----- Watchdog da hunt: recarrega somente uma hunt confirmada sem abates por 10 min -----
+  // Kill e um sinal melhor que drop: todo combate concluido gera field-kill, enquanto loot pode
+  // variar. set-city/leave-hunt zeram P.hunting, portanto cidade e mercado nunca entram aqui.
+  const HUNT_STALL_MS = 600e3, HUNT_RELOAD_COOLDOWN = 1200e3;
+  const lastK = [], lastKT = [], stallOn = [], stallSlug = [], stallReload = [], huntRecovery = [];
+  function checkStall(i, r, w) {
+    const now = Date.now(), slug = String(r.slug || '');
+    const city = ['cerulean', 'pewter', 'viridian', 'cassino', 'arena_pvp'].includes(slug);
+    const active = r.live && r.hunting === true && !city && /^[a-z0-9_-]{1,60}$/i.test(slug) && (w.getURL() || '').startsWith('https://poke.idleworld.online/play');
+    if (!active) {
+      lastK[i] = undefined; lastKT[i] = 0; stallOn[i] = false; stallSlug[i] = '';
+      return false;
+    }
+    if (stallSlug[i] !== slug || lastK[i] === undefined || r.kills !== lastK[i]) {
+      stallSlug[i] = slug; lastK[i] = r.kills; lastKT[i] = now; stallOn[i] = false;
+      return false;
+    }
+    if (now - (lastKT[i] || now) < HUNT_STALL_MS) return false;
+    if (stallOn[i] && now - (stallReload[i] || 0) < HUNT_RELOAD_COOLDOWN) return false;
+    stallOn[i] = true; stallReload[i] = now;
+    huntRecovery[i] = { slug, t: now };
+    if (alertsOn) alerta(i, 'msgStalled');
+    try { window.pokeAPI.logError('painel', 'painel ' + (i + 1) + ': hunt ' + slug + ' sem abates ha 10 min, recarregando sem cache'); } catch {}
+    try { if (typeof w.reloadIgnoringCache === 'function') w.reloadIgnoringCache(); else w.reload(); } catch {}
+    return true;
   }
 
   const lastRareDrops = [];
@@ -1956,7 +2033,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
         if (r.fieldShiny) {
           if (!shinyFieldOn[i] && Date.now() - (shinyFalouEm[i] || 0) > 30000) {
             shinyFalouEm[i] = Date.now();
-            if (sndShinyOn && !voiceOn) beepShiny();
+            if (sndShinyOn) beepShiny();
             if (alertsOn) alerta(i, 'msgShiny', { name: r.fieldShiny.n });
           }
           shinyFieldOn[i] = true;
@@ -1967,7 +2044,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
           const delta = r.shinyN - lastShiny[i]; lastShiny[i] = r.shinyN; addShinyLife(r.cid, delta);
           if (Date.now() - (shinyFalouEm[i] || 0) > 120000) {
             const ult = (r.shinyLog || []).slice().sort((a, b) => (+b.t || 0) - (+a.t || 0))[0] || {};
-            shinyFalouEm[i] = Date.now(); if (sndShinyOn && !voiceOn) beepShiny(); if (alertsOn) alerta(i, 'msgShiny', { name: ult.n });
+            shinyFalouEm[i] = Date.now(); if (sndShinyOn) beepShiny(); if (alertsOn) alerta(i, 'msgShiny', { name: ult.n });
           }
         }
         registraHunt(i, r.prevHunt); // hunt encerrada entra no log sozinha
@@ -1986,7 +2063,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
           return; }
         deadT[i] = 0;
         checkRareDrops(i, r);
-        checkStall(i, r); // farm parado
+        checkStall(i, r, w); // hunt confirmada sem progresso: recarrega e retoma a mesma hunt
         // sem gate aqui: o alerta() ja checa o sino. Parar de ACOMPANHAR com o sino desligado
         // fazia religar disparar faint velho e engolir suprimento que baixou nesse meio tempo.
         if (lastFaint[i] === undefined || r.faintN < lastFaint[i]) lastFaint[i] = r.faintN;
@@ -3778,7 +3855,7 @@ return {live,hasBalls,hasInv,balls,potions,revives,prevHunt:resumo(P.prev),shiny
     document.body.classList.toggle('cards-on', cardsOn);
     cardsBtn.classList.toggle('on', cardsOn);
     lsSet('cardsOn', cardsOn ? '1' : '0');
-    webviews.forEach((w, i) => { if (off[i] || !w) return; try { w.setAudioMuted(cardsOn || muted); w.executeJavaScript(ultraScript(cardsOn)).catch(() => {}); w.executeJavaScript(ecoScript(ecoFps())).catch(() => {}); w.executeJavaScript(chatScript(cardsOn || chatHidden)).catch(() => {}); } catch {} });
+    webviews.forEach((w, i) => { if (off[i] || !w) return; try { w.setAudioMuted(cardsOn || muted); if (!podeModificarPagina(w)) return; w.executeJavaScript(ultraScript(cardsOn)).catch(() => {}); w.executeJavaScript(ecoScript(ecoFps())).catch(() => {}); w.executeJavaScript(chatScript(cardsOn || chatHidden)).catch(() => {}); } catch {} });
     if (cardsOn) { cdHtmlAnt = ''; cardsEl.innerHTML = '<div class="cd-empty" style="padding:20px">' + t('cdWaiting') + '</div>'; refreshCards(); }
   }
   cardsBtn.onclick = () => { cardsOn = !cardsOn; applyCards(); };

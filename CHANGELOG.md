@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.7 — Login, alertas e recuperação automática da hunt
+
+- O CAPTCHA oficial do Poke Idle World volta a ser validado automaticamente no app: as rotas de autenticação preservam o ambiente nativo do Chromium e ficam livres dos coletores e ajustes usados dentro do jogo.
+- O preenchimento automático de treinador e senha, assim como o clique em **Entrar**, continua funcionando após a validação oficial; CAPTCHA e 2FA não são manipulados pelo PokeMux.
+- Sons de shiny e voz dos alertas voltam a funcionar mesmo quando o mecanismo de áudio do Chromium inicia suspenso ou o driver de voz deixa de responder, com retomada do áudio, timeout e aviso sonoro de fallback.
+- Novo watchdog de hunt: se uma hunt confirmada ficar 10 minutos sem nenhum abate, o painel é atualizado sem cache e tenta retornar automaticamente à mesma hunt. Cidade, mercado, login e saídas voluntárias ficam fora da verificação, e um cooldown impede ciclos de recarga.
+
 ## 1.1.6 — Lista de capturas completa e compacta
 
 - **Últimas capturas · todas as contas** agora mostra todas as capturas correspondentes aos filtros selecionados, sem o corte de 40 resultados, mantendo a seção compacta com rolagem interna e removendo alturas manuais antigas que deixavam o cartão gigante.

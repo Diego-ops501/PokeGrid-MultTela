@@ -130,7 +130,7 @@ console.log('\n--- pokebolas infinitas, vinculadas e com validade (lancamento de
 console.log('\n--- coletor le o dano real por golpe e a vida do selvagem (mensagem field do jogo) ---');
 {
   const c0 = s.indexOf("m.type==='field'){") + "m.type==='field'){".length; const trecho = s.slice(c0, s.indexOf('}else if(', c0));
-  const S = {}; const roda = (m) => new Function('m', 'S', trecho)(m, S);
+  const S = {}; const roda = (m) => new Function('m', 'S', 'P', trecho)(m, S, {});
   roda({ type: 'field', hits: [{ slot: 0, amount: 120, move: 'Psychic' }, { slot: -1, amount: 40 }, { slot: 1, amount: 0 }, { slot: 2, amount: 80 }], mobs: [{ slot: 0, hp: 10, maxHp: 200 }, { slot: 1, hp: 150, maxHp: 150 }] });
   roda({ type: 'field', hits: [], mobs: [{ slot: 0, hp: 200, maxHp: 200 }] });
   ok(S.hits === 2, 'conta so golpes do seu pokemon no selvagem (slot >= 0, dano > 0): ' + S.hits + ' golpes');
