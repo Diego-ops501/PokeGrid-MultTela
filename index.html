@@ -636,7 +636,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
     loginLoadTimers[i] = setTimeout(() => {
       loginLoadTimers[i] = null;
       if (off[i] || !wv) return;
-      try { Promise.resolve(wv.loadURL(url)).catch(() => {}); } catch {}
+      try { wv.src = url; } catch {}
     }, Math.max(0, delay || 0));
   }
   const deadT = [0, 0, 0, 0]; // ticks seguidos sem sessao viva: o jogo nao navega sozinho pro login
@@ -856,7 +856,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
       wv.addEventListener('did-start-loading', () => { if (!off[i]) { falhou = false; dot.className = 'dot'; status.textContent = t('stLoading'); } });
       // o did-stop-loading sempre fecha o par do did-start-loading. Sem ele, navegacao interna da
       // SPA do jogo (que nao redispara o dom-ready) deixava o painel preso em "carregando...".
-      wv.addEventListener('did-stop-loading', () => { if (!off[i] && !falhou) { dot.className = 'dot ok'; status.textContent = t('stOnline'); } });
+      wv.addEventListener('did-stop-loading', () => { if (!off[i] && !falhou && (wv.getURL() || '') !== 'about:blank') { dot.className = 'dot ok'; status.textContent = t('stOnline'); } });
       // canal do painel pro card de IV do app: a extensao marca a mensagem, aqui a gente pesca
       wv.addEventListener('console-message', (e) => {
         const m = e && e.message;
@@ -883,6 +883,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
       panel.querySelector('.zo').onclick = () => setZoom(zoom - 0.1);
 
       wv.addEventListener('dom-ready', () => {
+        if ((wv.getURL() || '') === 'about:blank') return; // pagina de espera do login escalonado nao e uma conta online
         if (!off[i] && !falhou) { dot.className = 'dot ok'; status.textContent = t('stOnline'); fails = 0; alertedDown = false; } // carregou DE VERDADE: zera o watchdog (a pagina de erro tambem emite dom-ready)
         try {
           wv.setAudioMuted(muted || cardsOn); wv.setZoomFactor(zoom);

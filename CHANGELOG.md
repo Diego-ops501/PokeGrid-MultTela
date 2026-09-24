@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.9 — Correção da tela preta no primeiro painel
+
+- Corrigida uma condição de corrida da autenticação sequencial da versão 1.1.8: o primeiro WebView podia tentar navegar antes de estar pronto e permanecer em uma tela preta.
+- A abertura agendada agora usa a propriedade nativa `src`, segura desde a criação do WebView, e a página interna de espera `about:blank` não aparece mais falsamente como conta online.
+
 ## 1.1.8 — Autenticação sequencial das contas
 
 - As telas de login das quatro contas agora são abertas em sequência, com intervalo de três segundos, em vez de iniciar quatro verificações Turnstile simultaneamente. Isso reduz o padrão de rajada que pode elevar o risco atribuído pela Cloudflare a uma das sessões.
