@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.8 — Autenticação sequencial das contas
+
+- As telas de login das quatro contas agora são abertas em sequência, com intervalo de três segundos, em vez de iniciar quatro verificações Turnstile simultaneamente. Isso reduz o padrão de rajada que pode elevar o risco atribuído pela Cloudflare a uma das sessões.
+- **Logar equipe** e **Atualizar tudo** usam a mesma sequência. O PokeMux continua sem clicar, reiniciar ou reconfigurar o CAPTCHA: se o modo gerenciado da Cloudflare exigir confirmação humana em uma sessão, o checkbox ainda precisa ser marcado pelo usuário.
+- Usuário, senha e o botão **Entrar** continuam automáticos assim que o site emitir o token oficial do Turnstile.
+
 ## 1.1.7 — Login, alertas e recuperação automática da hunt
 
 - O CAPTCHA oficial do Poke Idle World volta a ser validado automaticamente no app: as rotas de autenticação preservam o ambiente nativo do Chromium e ficam livres dos coletores e ajustes usados dentro do jogo.
