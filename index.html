@@ -820,6 +820,7 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
   }
 
   function criarPainel(i, loginDelay) {
+      const delayedLogin = +loginDelay > 0;
       const panel = document.createElement('div');
       panel.className = 'panel';
       panel.innerHTML = `
@@ -841,7 +842,10 @@ const HOME_URL  = 'https://poke.idleworld.online/?ref=2G9B4BV'; // link do refer
       // do main.js (que nega o popup e manda o link pro navegador de fora): o botao de wiki nao abria nada
       wv.setAttribute('allowpopups', '');
       wv.partition = 'persist:conta' + (i + 1);
-      wv.src = 'about:blank';
+      // O primeiro painel precisa nascer com uma URL real. Atribuir a URL por um
+      // timer de 0 ms disputa com a inicializacao do <webview> e pode deixa-lo
+      // preso indefinidamente em about:blank. So as contas seguintes aguardam.
+      wv.src = delayedLogin ? 'about:blank' : START_URL;
       panel.appendChild(wv);
       grid.appendChild(panel);
       webviews.push(wv);
@@ -972,7 +976,7 @@ S.supBase=cur;if(S.picBase==null){S.picBase=now;}else{if(now>S.picBase){const do
         const novo = prompt(t('promptRename'), accounts[i].name || defName(i));
         if (novo != null) { accounts[i].name = novo; nameEl.textContent = novo || defName(i); save(); }
       };
-      agendaLoginPage(wv, i, START_URL, loginDelay);
+      if (delayedLogin) agendaLoginPage(wv, i, START_URL, loginDelay);
   }
 
   // ----- Numero de paineis (2 a 4), escolhido no menu -----

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.10 — Primeiro painel abre diretamente
+
+- O primeiro painel volta a receber a tela de login já durante a criação do WebView, eliminando a disputa de inicialização que ainda podia deixá-lo preso em uma tela preta na versão 1.1.9.
+- Somente as contas 2 a 4 usam a espera sequencial de três segundos; o CAPTCHA oficial, o preenchimento de usuário e senha e o clique em **Entrar** permanecem no fluxo já existente.
+- Validado visualmente com um perfil limpo: os quatro painéis abriram o login e concluíram o Turnstile oficial com sucesso.
+
 ## 1.1.9 — Correção da tela preta no primeiro painel
 
 - Corrigida uma condição de corrida da autenticação sequencial da versão 1.1.8: o primeiro WebView podia tentar navegar antes de estar pronto e permanecer em uma tela preta.

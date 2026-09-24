@@ -25,7 +25,7 @@ ok(!main.includes('app.userAgentFallback ='), 'Turnstile recebe o User-Agent nat
 ok(html.includes('const podeModificarPagina = (wv) =>') && html.includes('const authPage = !podeModificarPagina(wv);'), 'rotas de autenticação ficam sem coletores e modificações do navegador');
 ok(html.includes('if (authPage) {') && html.includes('wv.executeJavaScript(scrollLoginScript)') && html.includes('return;'), 'login só recebe enquadramento visual, sem automação do CAPTCHA');
 ok(html.includes('const LOGIN_STAGGER_MS = 3000') && html.includes('criarPainel(i, i * LOGIN_STAGGER_MS)') && html.includes('LOGIN_URL, i * LOGIN_STAGGER_MS'), 'desafios Turnstile das quatro contas são iniciados em sequência, não em rajada');
-ok(html.includes("wv.src = 'about:blank'") && html.includes('agendaLoginPage(wv, i, START_URL, loginDelay)'), 'cada WebView espera sua vez antes de abrir a autenticação');
+ok(html.includes('const delayedLogin = +loginDelay > 0;') && html.includes("wv.src = delayedLogin ? 'about:blank' : START_URL;") && html.includes('if (delayedLogin) agendaLoginPage(wv, i, START_URL, loginDelay)'), 'primeiro WebView abre diretamente e somente os seguintes esperam sua vez');
 ok(html.includes('try { wv.src = url; }') && !html.includes('Promise.resolve(wv.loadURL(url))'), 'agendamento usa src e funciona mesmo no primeiro instante de vida do WebView');
 ok(html.includes("if ((wv.getURL() || '') === 'about:blank') return;"), 'painel de espera vazio não aparece falsamente como online');
 ok(!html.includes("iframe[src*='challenges.cloudflare.com']") && !html.includes('turnstile.render('), 'PokeMux não clica, reinicializa nem reconfigura o widget do site');
@@ -41,7 +41,7 @@ ok(main.includes("ipcMain.handle('overlay:toggle'") && html.includes('id="overla
 ok(main.includes("ipcMain.handle('shiny:capture'") && html.includes("let shotShinyOn = lsGet('shotShiny') === '1'"), 'print de shiny é opcional e local');
 
 console.log('\n--- Instalador e atualização ---');
-ok(pkg.name === 'pokemux' && pkg.build.productName === 'PokeMux' && pkg.version === '1.1.9', 'produto PokeMux está na versão 1.1.9');
+ok(pkg.name === 'pokemux' && pkg.build.productName === 'PokeMux' && pkg.version === '1.1.10', 'produto PokeMux está na versão 1.1.10');
 ok(!html.includes('id="appSidebar"') && !html.includes('--pg-sidebar') && html.includes('id="statsBtn"') && html.includes('id="cardsBtn"'), 'layout clássico remove a sidebar fixa e restaura os controles no topo');
 ok(html.includes('class="cd-catches-list"') && html.includes('.cd-catches-list { max-height: clamp(') && html.includes('overflow-y: auto'), 'últimas capturas têm altura responsiva e rolagem interna');
 ok(html.includes('(+x.t || 0) >= corte).reverse()') && !html.includes('(+x.t || 0) >= corte).slice(-40)'), 'últimas capturas mostram todos os resultados que passam pelos filtros');
